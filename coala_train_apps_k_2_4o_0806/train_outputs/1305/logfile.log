@@ -1,0 +1,2645 @@
+INFO - DB skill doc count: 0
+
+INFO - DB non_func doc count: 43
+
+INFO - DB semantic doc count: 429
+
+INFO - DB summaries doc count: 54
+
+INFO - DB reflections doc count: 54
+
+INFO - DB episodic doc count: 99
+
+INFO - [train iter]: 54/100 
+
+INFO - The task prompt is Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+The area is of dimension $N$ x $N$
+The whole area is already div...
+
+INFO - Attempting task_id 1305
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+The area is of dimension $N$ x $N$
+The whole area is already divided into blocks. $1$ means there's a bed in the block, $0$ denotes there isn't. Note, beds placed on consecutive diagonal blocks are safe.
+This is a SAFE example:
+1 0
+0 1
+This is an UNSAFE example:
+0 1 1
+0 0 0
+1 0 0
+To avoid spreading the virus even further, you have to make sure no two adjacent blocks have beds in them. This is done to maintain distance between beds.
+Return an output of "SAFE" if you find the workers have arranged the beds with due consideration to the distance needed. Return "UNSAFE" otherwise.
+
+-----Input:-----
+- First line will contain $T$, number of testcases. Then the testcases follow. 
+- Next line contains $N$.
+- Next $N$ lines will contain $N$ number of space-separated integers $Ai$ which make denote the beds in the area.
+
+-----Output:-----
+For each test case, output in a single line whether the total arrangement is "SAFE" or "UNSAFE". Even if there's a single unsafe bed in the whole area, report the whole area as "UNSAFE".
+
+-----Constraints-----
+- $1 \leq T \leq 100$
+- $0 \leq Ai \leq 1$
+- $2 \leq N \leq 100$
+
+-----Subtasks-----
+- 30 points : $1 \leq N \leq 7$
+- 70 points : Original constraints
+
+-----Sample Input:-----
+2
+4
+1 0 1 0
+0 0 0 1
+0 1 0 0
+1 0 0 1
+4
+1 0 1 0
+0 0 0 0
+1 0 1 1
+0 1 0 0
+
+-----Sample Output:-----
+SAFE
+UNSAFE
+
+-----EXPLANATION:-----
+Beds placed on blocks diagonally are not a problem.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1305 [generation text] ## Problem Restatement
+
+We are given a grid of size \( N \times N \) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is "SAFE" or "UNSAFE". An arrangement is considered "SAFE" if no two beds are adjacent horizontally, vertically, or diagonally. If any two beds are adjacent in any of these directions, the arrangement is "UNSAFE". We need to perform this check for multiple test cases.
+
+## Conceptual Solution
+
+1. For each test case, read the grid dimensions \( N \) and the grid itself.
+2. For each cell in the grid that contains a bed (value 1), check its adjacent cells in all eight possible directions (up, down, left, right, and the four diagonals).
+3. If any adjacent cell also contains a bed, mark the arrangement as "UNSAFE" and break out of the loop for that test case.
+4. If no adjacent beds are found for any bed in the grid, mark the arrangement as "SAFE".
+5. Repeat the above steps for all test cases and output the result for each.
+
+## Pseudocode
+
+```
+function check_safety(grid, N):
+    for each cell (i, j) in grid:
+        if grid[i][j] == 1:
+            for each direction (di, dj) in [(0,1), (1,0), (0,-1), (-1,0), (1,1), (1,-1), (-1,1), (-1,-1)]:
+                ni = i + di
+                nj = j + dj
+                if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                    return "UNSAFE"
+    return "SAFE"
+
+function main():
+    read T
+    for each test case:
+        read N
+        read grid of size N x N
+        result = check_safety(grid, N)
+        print result
+```
+
+## Final Python Solution
+
+```python
+def check_safety(grid, N):
+    # Directions for adjacent cells: right, down, left, up, and four diagonals
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                # Check all adjacent cells
+                for di, dj in directions:
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            index += N
+            grid.append(row)
+        
+        result = check_safety(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+```
+
+This solution reads input from standard input, processes each test case to determine if the bed arrangement is "SAFE" or "UNSAFE", and outputs the result for each test case. The `check_safety` function checks all possible adjacent positions for each bed to ensure no two beds are adjacent.
+INFO - [35m Rollout attempt 1/4[0m
+INFO - [33m Retrieving 2 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.4298):
+
+[Task]:
+    In ChefLand, there is a mountain range consisting of $N$ hills (numbered $1$ through $N$) in a straight line. Let's denote the height of the $i$-th hill from the left by $h_i$.
+    Ada is working on the water supply system of ChefLand. On some of the hills, she wants to place water r...
+
+
+INFO - Retrieved (score=0.4299):
+
+[Task]:
+    In ChefLand, there is a mountain range consisting of $N$ hills (numbered $1$ through $N$) in a straight line. Let's denote the height of the $i$-th hill from the left by $h_i$.
+    Ada is working on the water supply system of ChefLand. On some of the hills, she wants to place water r...
+
+
+INFO - [33m Retrieving 2 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.4720):
+Title: 15 Puzzle Game: Existence Of The Solution
+Part: 1/1
+# 15 Puzzle Game: Existence Of The Solution
+
+This game is played on a $4 \times 4$ board. On this board there are $15$ playing tiles numbered from 1 to 15. One cell is left empty (denoted by 0). You need to get the board to the position p...
+
+
+INFO - Retrieved (score=0.4856):
+Title: Placing Bishops on a Chessboard
+Part: 1/1
+# Placing Bishops on a Chessboard
+
+Find the number of ways to place $K$ bishops on an $N \times N$ chessboard so that no two bishops attack each other.
+
+## Algorithm
+
+This problem can be solved using dynamic programming.
+
+Let's enumerate the diagon...
+
+
+INFO - [33m Retrieving 2 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.4430):
+Reflecting on the problem and the official solution, I realized that my initial approach was incorrect due to a misunderstanding of the pattern for `N > 3`. The key insight from the official solution is the use of a mathematical formula that efficiently calculates the number of valid schedules us...
+
+
+INFO - Retrieved (score=0.4664):
+In this problem, the task was to determine how many rooms can be completely tiled using tiles from boxes, with the constraint that each room in one house must be paired with a room in the other house, and both must be tiled using the same number of tiles from a single box. The key insight is that...
+
+
+INFO - [33m Retrieving 2 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.4199):
+### Summary of Attempts on the Problem
+
+#### Core Concepts and Patterns
+The problem involves generating valid schedules for a sequence of days using a set of four dishes, ensuring no two consecutive days have the same dish, and the first and last days are different. The key pattern is recognizing...
+
+
+INFO - Retrieved (score=0.4239):
+In tackling the problem of distributing tiles to completely tile rooms in two houses, the core concept was recognizing that only perfect square numbers of tiles can be evenly split to tile two rooms of the same size. This insight led to the realization that for each test case, the solution involv...
+
+
+INFO - [33m Retrieving 2 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.5128):
+
+[description]
+The function determines if a given list of integers can be partitioned into four subsets with equal sums, effectively forming a square. It first checks if the list is empty or if the sum of the integers is not divisible by four, returning False in such cases. The target sum for eac...
+
+
+INFO - Retrieved (score=0.5354):
+
+[description for function: main]
+The function reads input from standard input, where the first line contains an integer T representing the number of test cases, followed by T integers. For each integer N, it calculates the N'th term using a specific formula and stores the result. After processin...
+
+
+INFO - Retrieved (score=0.4199): 
+[Summary]:
+    ### Summary of Attempts on the Problem
+
+    #### Core Concepts and Patterns
+    The problem involves generating valid schedules for a sequence of days using a set of four dishes, ensuring no two consecutive days have the same dish, and the first and last days are different. The ke...
+INFO - Retrieved (score=0.4239): 
+[Summary]:
+    In tackling the problem of distributing tiles to completely tile rooms in two houses, the core concept was recognizing that only perfect square numbers of tiles can be evenly split to tile two rooms of the same size. This insight led to the realization that for each test case, the...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+The area is of dimension $N$ x $N$
+The whole area is already divided into blocks. $1$ means there's a bed in the block, $0$ denotes there isn't. Note, beds placed on consecutive diagonal blocks are safe.
+This is a SAFE example:
+1 0
+0 1
+This is an UNSAFE example:
+0 1 1
+0 0 0
+1 0 0
+To avoid spreading the virus even further, you have to make sure no two adjacent blocks have beds in them. This is done to maintain distance between beds.
+Return an output of "SAFE" if you find the workers have arranged the beds with due consideration to the distance needed. Return "UNSAFE" otherwise.
+
+-----Input:-----
+- First line will contain $T$, number of testcases. Then the testcases follow. 
+- Next line contains $N$.
+- Next $N$ lines will contain $N$ number of space-separated integers $Ai$ which make denote the beds in the area.
+
+-----Output:-----
+For each test case, output in a single line whether the total arrangement is "SAFE" or "UNSAFE". Even if there's a single unsafe bed in the whole area, report the whole area as "UNSAFE".
+
+-----Constraints-----
+- $1 \leq T \leq 100$
+- $0 \leq Ai \leq 1$
+- $2 \leq N \leq 100$
+
+-----Subtasks-----
+- 30 points : $1 \leq N \leq 7$
+- 70 points : Original constraints
+
+-----Sample Input:-----
+2
+4
+1 0 1 0
+0 0 0 1
+0 1 0 0
+1 0 0 1
+4
+1 0 1 0
+0 0 0 0
+1 0 1 1
+0 1 0 0
+
+-----Sample Output:-----
+SAFE
+UNSAFE
+
+-----EXPLANATION:-----
+Beds placed on blocks diagonally are not a problem.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1305 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Summary]:
+    ### Summary of Attempts on the Problem
+
+    #### Core Concepts and Patterns
+    The problem involves generating valid schedules for a sequence of days using a set of four dishes, ensuring no two consecutive days have the same dish, and the first and last days are different. The key pattern is recognizing that for `N` days, the number of valid schedules can be calculated using a formula that accounts for the choices of dishes on the first, middle, and last days.
+
+    #### Strategy and Formula
+    Initially, the formula used was incorrect for `N > 3`. The correct approach is:
+    - For `N = 2`, the result is \(4 \times 3 = 12\).
+    - For `N = 3`, the result is \(4 \times 3 \times 2 = 24\).
+    - For `N > 3`, the result should be \(4 \times 3^{N-2} \times 2\).
+
+    This formula accounts for:
+    - 4 choices for the first day.
+    - \(3^{N-2}\) choices for the middle days, ensuring no consecutive days are the same.
+    - 2 choices for the last day to ensure it's different from the first day.
+
+    #### Errors and Fixes
+    The main error was in the formula for `N > 3`, where the last multiplier was incorrectly set. The correct multiplier should ensure the first and last days are different, which is achieved by multiplying by 2, not 3. The misunderstanding of the expected output for `N = 5` was corrected by applying the correct formula, which results in 240, not 216.
+
+    #### Final Code Snippet
+    ```python
+    def calculate_schedules(T, test_cases):
+        MOD = 10**9 + 7
+        results = []
+        for N in test_cases:
+            if N == 2:
+                result = 12
+            else:
+                result = (4 * pow(3, N-2, MOD) * 2) % MOD
+            results.append(result)
+        return results
+
+    def main():
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+    
+        T = int(data[0])
+        test_cases = [int(data[i]) for i in range(1, T + 1)]
+    
+        results = calculate_schedules(T, test_cases)
+    
+        for result in results:
+            print(result)
+
+    if __name__ == "__main__":
+        main()
+    ```
+
+    This experience highlighted the importance of correctly understanding the constraints and requirements of the problem, especially when dealing with large values of `N`.
+[/Summary]
+
+
+[Summary]:
+    In tackling the problem of distributing tiles to completely tile rooms in two houses, the core concept was recognizing that only perfect square numbers of tiles can be evenly split to tile two rooms of the same size. This insight led to the realization that for each test case, the solution involves finding the largest integer `k` such that `k*k <= N`, where `N` is the number of boxes.
+
+    Initially, the solution failed due to incorrect input handling and function execution. The input was read inside a function that was never called, resulting in no output. The fix involved moving the input reading outside the function and ensuring the function was executed by placing it within a `main` function, which was then called in the standard `if __name__ == "__main__":` block. This approach ensures the script runs correctly when executed directly.
+
+    The use of `math.isqrt(N)` was a key improvement, providing an efficient and precise way to compute the integer square root, which is crucial for determining the number of rooms that can be completely tiled. This experience reinforced the importance of proper input/output handling in competitive programming and the utility of mathematical functions for efficient computation.
+[/Summary]
+
+
+INFO - [Task id] 1305 [generation text] ## Problem Restatement
+
+We are given a grid of size \( N \times N \) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is "SAFE" or "UNSAFE". An arrangement is considered "SAFE" if no two beds are adjacent horizontally, vertically, or diagonally. We need to check multiple test cases and output "SAFE" or "UNSAFE" for each.
+
+## Conceptual Solution
+
+1. **Input Parsing**: Read the number of test cases \( T \). For each test case, read the size \( N \) of the grid and then the \( N \times N \) grid itself.
+
+2. **Safety Check**: For each test case, iterate over each cell in the grid. If a cell contains a bed (1), check its adjacent cells (up, down, left, right, and all four diagonals) to ensure none of them also contain a bed.
+
+3. **Output**: If any adjacent cells contain beds, mark the test case as "UNSAFE". If all beds are placed safely, mark it as "SAFE".
+
+## Pseudocode
+
+```
+function is_safe(grid, N):
+    for each cell (i, j) in grid:
+        if grid[i][j] == 1:
+            for each direction (dx, dy) in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                ni = i + dx
+                nj = j + dy
+                if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                    return "UNSAFE"
+    return "SAFE"
+
+function main():
+    read T
+    for each test case:
+        read N
+        read grid of size N x N
+        result = is_safe(grid, N)
+        print(result)
+```
+
+## Final Python Solution
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation
+
+- **is_safe Function**: This function checks each cell in the grid. If a cell contains a bed, it checks all possible adjacent cells (including diagonals) to ensure they do not contain a bed. If any adjacent cell contains a bed, it returns "UNSAFE".
+  
+- **main Function**: This function handles input and output. It reads the number of test cases, processes each test case, and prints whether the arrangement is "SAFE" or "UNSAFE".
+INFO - program_code:
+ 
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+
+
+INFO - program_name:
+ main
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ## Problem Restatement
+
+We are given a grid of size \( N \times N \) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is "SAFE" or "UNSAFE". An arrangement is considered "SAFE" if no two beds are adjacent horizontally, vertically, or diagonally. We need to check multiple test cases and output "SAFE" or "UNSAFE" for each.
+
+## Conceptual Solution
+
+1. **Input Parsing**: Read the number of test cases \( T \). For each test case, read the size \( N \) of the grid and then the \( N \times N \) grid itself.
+
+2. **Safety Check**: For each test case, iterate over each cell in the grid. If a cell contains a bed (1), check its adjacent cells (up, down, left, right, and all four diagonals) to ensure none of them also contain a bed.
+
+3. **Output**: If any adjacent cells contain beds, mark the test case as "UNSAFE". If all beds are placed safely, mark it as "SAFE".
+
+## Pseudocode
+
+```
+function is_safe(grid, N):
+    for each cell (i, j) in grid:
+        if grid[i][j] == 1:
+            for each direction (dx, dy) in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                ni = i + dx
+                nj = j + dy
+                if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                    return "UNSAFE"
+    return "SAFE"
+
+function main():
+    read T
+    for each test case:
+        read N
+        read grid of size N x N
+        result = is_safe(grid, N)
+        print(result)
+```
+
+## Final Python Solution
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation
+
+- **is_safe Function**: This function checks each cell in the grid. If a cell contains a bed, it checks all possible adjacent cells (including diagonals) to ensure they do not contain a bed. If any adjacent cell contains a bed, it returns "UNSAFE".
+  
+- **main Function**: This function handles input and output. It reads the number of test cases, processes each test case, and prints whether the arrangement is "SAFE" or "UNSAFE".
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+None
+
+Tests failed:
+ Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Expected output: [{'SAFE'}, {'UNSAFE'}] # Execution output: ['UNSAFE', 'UNSAFE']
+reward: False
+done: None
+info: {'individual_results': [False]}
+INFO - [35m Rollout attempt 2/4[0m
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+The area is of dimension $N$ x $N$
+The whole area is already divided into blocks. $1$ means there's a bed in the block, $0$ denotes there isn't. Note, beds placed on consecutive diagonal blocks are safe.
+This is a SAFE example:
+1 0
+0 1
+This is an UNSAFE example:
+0 1 1
+0 0 0
+1 0 0
+To avoid spreading the virus even further, you have to make sure no two adjacent blocks have beds in them. This is done to maintain distance between beds.
+Return an output of "SAFE" if you find the workers have arranged the beds with due consideration to the distance needed. Return "UNSAFE" otherwise.
+
+-----Input:-----
+- First line will contain $T$, number of testcases. Then the testcases follow. 
+- Next line contains $N$.
+- Next $N$ lines will contain $N$ number of space-separated integers $Ai$ which make denote the beds in the area.
+
+-----Output:-----
+For each test case, output in a single line whether the total arrangement is "SAFE" or "UNSAFE". Even if there's a single unsafe bed in the whole area, report the whole area as "UNSAFE".
+
+-----Constraints-----
+- $1 \leq T \leq 100$
+- $0 \leq Ai \leq 1$
+- $2 \leq N \leq 100$
+
+-----Subtasks-----
+- 30 points : $1 \leq N \leq 7$
+- 70 points : Original constraints
+
+-----Sample Input:-----
+2
+4
+1 0 1 0
+0 0 0 1
+0 1 0 0
+1 0 0 1
+4
+1 0 1 0
+0 0 0 0
+1 0 1 1
+0 1 0 0
+
+-----Sample Output:-----
+SAFE
+UNSAFE
+
+-----EXPLANATION:-----
+Beds placed on blocks diagonally are not a problem.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1305 [prompt] ## Problem Restatement
+
+We are given a grid of size \( N \times N \) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is "SAFE" or "UNSAFE". An arrangement is considered "SAFE" if no two beds are adjacent horizontally, vertically, or diagonally. We need to check multiple test cases and output "SAFE" or "UNSAFE" for each.
+
+## Conceptual Solution
+
+1. **Input Parsing**: Read the number of test cases \( T \). For each test case, read the size \( N \) of the grid and then the \( N \times N \) grid itself.
+
+2. **Safety Check**: For each test case, iterate over each cell in the grid. If a cell contains a bed (1), check its adjacent cells (up, down, left, right, and all four diagonals) to ensure none of them also contain a bed.
+
+3. **Output**: If any adjacent cells contain beds, mark the test case as "UNSAFE". If all beds are placed safely, mark it as "SAFE".
+
+## Pseudocode
+
+```
+function is_safe(grid, N):
+    for each cell (i, j) in grid:
+        if grid[i][j] == 1:
+            for each direction (dx, dy) in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                ni = i + dx
+                nj = j + dy
+                if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                    return "UNSAFE"
+    return "SAFE"
+
+function main():
+    read T
+    for each test case:
+        read N
+        read grid of size N x N
+        result = is_safe(grid, N)
+        print(result)
+```
+
+## Final Python Solution
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation
+
+- **is_safe Function**: This function checks each cell in the grid. If a cell contains a bed, it checks all possible adjacent cells (including diagonals) to ensure they do not contain a bed. If any adjacent cell contains a bed, it returns "UNSAFE".
+  
+- **main Function**: This function handles input and output. It reads the number of test cases, processes each test case, and prints whether the arrangement is "SAFE" or "UNSAFE".
+INFO - [Task id] 1305 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Expected output: [{'SAFE'}, {'UNSAFE'}] # Execution output: ['UNSAFE', 'UNSAFE']
+[/Environment Feedback]
+
+INFO - [Task id] 1305 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1305 [generation text] Let's analyze the problem and the solution to identify where the mistake might be.
+
+### Problem Analysis
+
+The problem requires us to determine if a grid of beds is "SAFE" or "UNSAFE". A grid is "SAFE" if no two beds are adjacent, including diagonally. The solution should check each bed and ensure that no adjacent cell (including diagonals) also contains a bed.
+
+### Solution Analysis
+
+The solution involves:
+1. Iterating over each cell in the grid.
+2. If a cell contains a bed (1), checking all adjacent cells (including diagonals) to ensure they do not contain a bed.
+3. If any adjacent cell contains a bed, the grid is marked "UNSAFE".
+4. If no adjacent beds are found for any bed, the grid is marked "SAFE".
+
+### Error Identification
+
+Upon reviewing the solution, the logic for checking adjacent cells seems correct. However, the issue might be in the interpretation of the problem statement or the implementation details. Let's re-evaluate the problem statement and the solution:
+
+1. **Diagonal Safety**: The problem states that beds placed on consecutive diagonal blocks are safe. This means that diagonal adjacency is allowed, which contradicts the initial understanding. The solution should only check horizontal and vertical adjacency, not diagonal.
+
+2. **Implementation**: The current implementation checks all eight possible directions (including diagonals), which is incorrect based on the problem's clarification.
+
+### Corrected Solution
+
+We need to adjust the solution to only check horizontal and vertical adjacency, not diagonal. Let's update the code accordingly:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This change ensures that diagonal adjacency is not checked, aligning with the problem's requirement that diagonal adjacency is safe.
+
+This should resolve the issue and correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+INFO - [33m Retrieving 2 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.4566):
+
+[Task]:
+    You may have helped Chef and prevented Doof from destroying the even numbers. But, it has only angered Dr Doof even further. However, for his next plan, he needs some time. Therefore, Doof has built $N$ walls to prevent Chef from interrupting him. You have to help Chef by telling him...
+
+
+INFO - Retrieved (score=0.4571):
+
+[Task]:
+    Let's call a sequence good if the sum of all its elements is $0$.
+    You have a sequence of integers $A_1, A_2, \ldots, A_N$. You may perform any number of operations on this sequence (including zero). In one operation, you should choose a valid index $i$ and decrease $A_i$ by $i$. ...
+
+
+INFO - [33m Retrieving 2 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.5289):
+Title: Placing Bishops on a Chessboard
+Part: 1/1
+# Placing Bishops on a Chessboard
+
+Find the number of ways to place $K$ bishops on an $N \times N$ chessboard so that no two bishops attack each other.
+
+## Algorithm
+
+This problem can be solved using dynamic programming.
+
+Let's enumerate the diagon...
+
+
+INFO - Retrieved (score=0.5361):
+Title: 15 Puzzle Game: Existence Of The Solution
+Part: 1/1
+# 15 Puzzle Game: Existence Of The Solution
+
+This game is played on a $4 \times 4$ board. On this board there are $15$ playing tiles numbered from 1 to 15. One cell is left empty (denoted by 0). You need to get the board to the position p...
+
+
+INFO - [33m Retrieving 2 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.4654):
+Reflecting on the problem and the official solution, I realized that my initial approach was incorrect due to a misunderstanding of the pattern for `N > 3`. The key insight from the official solution is the use of a mathematical formula that efficiently calculates the number of valid schedules us...
+
+
+INFO - Retrieved (score=0.5060):
+In this problem, the task was to determine how many rooms can be completely tiled using tiles from boxes, with the constraint that each room in one house must be paired with a room in the other house, and both must be tiled using the same number of tiles from a single box. The key insight is that...
+
+
+INFO - [33m Retrieving 2 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.4269):
+### Summary of Attempts on the Problem
+
+#### Core Concepts and Patterns
+The problem involves generating valid schedules for a sequence of days using a set of four dishes, ensuring no two consecutive days have the same dish, and the first and last days are different. The key pattern is recognizing...
+
+
+INFO - Retrieved (score=0.4522):
+In tackling the problem of distributing tiles to completely tile rooms in two houses, the core concept was recognizing that only perfect square numbers of tiles can be evenly split to tile two rooms of the same size. This insight led to the realization that for each test case, the solution involv...
+
+
+INFO - [33m Retrieving 2 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.5646):
+
+[description]
+The function determines if a given list of integers can be partitioned into four subsets with equal sums, effectively forming a square. It first checks if the list is empty or if the sum of the integers is not divisible by four, returning False in such cases. The target sum for eac...
+
+
+INFO - Retrieved (score=0.5708):
+
+[description for function: main]
+The function reads input from standard input, where the first line contains the number of test cases, T. For each test case, it reads an integer N and calculates the largest integer k such that k squared is less than or equal to N. It stores these results in a li...
+
+
+INFO - Retrieved (score=0.4269): 
+[Summary]:
+    ### Summary of Attempts on the Problem
+
+    #### Core Concepts and Patterns
+    The problem involves generating valid schedules for a sequence of days using a set of four dishes, ensuring no two consecutive days have the same dish, and the first and last days are different. The ke...
+INFO - Retrieved (score=0.4522): 
+[Summary]:
+    In tackling the problem of distributing tiles to completely tile rooms in two houses, the core concept was recognizing that only perfect square numbers of tiles can be evenly split to tile two rooms of the same size. This insight led to the realization that for each test case, the...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+The area is of dimension $N$ x $N$
+The whole area is already divided into blocks. $1$ means there's a bed in the block, $0$ denotes there isn't. Note, beds placed on consecutive diagonal blocks are safe.
+This is a SAFE example:
+1 0
+0 1
+This is an UNSAFE example:
+0 1 1
+0 0 0
+1 0 0
+To avoid spreading the virus even further, you have to make sure no two adjacent blocks have beds in them. This is done to maintain distance between beds.
+Return an output of "SAFE" if you find the workers have arranged the beds with due consideration to the distance needed. Return "UNSAFE" otherwise.
+
+-----Input:-----
+- First line will contain $T$, number of testcases. Then the testcases follow. 
+- Next line contains $N$.
+- Next $N$ lines will contain $N$ number of space-separated integers $Ai$ which make denote the beds in the area.
+
+-----Output:-----
+For each test case, output in a single line whether the total arrangement is "SAFE" or "UNSAFE". Even if there's a single unsafe bed in the whole area, report the whole area as "UNSAFE".
+
+-----Constraints-----
+- $1 \leq T \leq 100$
+- $0 \leq Ai \leq 1$
+- $2 \leq N \leq 100$
+
+-----Subtasks-----
+- 30 points : $1 \leq N \leq 7$
+- 70 points : Original constraints
+
+-----Sample Input:-----
+2
+4
+1 0 1 0
+0 0 0 1
+0 1 0 0
+1 0 0 1
+4
+1 0 1 0
+0 0 0 0
+1 0 1 1
+0 1 0 0
+
+-----Sample Output:-----
+SAFE
+UNSAFE
+
+-----EXPLANATION:-----
+Beds placed on blocks diagonally are not a problem.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1305 [prompt] ## Problem Restatement
+
+We are given a grid of size \( N \times N \) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is "SAFE" or "UNSAFE". An arrangement is considered "SAFE" if no two beds are adjacent horizontally, vertically, or diagonally. We need to check multiple test cases and output "SAFE" or "UNSAFE" for each.
+
+## Conceptual Solution
+
+1. **Input Parsing**: Read the number of test cases \( T \). For each test case, read the size \( N \) of the grid and then the \( N \times N \) grid itself.
+
+2. **Safety Check**: For each test case, iterate over each cell in the grid. If a cell contains a bed (1), check its adjacent cells (up, down, left, right, and all four diagonals) to ensure none of them also contain a bed.
+
+3. **Output**: If any adjacent cells contain beds, mark the test case as "UNSAFE". If all beds are placed safely, mark it as "SAFE".
+
+## Pseudocode
+
+```
+function is_safe(grid, N):
+    for each cell (i, j) in grid:
+        if grid[i][j] == 1:
+            for each direction (dx, dy) in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                ni = i + dx
+                nj = j + dy
+                if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                    return "UNSAFE"
+    return "SAFE"
+
+function main():
+    read T
+    for each test case:
+        read N
+        read grid of size N x N
+        result = is_safe(grid, N)
+        print(result)
+```
+
+## Final Python Solution
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation
+
+- **is_safe Function**: This function checks each cell in the grid. If a cell contains a bed, it checks all possible adjacent cells (including diagonals) to ensure they do not contain a bed. If any adjacent cell contains a bed, it returns "UNSAFE".
+  
+- **main Function**: This function handles input and output. It reads the number of test cases, processes each test case, and prints whether the arrangement is "SAFE" or "UNSAFE".
+INFO - [Task id] 1305 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Expected output: [{'SAFE'}, {'UNSAFE'}] # Execution output: ['UNSAFE', 'UNSAFE']
+[/Environment Feedback]
+
+INFO - [Task id] 1305 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1305 [prompt] Let's analyze the problem and the solution to identify where the mistake might be.
+
+### Problem Analysis
+
+The problem requires us to determine if a grid of beds is "SAFE" or "UNSAFE". A grid is "SAFE" if no two beds are adjacent, including diagonally. The solution should check each bed and ensure that no adjacent cell (including diagonals) also contains a bed.
+
+### Solution Analysis
+
+The solution involves:
+1. Iterating over each cell in the grid.
+2. If a cell contains a bed (1), checking all adjacent cells (including diagonals) to ensure they do not contain a bed.
+3. If any adjacent cell contains a bed, the grid is marked "UNSAFE".
+4. If no adjacent beds are found for any bed, the grid is marked "SAFE".
+
+### Error Identification
+
+Upon reviewing the solution, the logic for checking adjacent cells seems correct. However, the issue might be in the interpretation of the problem statement or the implementation details. Let's re-evaluate the problem statement and the solution:
+
+1. **Diagonal Safety**: The problem states that beds placed on consecutive diagonal blocks are safe. This means that diagonal adjacency is allowed, which contradicts the initial understanding. The solution should only check horizontal and vertical adjacency, not diagonal.
+
+2. **Implementation**: The current implementation checks all eight possible directions (including diagonals), which is incorrect based on the problem's clarification.
+
+### Corrected Solution
+
+We need to adjust the solution to only check horizontal and vertical adjacency, not diagonal. Let's update the code accordingly:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This change ensures that diagonal adjacency is not checked, aligning with the problem's requirement that diagonal adjacency is safe.
+
+This should resolve the issue and correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1305 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Summary]:
+    ### Summary of Attempts on the Problem
+
+    #### Core Concepts and Patterns
+    The problem involves generating valid schedules for a sequence of days using a set of four dishes, ensuring no two consecutive days have the same dish, and the first and last days are different. The key pattern is recognizing that for `N` days, the number of valid schedules can be calculated using a formula that accounts for the choices of dishes on the first, middle, and last days.
+
+    #### Strategy and Formula
+    Initially, the formula used was incorrect for `N > 3`. The correct approach is:
+    - For `N = 2`, the result is \(4 \times 3 = 12\).
+    - For `N = 3`, the result is \(4 \times 3 \times 2 = 24\).
+    - For `N > 3`, the result should be \(4 \times 3^{N-2} \times 2\).
+
+    This formula accounts for:
+    - 4 choices for the first day.
+    - \(3^{N-2}\) choices for the middle days, ensuring no consecutive days are the same.
+    - 2 choices for the last day to ensure it's different from the first day.
+
+    #### Errors and Fixes
+    The main error was in the formula for `N > 3`, where the last multiplier was incorrectly set. The correct multiplier should ensure the first and last days are different, which is achieved by multiplying by 2, not 3. The misunderstanding of the expected output for `N = 5` was corrected by applying the correct formula, which results in 240, not 216.
+
+    #### Final Code Snippet
+    ```python
+    def calculate_schedules(T, test_cases):
+        MOD = 10**9 + 7
+        results = []
+        for N in test_cases:
+            if N == 2:
+                result = 12
+            else:
+                result = (4 * pow(3, N-2, MOD) * 2) % MOD
+            results.append(result)
+        return results
+
+    def main():
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+    
+        T = int(data[0])
+        test_cases = [int(data[i]) for i in range(1, T + 1)]
+    
+        results = calculate_schedules(T, test_cases)
+    
+        for result in results:
+            print(result)
+
+    if __name__ == "__main__":
+        main()
+    ```
+
+    This experience highlighted the importance of correctly understanding the constraints and requirements of the problem, especially when dealing with large values of `N`.
+[/Summary]
+
+
+[Summary]:
+    In tackling the problem of distributing tiles to completely tile rooms in two houses, the core concept was recognizing that only perfect square numbers of tiles can be evenly split to tile two rooms of the same size. This insight led to the realization that for each test case, the solution involves finding the largest integer `k` such that `k*k <= N`, where `N` is the number of boxes.
+
+    Initially, the solution failed due to incorrect input handling and function execution. The input was read inside a function that was never called, resulting in no output. The fix involved moving the input reading outside the function and ensuring the function was executed by placing it within a `main` function, which was then called in the standard `if __name__ == "__main__":` block. This approach ensures the script runs correctly when executed directly.
+
+    The use of `math.isqrt(N)` was a key improvement, providing an efficient and precise way to compute the integer square root, which is crucial for determining the number of rooms that can be completely tiled. This experience reinforced the importance of proper input/output handling in competitive programming and the utility of mathematical functions for efficient computation.
+[/Summary]
+
+
+INFO - [Task id] 1305 [generation text] Let's fix the solution based on the insights we gathered. The main issue was the incorrect checking of diagonal adjacency, which should be allowed according to the problem statement. We will adjust the code to only check horizontal and vertical adjacency.
+
+Here's the corrected Python code:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This ensures that diagonal adjacency is not checked, which aligns with the problem's requirement that diagonal adjacency is safe.
+
+This should correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+INFO - program_code:
+ 
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+
+
+INFO - program_name:
+ main
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ Let's fix the solution based on the insights we gathered. The main issue was the incorrect checking of diagonal adjacency, which should be allowed according to the problem statement. We will adjust the code to only check horizontal and vertical adjacency.
+
+Here's the corrected Python code:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This ensures that diagonal adjacency is not checked, which aligns with the problem's requirement that diagonal adjacency is safe.
+
+This should correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+ Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Output: SAFE
+UNSAFE
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': [True]}
+INFO - Updated entry: 
+[Task]:
+    Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+    The area is of dimension $N$ x $N$
+    The whol...,
+
+INFO - Metadata: {
+    "raw_msg": "## Problem Restatement\n\nWe are given a grid of size \\( N \\times N \\) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is \"SAFE\" or \"UNSAFE\". An arrangement is considered \"SAFE\" if no t...
+
+INFO - Updated entry: 
+[Task]:
+    Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+    The area is of dimension $N$ x $N$
+    The whol...,
+
+INFO - Metadata: {
+    "critique": "Let's analyze the problem and the solution to identify where the mistake might be.\n\n### Problem Analysis\n\nThe problem requires us to determine if a grid of beds is \"SAFE\" or \"UNSAFE\". A grid is \"SAFE\" if no two beds are adjacent, including diagonally. The solution sho...
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+The area is of dimension $N$ x $N$
+The whole area is already divided into blocks. $1$ means there's a bed in the block, $0$ denotes there isn't. Note, beds placed on consecutive diagonal blocks are safe.
+This is a SAFE example:
+1 0
+0 1
+This is an UNSAFE example:
+0 1 1
+0 0 0
+1 0 0
+To avoid spreading the virus even further, you have to make sure no two adjacent blocks have beds in them. This is done to maintain distance between beds.
+Return an output of "SAFE" if you find the workers have arranged the beds with due consideration to the distance needed. Return "UNSAFE" otherwise.
+
+-----Input:-----
+- First line will contain $T$, number of testcases. Then the testcases follow. 
+- Next line contains $N$.
+- Next $N$ lines will contain $N$ number of space-separated integers $Ai$ which make denote the beds in the area.
+
+-----Output:-----
+For each test case, output in a single line whether the total arrangement is "SAFE" or "UNSAFE". Even if there's a single unsafe bed in the whole area, report the whole area as "UNSAFE".
+
+-----Constraints-----
+- $1 \leq T \leq 100$
+- $0 \leq Ai \leq 1$
+- $2 \leq N \leq 100$
+
+-----Subtasks-----
+- 30 points : $1 \leq N \leq 7$
+- 70 points : Original constraints
+
+-----Sample Input:-----
+2
+4
+1 0 1 0
+0 0 0 1
+0 1 0 0
+1 0 0 1
+4
+1 0 1 0
+0 0 0 0
+1 0 1 1
+0 1 0 0
+
+-----Sample Output:-----
+SAFE
+UNSAFE
+
+-----EXPLANATION:-----
+Beds placed on blocks diagonally are not a problem.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1305 [prompt] ## Problem Restatement
+
+We are given a grid of size \( N \times N \) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is "SAFE" or "UNSAFE". An arrangement is considered "SAFE" if no two beds are adjacent horizontally, vertically, or diagonally. We need to check multiple test cases and output "SAFE" or "UNSAFE" for each.
+
+## Conceptual Solution
+
+1. **Input Parsing**: Read the number of test cases \( T \). For each test case, read the size \( N \) of the grid and then the \( N \times N \) grid itself.
+
+2. **Safety Check**: For each test case, iterate over each cell in the grid. If a cell contains a bed (1), check its adjacent cells (up, down, left, right, and all four diagonals) to ensure none of them also contain a bed.
+
+3. **Output**: If any adjacent cells contain beds, mark the test case as "UNSAFE". If all beds are placed safely, mark it as "SAFE".
+
+## Pseudocode
+
+```
+function is_safe(grid, N):
+    for each cell (i, j) in grid:
+        if grid[i][j] == 1:
+            for each direction (dx, dy) in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                ni = i + dx
+                nj = j + dy
+                if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                    return "UNSAFE"
+    return "SAFE"
+
+function main():
+    read T
+    for each test case:
+        read N
+        read grid of size N x N
+        result = is_safe(grid, N)
+        print(result)
+```
+
+## Final Python Solution
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation
+
+- **is_safe Function**: This function checks each cell in the grid. If a cell contains a bed, it checks all possible adjacent cells (including diagonals) to ensure they do not contain a bed. If any adjacent cell contains a bed, it returns "UNSAFE".
+  
+- **main Function**: This function handles input and output. It reads the number of test cases, processes each test case, and prints whether the arrangement is "SAFE" or "UNSAFE".
+INFO - [Task id] 1305 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Expected output: [{'SAFE'}, {'UNSAFE'}] # Execution output: ['UNSAFE', 'UNSAFE']
+[/Environment Feedback]
+
+INFO - [Task id] 1305 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1305 [prompt] Let's analyze the problem and the solution to identify where the mistake might be.
+
+### Problem Analysis
+
+The problem requires us to determine if a grid of beds is "SAFE" or "UNSAFE". A grid is "SAFE" if no two beds are adjacent, including diagonally. The solution should check each bed and ensure that no adjacent cell (including diagonals) also contains a bed.
+
+### Solution Analysis
+
+The solution involves:
+1. Iterating over each cell in the grid.
+2. If a cell contains a bed (1), checking all adjacent cells (including diagonals) to ensure they do not contain a bed.
+3. If any adjacent cell contains a bed, the grid is marked "UNSAFE".
+4. If no adjacent beds are found for any bed, the grid is marked "SAFE".
+
+### Error Identification
+
+Upon reviewing the solution, the logic for checking adjacent cells seems correct. However, the issue might be in the interpretation of the problem statement or the implementation details. Let's re-evaluate the problem statement and the solution:
+
+1. **Diagonal Safety**: The problem states that beds placed on consecutive diagonal blocks are safe. This means that diagonal adjacency is allowed, which contradicts the initial understanding. The solution should only check horizontal and vertical adjacency, not diagonal.
+
+2. **Implementation**: The current implementation checks all eight possible directions (including diagonals), which is incorrect based on the problem's clarification.
+
+### Corrected Solution
+
+We need to adjust the solution to only check horizontal and vertical adjacency, not diagonal. Let's update the code accordingly:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This change ensures that diagonal adjacency is not checked, aligning with the problem's requirement that diagonal adjacency is safe.
+
+This should resolve the issue and correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1305 [prompt] Let's fix the solution based on the insights we gathered. The main issue was the incorrect checking of diagonal adjacency, which should be allowed according to the problem statement. We will adjust the code to only check horizontal and vertical adjacency.
+
+Here's the corrected Python code:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This ensures that diagonal adjacency is not checked, which aligns with the problem's requirement that diagonal adjacency is safe.
+
+This should correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+INFO - [Task id] 1305 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Output: SAFE
+    UNSAFE
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+Now, summarize your attempts as a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+- Only include the most relevant information and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - Identifying the core concepts and patterns that problem appears to test for
+    - Describing the strategies that seemed to work but did not, and vice versa
+    - Describing unexpected errors and how they were fixed
+
+Your summary should be at most a few paragraphs.
+
+INFO - [Task id] 1305 [generation text] In this problem, the task was to determine if a grid of beds is "SAFE" or "UNSAFE" based on adjacency rules. The key insight was understanding that diagonal adjacency is allowed, which initially led to an incorrect solution when I checked for all eight possible directions (including diagonals).
+
+### Core Concepts and Patterns
+The problem tests for understanding of grid traversal and adjacency checks. It requires careful reading of the problem statement to correctly interpret the rules regarding adjacency.
+
+### Strategies and Fixes
+Initially, I checked all eight directions for adjacency, which was incorrect because diagonal adjacency is allowed. The correct strategy was to only check horizontal and vertical directions (right, down, left, up) for adjacency. This adjustment aligned the solution with the problem's requirements and resolved the issue.
+
+### Code Snippet
+The final solution involved iterating over each cell in the grid and checking only the four cardinal directions for adjacent beds:
+
+```python
+def is_safe(grid, N):
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+```
+
+This experience reinforced the importance of accurately interpreting problem constraints and adjusting the solution approach accordingly.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+The area is of dimension $N$ x $N$
+The whole area is already divided into blocks. $1$ means there's a bed in the block, $0$ denotes there isn't. Note, beds placed on consecutive diagonal blocks are safe.
+This is a SAFE example:
+1 0
+0 1
+This is an UNSAFE example:
+0 1 1
+0 0 0
+1 0 0
+To avoid spreading the virus even further, you have to make sure no two adjacent blocks have beds in them. This is done to maintain distance between beds.
+Return an output of "SAFE" if you find the workers have arranged the beds with due consideration to the distance needed. Return "UNSAFE" otherwise.
+
+-----Input:-----
+- First line will contain $T$, number of testcases. Then the testcases follow. 
+- Next line contains $N$.
+- Next $N$ lines will contain $N$ number of space-separated integers $Ai$ which make denote the beds in the area.
+
+-----Output:-----
+For each test case, output in a single line whether the total arrangement is "SAFE" or "UNSAFE". Even if there's a single unsafe bed in the whole area, report the whole area as "UNSAFE".
+
+-----Constraints-----
+- $1 \leq T \leq 100$
+- $0 \leq Ai \leq 1$
+- $2 \leq N \leq 100$
+
+-----Subtasks-----
+- 30 points : $1 \leq N \leq 7$
+- 70 points : Original constraints
+
+-----Sample Input:-----
+2
+4
+1 0 1 0
+0 0 0 1
+0 1 0 0
+1 0 0 1
+4
+1 0 1 0
+0 0 0 0
+1 0 1 1
+0 1 0 0
+
+-----Sample Output:-----
+SAFE
+UNSAFE
+
+-----EXPLANATION:-----
+Beds placed on blocks diagonally are not a problem.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1305 [prompt] ## Problem Restatement
+
+We are given a grid of size \( N \times N \) where each cell can either have a bed (denoted by 1) or be empty (denoted by 0). The task is to determine if the arrangement of beds is "SAFE" or "UNSAFE". An arrangement is considered "SAFE" if no two beds are adjacent horizontally, vertically, or diagonally. We need to check multiple test cases and output "SAFE" or "UNSAFE" for each.
+
+## Conceptual Solution
+
+1. **Input Parsing**: Read the number of test cases \( T \). For each test case, read the size \( N \) of the grid and then the \( N \times N \) grid itself.
+
+2. **Safety Check**: For each test case, iterate over each cell in the grid. If a cell contains a bed (1), check its adjacent cells (up, down, left, right, and all four diagonals) to ensure none of them also contain a bed.
+
+3. **Output**: If any adjacent cells contain beds, mark the test case as "UNSAFE". If all beds are placed safely, mark it as "SAFE".
+
+## Pseudocode
+
+```
+function is_safe(grid, N):
+    for each cell (i, j) in grid:
+        if grid[i][j] == 1:
+            for each direction (dx, dy) in [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                ni = i + dx
+                nj = j + dy
+                if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                    return "UNSAFE"
+    return "SAFE"
+
+function main():
+    read T
+    for each test case:
+        read N
+        read grid of size N x N
+        result = is_safe(grid, N)
+        print(result)
+```
+
+## Final Python Solution
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up, and four diagonals)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation
+
+- **is_safe Function**: This function checks each cell in the grid. If a cell contains a bed, it checks all possible adjacent cells (including diagonals) to ensure they do not contain a bed. If any adjacent cell contains a bed, it returns "UNSAFE".
+  
+- **main Function**: This function handles input and output. It reads the number of test cases, processes each test case, and prints whether the arrangement is "SAFE" or "UNSAFE".
+INFO - [Task id] 1305 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Expected output: [{'SAFE'}, {'UNSAFE'}] # Execution output: ['UNSAFE', 'UNSAFE']
+[/Environment Feedback]
+
+INFO - [Task id] 1305 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1305 [prompt] Let's analyze the problem and the solution to identify where the mistake might be.
+
+### Problem Analysis
+
+The problem requires us to determine if a grid of beds is "SAFE" or "UNSAFE". A grid is "SAFE" if no two beds are adjacent, including diagonally. The solution should check each bed and ensure that no adjacent cell (including diagonals) also contains a bed.
+
+### Solution Analysis
+
+The solution involves:
+1. Iterating over each cell in the grid.
+2. If a cell contains a bed (1), checking all adjacent cells (including diagonals) to ensure they do not contain a bed.
+3. If any adjacent cell contains a bed, the grid is marked "UNSAFE".
+4. If no adjacent beds are found for any bed, the grid is marked "SAFE".
+
+### Error Identification
+
+Upon reviewing the solution, the logic for checking adjacent cells seems correct. However, the issue might be in the interpretation of the problem statement or the implementation details. Let's re-evaluate the problem statement and the solution:
+
+1. **Diagonal Safety**: The problem states that beds placed on consecutive diagonal blocks are safe. This means that diagonal adjacency is allowed, which contradicts the initial understanding. The solution should only check horizontal and vertical adjacency, not diagonal.
+
+2. **Implementation**: The current implementation checks all eight possible directions (including diagonals), which is incorrect based on the problem's clarification.
+
+### Corrected Solution
+
+We need to adjust the solution to only check horizontal and vertical adjacency, not diagonal. Let's update the code accordingly:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This change ensures that diagonal adjacency is not checked, aligning with the problem's requirement that diagonal adjacency is safe.
+
+This should resolve the issue and correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+INFO - [Task id] 1305 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1305 [prompt] Let's fix the solution based on the insights we gathered. The main issue was the incorrect checking of diagonal adjacency, which should be allowed according to the problem statement. We will adjust the code to only check horizontal and vertical adjacency.
+
+Here's the corrected Python code:
+
+```python
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explanation of Changes
+
+- **Direction Adjustment**: The `directions` list now only includes horizontal and vertical directions: right, down, left, and up. This ensures that diagonal adjacency is not checked, which aligns with the problem's requirement that diagonal adjacency is safe.
+
+This should correctly determine if the grid is "SAFE" or "UNSAFE" based on the problem's constraints.
+INFO - [Task id] 1305 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['2', '4', '1 0 1 0', '0 0 0 1', '0 1 0 0', '1 0 0 1', '4', '1 0 1 0', '0 0 0 0', '1 0 1 1', '0 1 0 0'] Output: SAFE
+    UNSAFE
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1305 [prompt] 
+Below is the official solution (do exercise discretion as official solutions can also have mistakes).
+
+You will be reflecting on your attempts to solve the problem.
+This will be a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+## Instructions
+- Only include the most relevant insights and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy / official solution was obvious), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - If the official solution is insightful (e.g. better than yours in time and space complexity or more effective in breaking down the problem statement), distil the key approach of the official solution, step by step.
+    - If your approach failed the test cases, reason why the official solution works but yours does not
+
+Your reflection should be at most a few paragraphs.
+
+## Official solution
+res = []
+for _ in range(int(input())):
+ lst = []
+ flag = 0
+ n = int(input())
+ for i in range(n):
+  lst.append(list(map(int, input().split())))
+ for i in lst:
+  for j in range(n-1):
+   if i[j] == i[j+1] == 1:
+    res.append("UNSAFE")
+    flag = 1
+    break
+  if flag != 0:
+   break
+ for i in range(n-1):
+  for j in range(n):
+   if lst[i][j] == lst[i+1] == 1:
+    res.append("UNSAFE")
+    flag = 1
+    break
+  if flag != 0:
+   break
+ if flag == 0:
+  res.append("SAFE")
+for i in res:
+ print(i)
+
+
+INFO - [Task id] 1305 [generation text] ### Reflection
+
+The problem required checking the safety of bed arrangements in a grid, ensuring no two beds are adjacent horizontally or vertically. Initially, I misunderstood the problem by including diagonal checks, which was unnecessary since diagonal adjacency is allowed.
+
+#### Key Insights:
+
+1. **Understanding Adjacency**: The main insight was realizing that only horizontal and vertical adjacency needed to be checked, not diagonal. This simplified the problem significantly.
+
+2. **Efficient Checking**: The official solution efficiently checks for unsafe conditions by iterating through rows and columns separately. This approach is straightforward and avoids unnecessary complexity.
+
+3. **Flag Usage**: The use of a flag to break out of loops once an unsafe condition is found is a practical way to optimize the solution, preventing further unnecessary checks.
+
+#### Code Snippet:
+
+The official solution uses a simple nested loop structure to check for unsafe conditions:
+
+```python
+for i in lst:
+    for j in range(n-1):
+        if i[j] == i[j+1] == 1:
+            res.append("UNSAFE")
+            flag = 1
+            break
+    if flag != 0:
+        break
+for i in range(n-1):
+    for j in range(n):
+        if lst[i][j] == lst[i+1][j] == 1:
+            res.append("UNSAFE")
+            flag = 1
+            break
+    if flag != 0:
+        break
+```
+
+This snippet efficiently checks for horizontal and vertical adjacency, ensuring the solution is both correct and optimal.
+
+### Conclusion
+
+The experience highlighted the importance of correctly interpreting problem constraints and focusing on the most relevant checks. The official solution's simplicity and efficiency serve as a good reminder to avoid overcomplicating problems by sticking to the core requirements.
+INFO - Updated entry: In this problem, the task was to determine if a grid of beds is "SAFE" or "UNSAFE" based on adjacency rules. The key insight was understanding that diagonal adjacency is allowed, which initially led to an incorrect solution when I checked for all eight possible directions (including diagonals).
+
+...,
+
+INFO - Metadata: {
+    "task_id": 1305
+}
+
+INFO - Updated entry: ### Reflection
+
+The problem required checking the safety of bed arrangements in a grid, ensuring no two beds are adjacent horizontally or vertically. Initially, I misunderstood the problem by including diagonal checks, which was unnecessary since diagonal adjacency is allowed.
+
+#### Key Insights:...,
+
+INFO - Metadata: {
+    "task_id": 1305
+}
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are a helpful assistant that writes a description of the given function written in the Python programming language.
+
+1) Do not mention the function name.
+2) Do not mention anything about helper functions.
+3) There might be some helper functions before the main function, but you only need to describe the main function.
+4) Try to summarize the function in no more than 6 sentences.
+5) Your response should be a single line of text.
+
+INFO - [Task id] 1305 [prompt] 
+def is_safe(grid, N):
+    # Directions for adjacent cells (right, down, left, up)
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    for i in range(N):
+        for j in range(N):
+            if grid[i][j] == 1:
+                for dx, dy in directions:
+                    ni, nj = i + dx, j + dy
+                    if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                        return "UNSAFE"
+    return "SAFE"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        index += 1
+        grid = []
+        for _ in range(N):
+            row = list(map(int, data[index:index + N]))
+            grid.append(row)
+            index += N
+        result = is_safe(grid, N)
+        results.append(result)
+    
+    for result in results:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+
+
+The main function is `main`.
+INFO - [Task id] 1305 [generation text] The function reads input data from standard input, which includes multiple test cases. For each test case, it reads an integer N and then an N x N grid of integers. It checks each grid using another function to determine if any adjacent cells both contain the value 1, indicating an "UNSAFE" condition. It collects the results for each test case, either "SAFE" or "UNSAFE", and prints them. The function handles multiple test cases in a single run.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1305 [prompt] 
+You are a helpful assistant that extracts important information from problems and solutions to aid in searchability and education.
+
+## Instructions
+- Read through the problem and solution carefully.
+- Reason out, step by step, in what scenarios this knowledge would be useful.
+- Focus on general patterns and situations to help connect this knowledge to new situations.
+- Then, include a list of keywords that are useful for searching this problem/solution pair.
+
+## Response format
+Respond in JSON, and follow the keys and expected format of the values strictly.
+
+The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
+the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
+
+Here is the output schema:
+```
+{"properties": {"scenarios": {"description": "In what scenarios will this knowledge be useful? Answer in a paragraph.", "title": "Scenarios", "type": "string"}, "keywords": {"description": "List of keywords that are useful for searching this problem/solution pair", "items": {"type": "string"}, "title": "Keywords", "type": "array"}}, "required": ["scenarios", "keywords"]}
+```
+
+INFO - [Task id] 1305 [prompt] 
+[Problem]
+    Due to the COVID pandemic, there has been an increase in the number of cases if a hospital. The management has decided to clear a large square area for the patients and arrange for beds. But the beds can't be too near to each other.
+    The area is of dimension $N$ x $N$
+    The whole area is already divided into blocks. $1$ means there's a bed in the block, $0$ denotes there isn't. Note, beds placed on consecutive diagonal blocks are safe.
+    This is a SAFE example:
+    1 0
+    0 1
+    This is an UNSAFE example:
+    0 1 1
+    0 0 0
+    1 0 0
+    To avoid spreading the virus even further, you have to make sure no two adjacent blocks have beds in them. This is done to maintain distance between beds.
+    Return an output of "SAFE" if you find the workers have arranged the beds with due consideration to the distance needed. Return "UNSAFE" otherwise.
+
+    -----Input:-----
+    - First line will contain $T$, number of testcases. Then the testcases follow. 
+    - Next line contains $N$.
+    - Next $N$ lines will contain $N$ number of space-separated integers $Ai$ which make denote the beds in the area.
+
+    -----Output:-----
+    For each test case, output in a single line whether the total arrangement is "SAFE" or "UNSAFE". Even if there's a single unsafe bed in the whole area, report the whole area as "UNSAFE".
+
+    -----Constraints-----
+    - $1 \leq T \leq 100$
+    - $0 \leq Ai \leq 1$
+    - $2 \leq N \leq 100$
+
+    -----Subtasks-----
+    - 30 points : $1 \leq N \leq 7$
+    - 70 points : Original constraints
+
+    -----Sample Input:-----
+    2
+    4
+    1 0 1 0
+    0 0 0 1
+    0 1 0 0
+    1 0 0 1
+    4
+    1 0 1 0
+    0 0 0 0
+    1 0 1 1
+    0 1 0 0
+
+    -----Sample Output:-----
+    SAFE
+    UNSAFE
+
+    -----EXPLANATION:-----
+    Beds placed on blocks diagonally are not a problem.
+[/Problem]
+
+[Solution]
+
+    def is_safe(grid, N):
+        # Directions for adjacent cells (right, down, left, up)
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+        for i in range(N):
+            for j in range(N):
+                if grid[i][j] == 1:
+                    for dx, dy in directions:
+                        ni, nj = i + dx, j + dy
+                        if 0 <= ni < N and 0 <= nj < N and grid[ni][nj] == 1:
+                            return "UNSAFE"
+        return "SAFE"
+
+    def main():
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+    
+        index = 0
+        T = int(data[index])
+        index += 1
+        results = []
+    
+        for _ in range(T):
+            N = int(data[index])
+            index += 1
+            grid = []
+            for _ in range(N):
+                row = list(map(int, data[index:index + N]))
+                grid.append(row)
+                index += N
+            result = is_safe(grid, N)
+            results.append(result)
+    
+        for result in results:
+            print(result)
+
+    if __name__ == "__main__":
+        main()
+
+[/Solution]
+
+INFO - [Task id] 1305 [generation text] 
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where spatial arrangement and safety protocols are critical, such as in hospital management during pandemics, seating arrangements in public spaces, or any situation where maintaining a safe distance between entities is necessary. The problem addresses the need to ensure that no two beds (or entities) are adjacent, except diagonally, which can be applied to various grid-based planning problems. Understanding how to check adjacency in a grid and ensuring compliance with safety regulations can be applied to software development for health management systems, urban planning, and even game development where grid-based logic is used.",
+    "keywords": [
+        "COVID",
+        "hospital",
+        "bed arrangement",
+        "grid",
+        "safety",
+        "adjacency",
+        "distance",
+        "pandemic",
+        "spatial arrangement",
+        "grid-based planning"
+    ]
+}
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where spatial arrangement and safety protocols are critical, such as in hospital management during pandemics, seating arrangements in public spaces, or any situation where maintaining a safe distance between entities is necessary. The problem addresses the need to ensure that no two beds (or entities) are adjacent, except diagonally, which can be applied to various grid-based planning problems. Understanding how to check adjacency in a grid and ensuring compliance with safety regulations can be applied to software development for health management systems, urban planning, and even game development where grid-based logic is used.",
+    "keywords": [
+        "COVID",
+        "hospital",
+        "bed arrangement",
+        "grid",
+        "safety",
+        "adjacency",
+        "distance",
+        "pandemic",
+        "spatial arrangement",
+        "grid-based planning"
+    ]
+}
+INFO - Updated entry: 
+[description for function: main]
+The function reads input data from standard input, which includes multiple test cases. For each test case, it reads an integer N and then an N x N grid of integers. It checks each grid using another function to determine if any adjacent cells both contain the val...,
+
+INFO - Metadata: {
+    "task": 1305,
+    "code": "\ndef is_safe(grid, N):\n    # Directions for adjacent cells (right, down, left, up)\n    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]\n    \n    for i in range(N):\n        for j in range(N):\n            if grid[i][j] == 1:\n                for dx, dy in dire...
+

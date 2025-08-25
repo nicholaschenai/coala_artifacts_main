@@ -1,0 +1,2487 @@
+INFO - DB skill doc count: 0
+
+INFO - DB non_func doc count: 9
+
+INFO - DB semantic doc count: 429
+
+INFO - DB summaries doc count: 10
+
+INFO - DB reflections doc count: 10
+
+INFO - DB episodic doc count: 16
+
+INFO - [train iter]: 10/100 
+
+INFO - The task prompt is For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+Note f([1]) = 0.
+...
+
+INFO - Attempting task_id 1249
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+Note f([1]) = 0.
+
+-----Input-----
+- The first line of the input contains an integer T denoting the number of test cases. The description of T test cases follows.
+- The only line of each test case consists of two space-separated integers N, K respectively.
+
+-----Output-----
+For each test case, if a permutation satisfying the condition exists, output a single line containing N space-separated integers which denotes any such permutation. If no such permutation exists, output a single integer -1 instead.
+Use fast I/O methods since the size of the output is large.
+
+-----Constraints-----
+- 1 ≤ T ≤ 40
+- 1 ≤ N ≤ 105
+- Sum of N over all test cases in each file ≤ 106
+- 0 ≤ K ≤ 2 * 1010
+
+-----Example-----
+Input:
+3
+4 12
+2 2
+5 14
+
+Output:
+-1
+1 2
+5 4 3 2 1
+
+-----Explanation-----
+Example 1. There doesn't exist any permutation of numbers [1, 2, 3, 4] that can have its f value equal to 4. Hence answer is -1.
+Example 2. The permutations [1, 2] and [2, 1] both have their f values equal to 2. You can print any of these two permutations. 
+Example 3. The permutation [5, 4, 3, 2, 1]
+has f value = max(5, 4) + max(4, 3) + max(3, 2) + max(2, 1) = 5 + 4 + 3 + 2 = 14.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1249 [generation text] ## Problem Restatement
+
+We are given a number of test cases. For each test case, we have two integers, N and K. We need to find a permutation of the numbers from 1 to N such that the sum of the maximums of each consecutive pair in the permutation equals K. If such a permutation exists, we should output it; otherwise, we should output -1.
+
+## Conceptual Solution
+
+1. **Understanding the Function f(P):** 
+   - For a permutation P of numbers [1, 2, ..., N], the function f(P) is defined as the sum of the maximums of each consecutive pair in the permutation.
+   - For example, if P = [p1, p2, ..., pN], then f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+
+2. **Constraints and Observations:**
+   - The maximum possible value of f(P) for a permutation of [1, 2, ..., N] is the sum of the largest N-1 numbers, i.e., N + (N-1) + ... + 2.
+   - The minimum possible value of f(P) is N-1, which occurs when the permutation is sorted in increasing order.
+
+3. **Approach:**
+   - If K is less than N-1 or greater than the maximum possible sum, output -1.
+   - Otherwise, construct a permutation that achieves the desired sum K.
+   - Start with the permutation in decreasing order, which gives the maximum possible sum.
+   - Adjust the permutation by swapping elements to decrease the sum to K.
+
+4. **Constructing the Permutation:**
+   - Start with the permutation [N, N-1, ..., 1].
+   - Calculate the current sum of maximums.
+   - If the current sum is greater than K, swap elements to reduce the sum until it equals K.
+
+## Pseudocode
+
+```
+function find_permutation(N, K):
+    max_sum = N + (N-1) + ... + 2
+    min_sum = N - 1
+    
+    if K < min_sum or K > max_sum:
+        return -1
+    
+    permutation = [N, N-1, ..., 1]
+    current_sum = max_sum
+    
+    for i from 0 to N-2:
+        if current_sum == K:
+            break
+        # Try to reduce the sum by swapping
+        for j from N-1 down to i+1:
+            if current_sum - (permutation[i] - permutation[j]) >= K:
+                current_sum -= (permutation[i] - permutation[j])
+                swap(permutation[i], permutation[j])
+                break
+    
+    return permutation
+
+read T
+for each test case:
+    read N, K
+    result = find_permutation(N, K)
+    print result
+```
+
+## Final Python Solution
+
+```python
+def find_permutation(N, K):
+    # Calculate the maximum and minimum possible sums
+    max_sum = sum(range(2, N + 1))
+    min_sum = N - 1
+    
+    # If K is out of the possible range, return -1
+    if K < min_sum or K > max_sum:
+        return -1
+    
+    # Start with the permutation in decreasing order
+    permutation = list(range(N, 0, -1))
+    current_sum = max_sum
+    
+    # Adjust the permutation to achieve the desired sum K
+    for i in range(N - 1):
+        if current_sum == K:
+            break
+        # Try to reduce the sum by swapping
+        for j in range(N - 1, i, -1):
+            if current_sum - (permutation[i] - permutation[j]) >= K:
+                current_sum -= (permutation[i] - permutation[j])
+                permutation[i], permutation[j] = permutation[j], permutation[i]
+                break
+    
+    return permutation
+
+import sys
+input = sys.stdin.read
+data = input().split()
+
+T = int(data[0])
+index = 1
+results = []
+
+for _ in range(T):
+    N = int(data[index])
+    K = int(data[index + 1])
+    index += 2
+    result = find_permutation(N, K)
+    if result == -1:
+        results.append("-1")
+    else:
+        results.append(" ".join(map(str, result)))
+
+sys.stdout.write("\n".join(results) + "\n")
+```
+
+This solution reads input, processes each test case, and outputs the required permutation or -1 if no valid permutation exists. The function `find_permutation` constructs the permutation by starting with the maximum possible sum and adjusting it to match K.
+INFO - [35m Rollout attempt 1/4[0m
+INFO - [33m Retrieving 1 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.3655):
+
+[Task]:
+    This is the easy version of the problem. The difference between the versions is that the easy version has no swap operations. You can make hacks only if all versions of the problem are solved.
+
+    Pikachu is a cute and friendly pokémon living in the wild pikachu herd.
+
+    But it ha...
+
+
+INFO - [33m Retrieving 1 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.4625):
+Title: Continued fractions
+Part: 4/12
+```
+
+!!! example "[GCJ 2019, Round 2 - New Elements: Part 2](https://codingcompetitions.withgoogle.com/codejam/round/0000000000051679/0000000000146184)"
+    You're given $N$ positive integer pairs $(C_i, J_i)$. You need to find a positive integer pair $(x, y)...
+
+
+INFO - [33m Retrieving 1 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.3845):
+Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights:
+
+1. **Prefix Sum Optimization**: My approach used a prefix sum array to efficiently compute the sum of any subarray in constant time. This is a common optimization technique for rang...
+
+
+INFO - [33m Retrieving 1 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.3938):
+In this problem, the task was to calculate the mean of maximum possible scores for students after processing a series of questions with complexity factors. Each student starts with a score of 10, and their scores are multiplied by the complexity factor for questions they solve.
+
+### Key Concepts ...
+
+
+INFO - [33m Retrieving 1 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.4966):
+
+[description for function: process_test_cases]
+The function reads input data for multiple test cases, where each test case consists of a list of bills and a series of queries. For each test case, it first reads the number of bills and queries, then constructs a prefix sum array to efficiently ca...
+
+
+INFO - Retrieved (score=0.3655): 
+[Past Memory]:
+
+    [Task]:
+        This is the easy version of the problem. The difference between the versions is that the easy version has no swap operations. You can make hacks only if all versions of the problem are solved.
+
+        Pikachu is a cute and friendly pokémon living in the wild ...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+Note f([1]) = 0.
+
+-----Input-----
+- The first line of the input contains an integer T denoting the number of test cases. The description of T test cases follows.
+- The only line of each test case consists of two space-separated integers N, K respectively.
+
+-----Output-----
+For each test case, if a permutation satisfying the condition exists, output a single line containing N space-separated integers which denotes any such permutation. If no such permutation exists, output a single integer -1 instead.
+Use fast I/O methods since the size of the output is large.
+
+-----Constraints-----
+- 1 ≤ T ≤ 40
+- 1 ≤ N ≤ 105
+- Sum of N over all test cases in each file ≤ 106
+- 0 ≤ K ≤ 2 * 1010
+
+-----Example-----
+Input:
+3
+4 12
+2 2
+5 14
+
+Output:
+-1
+1 2
+5 4 3 2 1
+
+-----Explanation-----
+Example 1. There doesn't exist any permutation of numbers [1, 2, 3, 4] that can have its f value equal to 4. Hence answer is -1.
+Example 2. The permutations [1, 2] and [2, 1] both have their f values equal to 2. You can print any of these two permutations. 
+Example 3. The permutation [5, 4, 3, 2, 1]
+has f value = max(5, 4) + max(4, 3) + max(3, 2) + max(2, 1) = 5 + 4 + 3 + 2 = 14.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1249 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Past Memory]:
+
+    [Task]:
+        This is the easy version of the problem. The difference between the versions is that the easy version has no swap operations. You can make hacks only if all versions of the problem are solved.
+
+        Pikachu is a cute and friendly pokémon living in the wild pikachu herd.
+
+        But it has become known recently that infamous team R wanted to steal all these pokémon! Pokémon trainer Andrew decided to help Pikachu to build a pokémon army to resist.
+
+        First, Andrew counted all the pokémon — there were exactly $n$ pikachu. The strength of the $i$-th pokémon is equal to $a_i$, and all these numbers are distinct.
+
+        As an army, Andrew can choose any non-empty subsequence of pokemons. In other words, Andrew chooses some array $b$ from $k$ indices such that $1 \le b_1 < b_2 < \dots < b_k \le n$, and his army will consist of pokémons with forces $a_{b_1}, a_{b_2}, \dots, a_{b_k}$.
+
+        The strength of the army is equal to the alternating sum of elements of the subsequence; that is, $a_{b_1} - a_{b_2} + a_{b_3} - a_{b_4} + \dots$.
+
+        Andrew is experimenting with pokémon order. He performs $q$ operations. In $i$-th operation Andrew swaps $l_i$-th and $r_i$-th pokémon.
+
+        Note: $q=0$ in this version of the task.
+
+        Andrew wants to know the maximal stregth of the army he can achieve with the initial pokémon placement. He also needs to know the maximal strength after each operation.
+
+        Help Andrew and the pokémon, or team R will realize their tricky plan!
+
+
+        -----Input-----
+
+        Each test contains multiple test cases.
+
+        The first line contains one positive integer $t$ ($1 \le t \le 10^3$) denoting the number of test cases. Description of the test cases follows.
+
+        The first line of each test case contains two integers $n$ and $q$ ($1 \le n \le 3 \cdot 10^5, q = 0$) denoting the number of pokémon and number of operations respectively.
+
+        The second line contains $n$ distinct positive integers $a_1, a_2, \dots, a_n$ ($1 \le a_i \le n$) denoting the strengths of the pokémon.
+
+        $i$-th of the last $q$ lines contains two positive integers $l_i$ and $r_i$ ($1 \le l_i \le r_i \le n$) denoting the indices of pokémon that were swapped in the $i$-th operation.
+
+        It is guaranteed that the sum of $n$ over all test cases does not exceed $3 \cdot 10^5$, and the sum of $q$ over all test cases does not exceed $3 \cdot 10^5$. 
+
+
+        -----Output-----
+
+        For each test case, print $q+1$ integers: the maximal strength of army before the swaps and after each swap.
+
+
+        -----Example-----
+        Input
+        3
+        3 0
+        1 3 2
+        2 0
+        1 2
+        7 0
+        1 2 5 4 3 6 7
+
+        Output
+        3
+        2
+        9
+
+
+
+        -----Note-----
+
+        In third test case we can build an army in such way: [1 2 5 4 3 6 7], its strength will be $5−3+7=9$.
+    [/Task]
+
+    [Previous Critique]:
+        Let's carefully analyze the problem and the solution to identify where the mistake might be.
+
+        ### Problem Analysis
+
+        1. **Alternating Sum**: The goal is to maximize the alternating sum of a subsequence. The alternating sum is calculated as: add the first element, subtract the second, add the third, and so on.
+
+        2. **Strategy**: To maximize the alternating sum, we should:
+           - Sort the array in descending order.
+           - Add the largest elements and subtract the smaller ones in an alternating fashion.
+
+        ### Mistake Analysis
+
+        1. **Sorting**: The code correctly sorts the array in descending order.
+
+        2. **Alternating Sum Calculation**: The code iterates over the sorted array and alternates between adding and subtracting elements based on their index. However, the logic for determining which elements to include in the subsequence might be flawed.
+
+        3. **Subsequence Selection**: The problem allows us to choose any subsequence, not necessarily all elements. The current solution assumes that we must use all elements, which is incorrect. We should only include elements that contribute positively to the alternating sum.
+
+        ### Corrected Strategy
+
+        1. **Sort the Array**: Sort the array in descending order.
+
+        2. **Calculate Alternating Sum**:
+           - Start with the first element (largest) and add it to the sum.
+           - Continue adding elements to the sum as long as they contribute positively to the alternating sum.
+           - Stop when adding another element would decrease the sum.
+
+        ### Corrected Pseudocode
+
+        ```
+        function calculate_max_strength(t, test_cases):
+            for each test_case in test_cases:
+                n, strengths = test_case
+                sort strengths in descending order
+                max_strength = 0
+                for i in range(n):
+                    if i is even:
+                        max_strength += strengths[i]
+                    else:
+                        max_strength -= strengths[i]
+                    if max_strength < 0:
+                        break
+                print max_strength
+        ```
+
+        ### Corrected Python Code
+
+        ```python
+        def calculate_max_strength(t, test_cases):
+            results = []
+            for test_case in test_cases:
+                n, strengths = test_case
+                # Sort the strengths in descending order
+                strengths.sort(reverse=True)
+                max_strength = 0
+                # Calculate the alternating sum
+                for i in range(n):
+                    if i % 2 == 0:
+                        max_strength += strengths[i]
+                    else:
+                        max_strength -= strengths[i]
+                # Store the result for this test case
+                results.append(max_strength)
+    
+            # Print all results
+            for result in results:
+                print(result)
+
+        # Read input
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+
+        # Parse input
+        index = 0
+        t = int(data[index])
+        index += 1
+        test_cases = []
+        for _ in range(t):
+            n = int(data[index])
+            q = int(data[index + 1])  # q is always 0 in this version
+            index += 2
+            strengths = list(map(int, data[index:index + n]))
+            index += n
+            test_cases.append((n, strengths))
+
+        # Calculate and print the results
+        calculate_max_strength(t, test_cases)
+        ```
+
+        This code reads input, processes each test case by sorting the strengths in descending order, calculates the maximal alternating sum by including elements in an alternating fashion, and outputs the result for each test case. The logic now correctly handles the selection of elements to maximize the alternating sum.
+    [/Previous Critique]
+
+    [Thought Process and Code]:
+        Let's address the issue with the solution by revisiting the problem requirements and ensuring the logic aligns with the intended strategy. The key mistake was assuming that we must use all elements in the alternating sum, which is not necessary. We should only include elements that contribute positively to the alternating sum.
+
+        Here's the corrected Python code:
+
+        ```python
+        def calculate_max_strength(t, test_cases):
+            results = []
+            for test_case in test_cases:
+                n, strengths = test_case
+                # Sort the strengths in descending order
+                strengths.sort(reverse=True)
+                max_strength = 0
+                # Calculate the alternating sum
+                for i in range(n):
+                    if i % 2 == 0:
+                        max_strength += strengths[i]
+                    else:
+                        max_strength -= strengths[i]
+                # Store the result for this test case
+                results.append(max_strength)
+    
+            # Print all results
+            for result in results:
+                print(result)
+
+        # Read input
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+
+        # Parse input
+        index = 0
+        t = int(data[index])
+        index += 1
+        test_cases = []
+        for _ in range(t):
+            n = int(data[index])
+            q = int(data[index + 1])  # q is always 0 in this version
+            index += 2
+            strengths = list(map(int, data[index:index + n]))
+            index += n
+            test_cases.append((n, strengths))
+
+        # Calculate and print the results
+        calculate_max_strength(t, test_cases)
+        ```
+
+        ### Explanation of the Code
+
+        1. **Input Parsing**: The code reads all input at once and splits it into manageable parts. It then parses the number of test cases and the strengths of Pokémon for each test case.
+
+        2. **Sorting**: For each test case, the strengths are sorted in descending order to maximize the alternating sum.
+
+        3. **Alternating Sum Calculation**: The code iterates over the sorted strengths, adding and subtracting them in an alternating fashion to calculate the maximal alternating sum.
+
+        4. **Output**: The results for each test case are stored and printed at the end.
+
+        This solution should correctly calculate the maximal alternating sum for each test case by considering only the elements that contribute positively to the sum.
+    [/Thought Process and Code]
+
+    [Environment Feedback]:
+        Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+        Tests passed:
+
+        None
+
+        Tests failed:
+         Input: 3
+        3 0
+        1 3 2
+        2 0
+        1 2
+        7 0
+        1 2 5 4 3 6 7
+         Expected output: [{'3'}, {'2'}, {'9'}] # Execution output: ['2', '1', '4']
+    [/Environment Feedback]
+
+    [Result]:
+        Failure
+    [/Result]
+
+[/Past Memory]
+
+
+INFO - [Task id] 1249 [generation text] ## Problem Restatement
+
+We are given a permutation of numbers from 1 to N and a function f(P) that sums the maximum of each pair of consecutive elements in the permutation. Given N and an integer K, we need to find a permutation P such that f(P) equals K. If no such permutation exists, we should return -1.
+
+## Conceptual Solution
+
+1. **Understanding f(P)**: The function f(P) is the sum of the maximum of each pair of consecutive elements in the permutation. For a permutation of size N, this involves N-1 pairs.
+
+2. **Maximum Possible Value of f(P)**: The maximum value of f(P) is achieved when the permutation is sorted in descending order. In this case, f(P) is the sum of the first N-1 natural numbers, which is (N * (N + 1) / 2) - 1.
+
+3. **Minimum Possible Value of f(P)**: The minimum value of f(P) is achieved when the permutation is sorted in ascending order. In this case, f(P) is the sum of the last N-1 natural numbers, which is (N * (N - 1) / 2).
+
+4. **Feasibility Check**: If K is less than the minimum possible value or greater than the maximum possible value, it is impossible to find such a permutation, and we should return -1.
+
+5. **Constructing the Permutation**: If K is feasible, we can construct the permutation by starting with the descending order and adjusting it to achieve the desired sum K. This involves swapping elements to reduce the sum from the maximum possible value to K.
+
+## Pseudocode
+
+```
+function find_permutation(T, test_cases):
+    for each test_case in test_cases:
+        N, K = test_case
+        max_possible = (N * (N + 1) / 2) - 1
+        min_possible = (N * (N - 1) / 2)
+        
+        if K < min_possible or K > max_possible:
+            print -1
+        else:
+            permutation = [N, N-1, ..., 1]
+            current_sum = max_possible
+            for i from 0 to N-2:
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i+1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i+1])
+                    swap permutation[i] and permutation[i+1]
+            print permutation
+```
+
+## Final Python Code
+
+```python
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+```
+
+This code reads input, processes each test case, checks if a valid permutation is possible, constructs the permutation if feasible, and outputs the result.
+INFO - program_code:
+ 
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+
+INFO - program_name:
+ find_permutation
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ## Problem Restatement
+
+We are given a permutation of numbers from 1 to N and a function f(P) that sums the maximum of each pair of consecutive elements in the permutation. Given N and an integer K, we need to find a permutation P such that f(P) equals K. If no such permutation exists, we should return -1.
+
+## Conceptual Solution
+
+1. **Understanding f(P)**: The function f(P) is the sum of the maximum of each pair of consecutive elements in the permutation. For a permutation of size N, this involves N-1 pairs.
+
+2. **Maximum Possible Value of f(P)**: The maximum value of f(P) is achieved when the permutation is sorted in descending order. In this case, f(P) is the sum of the first N-1 natural numbers, which is (N * (N + 1) / 2) - 1.
+
+3. **Minimum Possible Value of f(P)**: The minimum value of f(P) is achieved when the permutation is sorted in ascending order. In this case, f(P) is the sum of the last N-1 natural numbers, which is (N * (N - 1) / 2).
+
+4. **Feasibility Check**: If K is less than the minimum possible value or greater than the maximum possible value, it is impossible to find such a permutation, and we should return -1.
+
+5. **Constructing the Permutation**: If K is feasible, we can construct the permutation by starting with the descending order and adjusting it to achieve the desired sum K. This involves swapping elements to reduce the sum from the maximum possible value to K.
+
+## Pseudocode
+
+```
+function find_permutation(T, test_cases):
+    for each test_case in test_cases:
+        N, K = test_case
+        max_possible = (N * (N + 1) / 2) - 1
+        min_possible = (N * (N - 1) / 2)
+        
+        if K < min_possible or K > max_possible:
+            print -1
+        else:
+            permutation = [N, N-1, ..., 1]
+            current_sum = max_possible
+            for i from 0 to N-2:
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i+1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i+1])
+                    swap permutation[i] and permutation[i+1]
+            print permutation
+```
+
+## Final Python Code
+
+```python
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+```
+
+This code reads input, processes each test case, checks if a valid permutation is possible, constructs the permutation if feasible, and outputs the result.
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+None
+
+Tests failed:
+ Input: ['3', '4 12', '2 2', '5 14'] Expected output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}] # Execution output: []
+No output detected. You might want to check the reading from / writing to standard IO.
+A common mistake is to put the IO inside a function, but the function is not called.
+
+reward: False
+done: None
+info: {'individual_results': [False]}
+INFO - [35m Rollout attempt 2/4[0m
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+Note f([1]) = 0.
+
+-----Input-----
+- The first line of the input contains an integer T denoting the number of test cases. The description of T test cases follows.
+- The only line of each test case consists of two space-separated integers N, K respectively.
+
+-----Output-----
+For each test case, if a permutation satisfying the condition exists, output a single line containing N space-separated integers which denotes any such permutation. If no such permutation exists, output a single integer -1 instead.
+Use fast I/O methods since the size of the output is large.
+
+-----Constraints-----
+- 1 ≤ T ≤ 40
+- 1 ≤ N ≤ 105
+- Sum of N over all test cases in each file ≤ 106
+- 0 ≤ K ≤ 2 * 1010
+
+-----Example-----
+Input:
+3
+4 12
+2 2
+5 14
+
+Output:
+-1
+1 2
+5 4 3 2 1
+
+-----Explanation-----
+Example 1. There doesn't exist any permutation of numbers [1, 2, 3, 4] that can have its f value equal to 4. Hence answer is -1.
+Example 2. The permutations [1, 2] and [2, 1] both have their f values equal to 2. You can print any of these two permutations. 
+Example 3. The permutation [5, 4, 3, 2, 1]
+has f value = max(5, 4) + max(4, 3) + max(3, 2) + max(2, 1) = 5 + 4 + 3 + 2 = 14.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1249 [prompt] ## Problem Restatement
+
+We are given a permutation of numbers from 1 to N and a function f(P) that sums the maximum of each pair of consecutive elements in the permutation. Given N and an integer K, we need to find a permutation P such that f(P) equals K. If no such permutation exists, we should return -1.
+
+## Conceptual Solution
+
+1. **Understanding f(P)**: The function f(P) is the sum of the maximum of each pair of consecutive elements in the permutation. For a permutation of size N, this involves N-1 pairs.
+
+2. **Maximum Possible Value of f(P)**: The maximum value of f(P) is achieved when the permutation is sorted in descending order. In this case, f(P) is the sum of the first N-1 natural numbers, which is (N * (N + 1) / 2) - 1.
+
+3. **Minimum Possible Value of f(P)**: The minimum value of f(P) is achieved when the permutation is sorted in ascending order. In this case, f(P) is the sum of the last N-1 natural numbers, which is (N * (N - 1) / 2).
+
+4. **Feasibility Check**: If K is less than the minimum possible value or greater than the maximum possible value, it is impossible to find such a permutation, and we should return -1.
+
+5. **Constructing the Permutation**: If K is feasible, we can construct the permutation by starting with the descending order and adjusting it to achieve the desired sum K. This involves swapping elements to reduce the sum from the maximum possible value to K.
+
+## Pseudocode
+
+```
+function find_permutation(T, test_cases):
+    for each test_case in test_cases:
+        N, K = test_case
+        max_possible = (N * (N + 1) / 2) - 1
+        min_possible = (N * (N - 1) / 2)
+        
+        if K < min_possible or K > max_possible:
+            print -1
+        else:
+            permutation = [N, N-1, ..., 1]
+            current_sum = max_possible
+            for i from 0 to N-2:
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i+1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i+1])
+                    swap permutation[i] and permutation[i+1]
+            print permutation
+```
+
+## Final Python Code
+
+```python
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+```
+
+This code reads input, processes each test case, checks if a valid permutation is possible, constructs the permutation if feasible, and outputs the result.
+INFO - [Task id] 1249 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['3', '4 12', '2 2', '5 14'] Expected output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1249 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1249 [generation text] Let's analyze the problem with the current solution and identify where it might have gone wrong:
+
+1. **Input/Output Handling**: The code is designed to read from standard input and write to standard output. However, the function `find_permutation` is defined but never called. This means that the logic inside the function is never executed, leading to no output.
+
+2. **Permutation Construction Logic**: The logic for constructing the permutation is based on starting with a descending order and adjusting it to achieve the desired sum K. This logic seems correct in principle, but it needs to be executed to verify its correctness.
+
+3. **Feasibility Check**: The feasibility check for whether a permutation can achieve the desired sum K is based on comparing K with the minimum and maximum possible values of f(P). This part seems logically sound.
+
+4. **Execution**: The main issue is that the function is not being executed, which is why no output is being produced.
+
+To fix the problem, we need to ensure that the function is called and executed properly. Let's adjust the code to ensure it runs as expected:
+
+```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Key Changes:
+- **Function Call**: The function `find_permutation` is now called at the end of the script to ensure that the logic is executed.
+- **Input Handling**: The input is read from standard input, and the function processes it as expected.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+
+This should address the issue of no output being produced and allow the code to be tested properly.
+INFO - [33m Retrieving 1 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.4172):
+
+[Task]:
+    You have a string S consisting of N uppercase English letters. You are allowed to perform at most one operation of following kind: Choose any position in the string, remove the character at that position and insert it back to any other place in the string.
+
+    Find the  lexicographi...
+
+
+INFO - [33m Retrieving 1 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.4441):
+Title: Generating all $K$-combinations
+Part: 1/1
+# Generating all $K$-combinations
+
+In this article we will discuss the problem of generating all $K$-combinations.
+Given the natural numbers $N$ and $K$, and considering a set of numbers from $1$ to $N$.
+The task is to derive all **subsets of size ...
+
+
+INFO - [33m Retrieving 1 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.3792):
+Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights:
+
+1. **Prefix Sum Optimization**: My approach used a prefix sum array to efficiently compute the sum of any subarray in constant time. This is a common optimization technique for rang...
+
+
+INFO - [33m Retrieving 1 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.3975):
+In this problem, the core concept was efficiently computing the sum of elements in a subarray for multiple queries. The key strategy was to use a prefix sum array, which allows each query to be processed in constant time. This approach is crucial when dealing with large input sizes, as it reduces...
+
+
+INFO - [33m Retrieving 1 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.4686):
+
+[description for function: find_lexicographically_smallest_string]
+The function processes multiple test cases to find the lexicographically smallest string possible by moving each character of the given string to every other position. For each test case, it initializes the smallest string as the...
+
+
+INFO - Retrieved (score=0.3792): 
+[Reflection]:
+    Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights:
+
+    1. **Prefix Sum Optimization**: My approach used a prefix sum array to efficiently compute the sum of any subarray in constant time. This is a common optimiza...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+Note f([1]) = 0.
+
+-----Input-----
+- The first line of the input contains an integer T denoting the number of test cases. The description of T test cases follows.
+- The only line of each test case consists of two space-separated integers N, K respectively.
+
+-----Output-----
+For each test case, if a permutation satisfying the condition exists, output a single line containing N space-separated integers which denotes any such permutation. If no such permutation exists, output a single integer -1 instead.
+Use fast I/O methods since the size of the output is large.
+
+-----Constraints-----
+- 1 ≤ T ≤ 40
+- 1 ≤ N ≤ 105
+- Sum of N over all test cases in each file ≤ 106
+- 0 ≤ K ≤ 2 * 1010
+
+-----Example-----
+Input:
+3
+4 12
+2 2
+5 14
+
+Output:
+-1
+1 2
+5 4 3 2 1
+
+-----Explanation-----
+Example 1. There doesn't exist any permutation of numbers [1, 2, 3, 4] that can have its f value equal to 4. Hence answer is -1.
+Example 2. The permutations [1, 2] and [2, 1] both have their f values equal to 2. You can print any of these two permutations. 
+Example 3. The permutation [5, 4, 3, 2, 1]
+has f value = max(5, 4) + max(4, 3) + max(3, 2) + max(2, 1) = 5 + 4 + 3 + 2 = 14.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1249 [prompt] ## Problem Restatement
+
+We are given a permutation of numbers from 1 to N and a function f(P) that sums the maximum of each pair of consecutive elements in the permutation. Given N and an integer K, we need to find a permutation P such that f(P) equals K. If no such permutation exists, we should return -1.
+
+## Conceptual Solution
+
+1. **Understanding f(P)**: The function f(P) is the sum of the maximum of each pair of consecutive elements in the permutation. For a permutation of size N, this involves N-1 pairs.
+
+2. **Maximum Possible Value of f(P)**: The maximum value of f(P) is achieved when the permutation is sorted in descending order. In this case, f(P) is the sum of the first N-1 natural numbers, which is (N * (N + 1) / 2) - 1.
+
+3. **Minimum Possible Value of f(P)**: The minimum value of f(P) is achieved when the permutation is sorted in ascending order. In this case, f(P) is the sum of the last N-1 natural numbers, which is (N * (N - 1) / 2).
+
+4. **Feasibility Check**: If K is less than the minimum possible value or greater than the maximum possible value, it is impossible to find such a permutation, and we should return -1.
+
+5. **Constructing the Permutation**: If K is feasible, we can construct the permutation by starting with the descending order and adjusting it to achieve the desired sum K. This involves swapping elements to reduce the sum from the maximum possible value to K.
+
+## Pseudocode
+
+```
+function find_permutation(T, test_cases):
+    for each test_case in test_cases:
+        N, K = test_case
+        max_possible = (N * (N + 1) / 2) - 1
+        min_possible = (N * (N - 1) / 2)
+        
+        if K < min_possible or K > max_possible:
+            print -1
+        else:
+            permutation = [N, N-1, ..., 1]
+            current_sum = max_possible
+            for i from 0 to N-2:
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i+1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i+1])
+                    swap permutation[i] and permutation[i+1]
+            print permutation
+```
+
+## Final Python Code
+
+```python
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+```
+
+This code reads input, processes each test case, checks if a valid permutation is possible, constructs the permutation if feasible, and outputs the result.
+INFO - [Task id] 1249 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['3', '4 12', '2 2', '5 14'] Expected output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1249 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1249 [prompt] Let's analyze the problem with the current solution and identify where it might have gone wrong:
+
+1. **Input/Output Handling**: The code is designed to read from standard input and write to standard output. However, the function `find_permutation` is defined but never called. This means that the logic inside the function is never executed, leading to no output.
+
+2. **Permutation Construction Logic**: The logic for constructing the permutation is based on starting with a descending order and adjusting it to achieve the desired sum K. This logic seems correct in principle, but it needs to be executed to verify its correctness.
+
+3. **Feasibility Check**: The feasibility check for whether a permutation can achieve the desired sum K is based on comparing K with the minimum and maximum possible values of f(P). This part seems logically sound.
+
+4. **Execution**: The main issue is that the function is not being executed, which is why no output is being produced.
+
+To fix the problem, we need to ensure that the function is called and executed properly. Let's adjust the code to ensure it runs as expected:
+
+```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Key Changes:
+- **Function Call**: The function `find_permutation` is now called at the end of the script to ensure that the logic is executed.
+- **Input Handling**: The input is read from standard input, and the function processes it as expected.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+
+This should address the issue of no output being produced and allow the code to be tested properly.
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1249 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Reflection]:
+    Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights:
+
+    1. **Prefix Sum Optimization**: My approach used a prefix sum array to efficiently compute the sum of any subarray in constant time. This is a common optimization technique for range sum queries, especially when the number of queries is large. The official solution, however, computes the sum directly for each query, which can be less efficient for larger inputs.
+
+    2. **Handling Large Inputs**: The official solution uses a modulo operation with `1000000000` when computing the sum. This is likely intended to prevent integer overflow, although Python handles large integers natively. My solution did not include this, as it wasn't specified in the problem statement.
+
+    3. **Function Structure**: My solution encapsulated the logic within a function and used `sys.stdin.read` for input handling, which is efficient for large inputs. The official solution uses a more straightforward approach with `input()` calls, which is simpler but can be less efficient for very large input sizes.
+
+    4. **Code Readability and Maintenance**: My solution was structured with clear variable names and comments, making it easier to understand and maintain. The official solution is more concise but might be harder to follow for someone unfamiliar with the problem.
+
+    Overall, the experience reinforced the importance of understanding the problem constraints and choosing the right optimization techniques. The prefix sum approach is particularly useful for problems involving multiple range queries, and ensuring efficient input/output handling is crucial for performance in competitive programming.
+[/Reflection]
+
+
+INFO - [Task id] 1249 [generation text] ```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Explanation:
+- **Function Call**: The function `find_permutation` is called at the end to ensure the logic is executed.
+- **Input Handling**: The input is read using `sys.stdin.read` for efficiency with large inputs.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+- **Permutation Construction**: The logic constructs a permutation starting from the descending order and adjusts it to achieve the desired sum K, if possible.
+INFO - program_code:
+ 
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+
+
+INFO - program_name:
+ find_permutation
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Explanation:
+- **Function Call**: The function `find_permutation` is called at the end to ensure the logic is executed.
+- **Input Handling**: The input is read using `sys.stdin.read` for efficiency with large inputs.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+- **Permutation Construction**: The logic constructs a permutation starting from the descending order and adjusts it to achieve the desired sum K, if possible.
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+ Input: ['3', '4 12', '2 2', '5 14'] Output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}]
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': [True]}
+INFO - Updated entry: 
+[Task]:
+    For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+    You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+...,
+
+INFO - Metadata: {
+    "raw_msg": "## Problem Restatement\n\nWe are given a permutation of numbers from 1 to N and a function f(P) that sums the maximum of each pair of consecutive elements in the permutation. Given N and an integer K, we need to find a permutation P such that f(P) equals K. If no such permutatio...
+
+INFO - Updated entry: 
+[Task]:
+    For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+    You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+...,
+
+INFO - Metadata: {
+    "critique": "Let's analyze the problem with the current solution and identify where it might have gone wrong:\n\n1. **Input/Output Handling**: The code is designed to read from standard input and write to standard output. However, the function `find_permutation` is defined but never called....
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+Note f([1]) = 0.
+
+-----Input-----
+- The first line of the input contains an integer T denoting the number of test cases. The description of T test cases follows.
+- The only line of each test case consists of two space-separated integers N, K respectively.
+
+-----Output-----
+For each test case, if a permutation satisfying the condition exists, output a single line containing N space-separated integers which denotes any such permutation. If no such permutation exists, output a single integer -1 instead.
+Use fast I/O methods since the size of the output is large.
+
+-----Constraints-----
+- 1 ≤ T ≤ 40
+- 1 ≤ N ≤ 105
+- Sum of N over all test cases in each file ≤ 106
+- 0 ≤ K ≤ 2 * 1010
+
+-----Example-----
+Input:
+3
+4 12
+2 2
+5 14
+
+Output:
+-1
+1 2
+5 4 3 2 1
+
+-----Explanation-----
+Example 1. There doesn't exist any permutation of numbers [1, 2, 3, 4] that can have its f value equal to 4. Hence answer is -1.
+Example 2. The permutations [1, 2] and [2, 1] both have their f values equal to 2. You can print any of these two permutations. 
+Example 3. The permutation [5, 4, 3, 2, 1]
+has f value = max(5, 4) + max(4, 3) + max(3, 2) + max(2, 1) = 5 + 4 + 3 + 2 = 14.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1249 [prompt] ## Problem Restatement
+
+We are given a permutation of numbers from 1 to N and a function f(P) that sums the maximum of each pair of consecutive elements in the permutation. Given N and an integer K, we need to find a permutation P such that f(P) equals K. If no such permutation exists, we should return -1.
+
+## Conceptual Solution
+
+1. **Understanding f(P)**: The function f(P) is the sum of the maximum of each pair of consecutive elements in the permutation. For a permutation of size N, this involves N-1 pairs.
+
+2. **Maximum Possible Value of f(P)**: The maximum value of f(P) is achieved when the permutation is sorted in descending order. In this case, f(P) is the sum of the first N-1 natural numbers, which is (N * (N + 1) / 2) - 1.
+
+3. **Minimum Possible Value of f(P)**: The minimum value of f(P) is achieved when the permutation is sorted in ascending order. In this case, f(P) is the sum of the last N-1 natural numbers, which is (N * (N - 1) / 2).
+
+4. **Feasibility Check**: If K is less than the minimum possible value or greater than the maximum possible value, it is impossible to find such a permutation, and we should return -1.
+
+5. **Constructing the Permutation**: If K is feasible, we can construct the permutation by starting with the descending order and adjusting it to achieve the desired sum K. This involves swapping elements to reduce the sum from the maximum possible value to K.
+
+## Pseudocode
+
+```
+function find_permutation(T, test_cases):
+    for each test_case in test_cases:
+        N, K = test_case
+        max_possible = (N * (N + 1) / 2) - 1
+        min_possible = (N * (N - 1) / 2)
+        
+        if K < min_possible or K > max_possible:
+            print -1
+        else:
+            permutation = [N, N-1, ..., 1]
+            current_sum = max_possible
+            for i from 0 to N-2:
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i+1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i+1])
+                    swap permutation[i] and permutation[i+1]
+            print permutation
+```
+
+## Final Python Code
+
+```python
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+```
+
+This code reads input, processes each test case, checks if a valid permutation is possible, constructs the permutation if feasible, and outputs the result.
+INFO - [Task id] 1249 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['3', '4 12', '2 2', '5 14'] Expected output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1249 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1249 [prompt] Let's analyze the problem with the current solution and identify where it might have gone wrong:
+
+1. **Input/Output Handling**: The code is designed to read from standard input and write to standard output. However, the function `find_permutation` is defined but never called. This means that the logic inside the function is never executed, leading to no output.
+
+2. **Permutation Construction Logic**: The logic for constructing the permutation is based on starting with a descending order and adjusting it to achieve the desired sum K. This logic seems correct in principle, but it needs to be executed to verify its correctness.
+
+3. **Feasibility Check**: The feasibility check for whether a permutation can achieve the desired sum K is based on comparing K with the minimum and maximum possible values of f(P). This part seems logically sound.
+
+4. **Execution**: The main issue is that the function is not being executed, which is why no output is being produced.
+
+To fix the problem, we need to ensure that the function is called and executed properly. Let's adjust the code to ensure it runs as expected:
+
+```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Key Changes:
+- **Function Call**: The function `find_permutation` is now called at the end of the script to ensure that the logic is executed.
+- **Input Handling**: The input is read from standard input, and the function processes it as expected.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+
+This should address the issue of no output being produced and allow the code to be tested properly.
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1249 [prompt] ```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Explanation:
+- **Function Call**: The function `find_permutation` is called at the end to ensure the logic is executed.
+- **Input Handling**: The input is read using `sys.stdin.read` for efficiency with large inputs.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+- **Permutation Construction**: The logic constructs a permutation starting from the descending order and adjusts it to achieve the desired sum K, if possible.
+INFO - [Task id] 1249 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['3', '4 12', '2 2', '5 14'] Output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}]
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+Now, summarize your attempts as a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+- Only include the most relevant information and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - Identifying the core concepts and patterns that problem appears to test for
+    - Describing the strategies that seemed to work but did not, and vice versa
+    - Describing unexpected errors and how they were fixed
+
+Your summary should be at most a few paragraphs.
+
+INFO - [Task id] 1249 [generation text] In this problem, the task was to find a permutation of numbers from 1 to N such that a specific function f(P) equals a given integer K. The function f(P) is defined as the sum of the maximum of each pair of consecutive elements in the permutation. The challenge was to determine if such a permutation exists and to construct it if possible.
+
+### Key Concepts:
+- **Function f(P)**: Understanding that f(P) is the sum of the maximums of consecutive pairs in a permutation.
+- **Feasibility Check**: Calculating the minimum and maximum possible values of f(P) for a given N to quickly determine if a permutation achieving K is possible.
+- **Permutation Construction**: Starting with a descending order permutation (which gives the maximum f(P)) and adjusting it to achieve the desired K by swapping elements.
+
+### Strategies:
+- **Descending Order Start**: Begin with the permutation in descending order to start with the maximum possible f(P).
+- **Adjusting the Permutation**: Swap elements to reduce the sum from the maximum possible value to K, ensuring the sum decreases correctly.
+
+### Challenges and Fixes:
+- **Function Execution**: Initially, the function was defined but not called, leading to no output. Ensuring the function is called fixed this issue.
+- **Efficient I/O Handling**: Using `sys.stdin.read` and `sys.stdout.write` for efficient input and output handling, especially given the constraints on the sum of N across test cases.
+
+The final solution efficiently checks the feasibility of achieving K and constructs the permutation if possible, handling large inputs and outputs effectively. This problem reinforced the importance of understanding problem constraints and efficient I/O handling in competitive programming.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+Note f([1]) = 0.
+
+-----Input-----
+- The first line of the input contains an integer T denoting the number of test cases. The description of T test cases follows.
+- The only line of each test case consists of two space-separated integers N, K respectively.
+
+-----Output-----
+For each test case, if a permutation satisfying the condition exists, output a single line containing N space-separated integers which denotes any such permutation. If no such permutation exists, output a single integer -1 instead.
+Use fast I/O methods since the size of the output is large.
+
+-----Constraints-----
+- 1 ≤ T ≤ 40
+- 1 ≤ N ≤ 105
+- Sum of N over all test cases in each file ≤ 106
+- 0 ≤ K ≤ 2 * 1010
+
+-----Example-----
+Input:
+3
+4 12
+2 2
+5 14
+
+Output:
+-1
+1 2
+5 4 3 2 1
+
+-----Explanation-----
+Example 1. There doesn't exist any permutation of numbers [1, 2, 3, 4] that can have its f value equal to 4. Hence answer is -1.
+Example 2. The permutations [1, 2] and [2, 1] both have their f values equal to 2. You can print any of these two permutations. 
+Example 3. The permutation [5, 4, 3, 2, 1]
+has f value = max(5, 4) + max(4, 3) + max(3, 2) + max(2, 1) = 5 + 4 + 3 + 2 = 14.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1249 [prompt] ## Problem Restatement
+
+We are given a permutation of numbers from 1 to N and a function f(P) that sums the maximum of each pair of consecutive elements in the permutation. Given N and an integer K, we need to find a permutation P such that f(P) equals K. If no such permutation exists, we should return -1.
+
+## Conceptual Solution
+
+1. **Understanding f(P)**: The function f(P) is the sum of the maximum of each pair of consecutive elements in the permutation. For a permutation of size N, this involves N-1 pairs.
+
+2. **Maximum Possible Value of f(P)**: The maximum value of f(P) is achieved when the permutation is sorted in descending order. In this case, f(P) is the sum of the first N-1 natural numbers, which is (N * (N + 1) / 2) - 1.
+
+3. **Minimum Possible Value of f(P)**: The minimum value of f(P) is achieved when the permutation is sorted in ascending order. In this case, f(P) is the sum of the last N-1 natural numbers, which is (N * (N - 1) / 2).
+
+4. **Feasibility Check**: If K is less than the minimum possible value or greater than the maximum possible value, it is impossible to find such a permutation, and we should return -1.
+
+5. **Constructing the Permutation**: If K is feasible, we can construct the permutation by starting with the descending order and adjusting it to achieve the desired sum K. This involves swapping elements to reduce the sum from the maximum possible value to K.
+
+## Pseudocode
+
+```
+function find_permutation(T, test_cases):
+    for each test_case in test_cases:
+        N, K = test_case
+        max_possible = (N * (N + 1) / 2) - 1
+        min_possible = (N * (N - 1) / 2)
+        
+        if K < min_possible or K > max_possible:
+            print -1
+        else:
+            permutation = [N, N-1, ..., 1]
+            current_sum = max_possible
+            for i from 0 to N-2:
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i+1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i+1])
+                    swap permutation[i] and permutation[i+1]
+            print permutation
+```
+
+## Final Python Code
+
+```python
+def find_permutation(T, test_cases):
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+```
+
+This code reads input, processes each test case, checks if a valid permutation is possible, constructs the permutation if feasible, and outputs the result.
+INFO - [Task id] 1249 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['3', '4 12', '2 2', '5 14'] Expected output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1249 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1249 [prompt] Let's analyze the problem with the current solution and identify where it might have gone wrong:
+
+1. **Input/Output Handling**: The code is designed to read from standard input and write to standard output. However, the function `find_permutation` is defined but never called. This means that the logic inside the function is never executed, leading to no output.
+
+2. **Permutation Construction Logic**: The logic for constructing the permutation is based on starting with a descending order and adjusting it to achieve the desired sum K. This logic seems correct in principle, but it needs to be executed to verify its correctness.
+
+3. **Feasibility Check**: The feasibility check for whether a permutation can achieve the desired sum K is based on comparing K with the minimum and maximum possible values of f(P). This part seems logically sound.
+
+4. **Execution**: The main issue is that the function is not being executed, which is why no output is being produced.
+
+To fix the problem, we need to ensure that the function is called and executed properly. Let's adjust the code to ensure it runs as expected:
+
+```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Key Changes:
+- **Function Call**: The function `find_permutation` is now called at the end of the script to ensure that the logic is executed.
+- **Input Handling**: The input is read from standard input, and the function processes it as expected.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+
+This should address the issue of no output being produced and allow the code to be tested properly.
+INFO - [Task id] 1249 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1249 [prompt] ```python
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+```
+
+### Explanation:
+- **Function Call**: The function `find_permutation` is called at the end to ensure the logic is executed.
+- **Input Handling**: The input is read using `sys.stdin.read` for efficiency with large inputs.
+- **Output Handling**: The results are collected in a list and written to standard output at the end.
+- **Permutation Construction**: The logic constructs a permutation starting from the descending order and adjusts it to achieve the desired sum K, if possible.
+INFO - [Task id] 1249 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['3', '4 12', '2 2', '5 14'] Output: [{'-1'}, {'2', '1'}, {'2', '1', '5', '4', '3'}]
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1249 [prompt] 
+Below is the official solution (do exercise discretion as official solutions can also have mistakes).
+
+You will be reflecting on your attempts to solve the problem.
+This will be a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+## Instructions
+- Only include the most relevant insights and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy / official solution was obvious), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - If the official solution is insightful (e.g. better than yours in time and space complexity or more effective in breaking down the problem statement), distil the key approach of the official solution, step by step.
+    - If your approach failed the test cases, reason why the official solution works but yours does not
+
+Your reflection should be at most a few paragraphs.
+
+## Official solution
+# cook your dish here
+for i in range(int(input())):
+    n,k=[int(i) for i in input().split()]
+    if(n%2==0):
+     if(k<(n*(n+1))//2 - 1  or  k>3*((n//2)**2) - 1):print(-1)
+     elif(k==(n*(n+1))//2 - 1):
+      for i in range(1,n+1):print(i,'',end='')
+      print()
+     else:
+      k,count,p,l,x = k-(n*(n+1))//2 + 1,0,0,[0 for i in range(n)],1
+      while(k>0):p+=2 ;k,count = k-n+p ,count+1
+      for i in range(n,n-count+1,-1):l[x]=i ;x+=2
+      k=-k ;l[2*count - 1 +k],p = n-count+1 ,1
+      for i in range(n):
+       if(l[i]==0):l[i]=p ;   p+=1 
+      for i in l:print(i,'',end='')
+      print()
+    else:
+     if(n==1):print(1) if(k==0) else print(-1)                
+     elif(k<(n*(n+1))//2 - 1  or k>3*(n//2)*(n//2 + 1)):print(-1)
+     elif(k==(n*(n+1))//2 - 1):
+      for i in range(1,n+1):print(i,'',end='')
+      print()
+     else:
+      k,count,p,l,x = k-(n*(n+1))//2 + 1,0,0,[0 for i in range(n)],1
+      while(k>0):  p+=2 ;  k,count = k-n+p ,count+1
+
+INFO - [Task id] 1249 [generation text] Reflecting on the problem-solving process for this permutation problem, there are several key insights and lessons learned:
+
+1. **Understanding the Problem Constraints**: The problem involves finding a permutation of numbers that satisfies a specific sum condition. The constraints on the sum, derived from the properties of permutations, are crucial for determining if a solution is possible. The official solution effectively uses these constraints to quickly rule out impossible cases.
+
+2. **Efficient Input/Output Handling**: Given the large potential size of input and output, efficient handling using `sys.stdin` and `sys.stdout` is necessary. This was a point of improvement in my initial solution, which was corrected in the final version.
+
+3. **Constructing the Permutation**: The official solution uses a systematic approach to construct the permutation by starting from a known configuration (ascending order) and making adjustments to reach the desired sum. This involves understanding the maximum and minimum possible values of the function f(P) and adjusting the permutation accordingly.
+
+4. **Iterative Adjustment**: The official solution iteratively adjusts the permutation to achieve the desired sum by swapping elements. This is a more structured approach compared to my initial attempt, which was less systematic in handling the adjustments.
+
+5. **Edge Cases**: Handling edge cases, such as when N is 1 or when the desired sum is exactly the minimum or maximum possible, is crucial. The official solution includes specific checks for these scenarios, ensuring robustness.
+
+Overall, the experience highlighted the importance of understanding problem constraints, efficient I/O handling, and systematic approaches to constructing solutions. These insights are valuable for tackling similar permutation and combinatorial problems in the future.
+INFO - Updated entry: In this problem, the task was to find a permutation of numbers from 1 to N such that a specific function f(P) equals a given integer K. The function f(P) is defined as the sum of the maximum of each pair of consecutive elements in the permutation. The challenge was to determine if such a permutat...,
+
+INFO - Metadata: {
+    "task_id": 1249
+}
+
+INFO - Updated entry: Reflecting on the problem-solving process for this permutation problem, there are several key insights and lessons learned:
+
+1. **Understanding the Problem Constraints**: The problem involves finding a permutation of numbers that satisfies a specific sum condition. The constraints on the sum, der...,
+
+INFO - Metadata: {
+    "task_id": 1249
+}
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are a helpful assistant that writes a description of the given function written in the Python programming language.
+
+1) Do not mention the function name.
+2) Do not mention anything about helper functions.
+3) There might be some helper functions before the main function, but you only need to describe the main function.
+4) Try to summarize the function in no more than 6 sentences.
+5) Your response should be a single line of text.
+
+INFO - [Task id] 1249 [prompt] 
+def find_permutation():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        K = int(data[index + 1])
+        index += 2
+        
+        max_possible = (N * (N + 1) // 2) - 1
+        min_possible = (N * (N - 1) // 2)
+        
+        if K < min_possible or K > max_possible:
+            results.append("-1")
+        else:
+            permutation = list(range(N, 0, -1))
+            current_sum = max_possible
+            
+            for i in range(N - 1):
+                if current_sum == K:
+                    break
+                if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                    current_sum -= (permutation[i] - permutation[i + 1])
+                    permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+            results.append(" ".join(map(str, permutation)))
+    
+    sys.stdout.write("\n".join(results) + "\n")
+
+# Call the function to execute the logic
+find_permutation()
+
+
+The main function is `find_permutation`.
+INFO - [Task id] 1249 [generation text] The function reads input data to determine the number of test cases, and for each test case, it reads two integers, N and K. It calculates the maximum and minimum possible sums of a permutation of numbers from 1 to N. If K is outside this range, it appends "-1" to the results. Otherwise, it starts with the permutation in descending order and attempts to adjust it to achieve the sum K by swapping adjacent elements. The results for all test cases are then printed, each on a new line.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1249 [prompt] 
+You are a helpful assistant that extracts important information from problems and solutions to aid in searchability and education.
+
+## Instructions
+- Read through the problem and solution carefully.
+- Reason out, step by step, in what scenarios this knowledge would be useful.
+- Focus on general patterns and situations to help connect this knowledge to new situations.
+- Then, include a list of keywords that are useful for searching this problem/solution pair.
+
+## Response format
+Respond in JSON, and follow the keys and expected format of the values strictly.
+
+The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
+the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
+
+Here is the output schema:
+```
+{"properties": {"scenarios": {"description": "In what scenarios will this knowledge be useful? Answer in a paragraph.", "title": "Scenarios", "type": "string"}, "keywords": {"description": "List of keywords that are useful for searching this problem/solution pair", "items": {"type": "string"}, "title": "Keywords", "type": "array"}}, "required": ["scenarios", "keywords"]}
+```
+
+INFO - [Task id] 1249 [prompt] 
+[Problem]
+    For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+    You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+    Note f([1]) = 0.
+
+    -----Input-----
+    - The first line of the input contains an integer T denoting the number of test cases. The description of T test cases follows.
+    - The only line of each test case consists of two space-separated integers N, K respectively.
+
+    -----Output-----
+    For each test case, if a permutation satisfying the condition exists, output a single line containing N space-separated integers which denotes any such permutation. If no such permutation exists, output a single integer -1 instead.
+    Use fast I/O methods since the size of the output is large.
+
+    -----Constraints-----
+    - 1 ≤ T ≤ 40
+    - 1 ≤ N ≤ 105
+    - Sum of N over all test cases in each file ≤ 106
+    - 0 ≤ K ≤ 2 * 1010
+
+    -----Example-----
+    Input:
+    3
+    4 12
+    2 2
+    5 14
+
+    Output:
+    -1
+    1 2
+    5 4 3 2 1
+
+    -----Explanation-----
+    Example 1. There doesn't exist any permutation of numbers [1, 2, 3, 4] that can have its f value equal to 4. Hence answer is -1.
+    Example 2. The permutations [1, 2] and [2, 1] both have their f values equal to 2. You can print any of these two permutations. 
+    Example 3. The permutation [5, 4, 3, 2, 1]
+    has f value = max(5, 4) + max(4, 3) + max(3, 2) + max(2, 1) = 5 + 4 + 3 + 2 = 14.
+[/Problem]
+
+[Solution]
+
+    def find_permutation():
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+    
+        index = 0
+        T = int(data[index])
+        index += 1
+        results = []
+    
+        for _ in range(T):
+            N = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+        
+            max_possible = (N * (N + 1) // 2) - 1
+            min_possible = (N * (N - 1) // 2)
+        
+            if K < min_possible or K > max_possible:
+                results.append("-1")
+            else:
+                permutation = list(range(N, 0, -1))
+                current_sum = max_possible
+            
+                for i in range(N - 1):
+                    if current_sum == K:
+                        break
+                    if current_sum - (permutation[i] - permutation[i + 1]) >= K:
+                        current_sum -= (permutation[i] - permutation[i + 1])
+                        permutation[i], permutation[i + 1] = permutation[i + 1], permutation[i]
+            
+                results.append(" ".join(map(str, permutation)))
+    
+        sys.stdout.write("\n".join(results) + "\n")
+
+    # Call the function to execute the logic
+    find_permutation()
+
+[/Solution]
+
+INFO - [Task id] 1249 [generation text] 
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where one needs to find a specific permutation of a sequence that satisfies a given condition based on a function of the permutation. It is particularly relevant in combinatorial optimization problems where constraints are placed on the sum of maximum values of adjacent pairs in a permutation. This problem-solving approach can be applied to similar problems where permutations need to be constructed to meet specific criteria, such as in scheduling, resource allocation, or game theory, where the order of elements affects the outcome based on a defined function.",
+    "keywords": [
+        "permutation",
+        "combinatorial optimization",
+        "adjacent pairs",
+        "maximum function",
+        "sequence",
+        "constraints",
+        "sum of maximums",
+        "permutation construction",
+        "scheduling",
+        "resource allocation"
+    ]
+}
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where one needs to find a specific permutation of a sequence that satisfies a given condition based on a function of the permutation. It is particularly relevant in combinatorial optimization problems where constraints are placed on the sum of maximum values of adjacent pairs in a permutation. This problem-solving approach can be applied to similar problems where permutations need to be constructed to meet specific criteria, such as in scheduling, resource allocation, or game theory, where the order of elements affects the outcome based on a defined function.",
+    "keywords": [
+        "permutation",
+        "combinatorial optimization",
+        "adjacent pairs",
+        "maximum function",
+        "sequence",
+        "constraints",
+        "sum of maximums",
+        "permutation construction",
+        "scheduling",
+        "resource allocation"
+    ]
+}
+INFO - Updated entry: 
+[description for function: find_permutation]
+The function reads input data to determine the number of test cases, and for each test case, it reads two integers, N and K. It calculates the maximum and minimum possible sums of a permutation of numbers from 1 to N. If K is outside this range, it ap...,
+
+INFO - Metadata: {
+    "task": 1249,
+    "code": "\ndef find_permutation():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    \n    index = 0\n    T = int(data[index])\n    index += 1\n    results = []\n    \n    for _ in range(T):\n        N = int(data[index])\n        K = int(data[ind...
+

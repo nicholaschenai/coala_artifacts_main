@@ -1,0 +1,769 @@
+INFO - [test iter]: 39/378
+
+INFO - The task prompt is Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Write a function that returns integers x and y that satisfy ax + by...
+
+INFO - Attempting task_id Mbpp/160
+INFO - [35m Rollout attempt 1/4[0m
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] Mbpp/160 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Write a function that returns integers x and y that satisfy ax + by = n as a tuple, or return None if no solution exists.
+assert find_solution(2, 3, 7) == (2, 1)
+"""
+
+[END PROBLEM]
+
+INFO - [Task id] Mbpp/160 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] Mbpp/160 [generation text] ### Problem Restatement
+
+We need to find two integers, \( x \) and \( y \), such that the equation \( ax + by = n \) holds true for given integers \( a \), \( b \), and \( n \). If such integers exist, we should return them as a tuple \((x, y)\). If no such integers exist, we should return `None`.
+
+### Conceptual Solution
+
+1. **Understanding the Equation**: The equation \( ax + by = n \) is a linear Diophantine equation. A solution exists if and only if the greatest common divisor (GCD) of \( a \) and \( b \) divides \( n \).
+
+2. **Finding a Solution**: If a solution exists, we can use the Extended Euclidean Algorithm to find one particular solution \((x_0, y_0)\) to the equation \( ax + by = \text{gcd}(a, b) \). We can then scale this solution by \( \frac{n}{\text{gcd}(a, b)} \) to get a solution to \( ax + by = n \).
+
+3. **Algorithm Steps**:
+   - Compute the GCD of \( a \) and \( b \).
+   - Check if \( n \) is divisible by this GCD. If not, return `None`.
+   - Use the Extended Euclidean Algorithm to find one solution to \( ax + by = \text{gcd}(a, b) \).
+   - Scale this solution to find a solution to \( ax + by = n \).
+
+### Pseudocode
+
+```
+function extended_gcd(a, b):
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+function find_solution(a, b, n):
+    gcd, x0, y0 = extended_gcd(a, b)
+    if n % gcd != 0:
+        return None
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+### Final Python Solution
+
+```python
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+This code uses the Extended Euclidean Algorithm to find a solution to the linear Diophantine equation, ensuring that the solution is only returned if it exists.
+INFO - program_code:
+ 
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+
+
+INFO - program_name:
+ find_solution
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ### Problem Restatement
+
+We need to find two integers, \( x \) and \( y \), such that the equation \( ax + by = n \) holds true for given integers \( a \), \( b \), and \( n \). If such integers exist, we should return them as a tuple \((x, y)\). If no such integers exist, we should return `None`.
+
+### Conceptual Solution
+
+1. **Understanding the Equation**: The equation \( ax + by = n \) is a linear Diophantine equation. A solution exists if and only if the greatest common divisor (GCD) of \( a \) and \( b \) divides \( n \).
+
+2. **Finding a Solution**: If a solution exists, we can use the Extended Euclidean Algorithm to find one particular solution \((x_0, y_0)\) to the equation \( ax + by = \text{gcd}(a, b) \). We can then scale this solution by \( \frac{n}{\text{gcd}(a, b)} \) to get a solution to \( ax + by = n \).
+
+3. **Algorithm Steps**:
+   - Compute the GCD of \( a \) and \( b \).
+   - Check if \( n \) is divisible by this GCD. If not, return `None`.
+   - Use the Extended Euclidean Algorithm to find one solution to \( ax + by = \text{gcd}(a, b) \).
+   - Scale this solution to find a solution to \( ax + by = n \).
+
+### Pseudocode
+
+```
+function extended_gcd(a, b):
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+function find_solution(a, b, n):
+    gcd, x0, y0 = extended_gcd(a, b)
+    if n % gcd != 0:
+        return None
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+### Final Python Solution
+
+```python
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+This code uses the Extended Euclidean Algorithm to find a solution to the linear Diophantine equation, ensuring that the solution is only returned if it exists.
+
+INFO - no_parent:
+ True
+
+INFO - full code to be executed: 
+ 
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+
+
+INFO - obs: Note: Tests are automatically generated and can be wrong.
+
+Tests passed:
+None
+
+Tests failed:
+assert find_solution(2, 3, 7) == (2, 1) # output: (-7, 7)
+reward: False
+done: None
+info: {'individual_results': (False,)}
+INFO - [35m Rollout attempt 2/4[0m
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] Mbpp/160 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Write a function that returns integers x and y that satisfy ax + by = n as a tuple, or return None if no solution exists.
+assert find_solution(2, 3, 7) == (2, 1)
+"""
+
+[END PROBLEM]
+
+INFO - [Task id] Mbpp/160 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] Mbpp/160 [prompt] ### Problem Restatement
+
+We need to find two integers, \( x \) and \( y \), such that the equation \( ax + by = n \) holds true for given integers \( a \), \( b \), and \( n \). If such integers exist, we should return them as a tuple \((x, y)\). If no such integers exist, we should return `None`.
+
+### Conceptual Solution
+
+1. **Understanding the Equation**: The equation \( ax + by = n \) is a linear Diophantine equation. A solution exists if and only if the greatest common divisor (GCD) of \( a \) and \( b \) divides \( n \).
+
+2. **Finding a Solution**: If a solution exists, we can use the Extended Euclidean Algorithm to find one particular solution \((x_0, y_0)\) to the equation \( ax + by = \text{gcd}(a, b) \). We can then scale this solution by \( \frac{n}{\text{gcd}(a, b)} \) to get a solution to \( ax + by = n \).
+
+3. **Algorithm Steps**:
+   - Compute the GCD of \( a \) and \( b \).
+   - Check if \( n \) is divisible by this GCD. If not, return `None`.
+   - Use the Extended Euclidean Algorithm to find one solution to \( ax + by = \text{gcd}(a, b) \).
+   - Scale this solution to find a solution to \( ax + by = n \).
+
+### Pseudocode
+
+```
+function extended_gcd(a, b):
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+function find_solution(a, b, n):
+    gcd, x0, y0 = extended_gcd(a, b)
+    if n % gcd != 0:
+        return None
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+### Final Python Solution
+
+```python
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+This code uses the Extended Euclidean Algorithm to find a solution to the linear Diophantine equation, ensuring that the solution is only returned if it exists.
+INFO - [Task id] Mbpp/160 [prompt] 
+[Environment Feedback]:
+    Note: Tests are automatically generated and can be wrong.
+
+    Tests passed:
+    None
+
+    Tests failed:
+    assert find_solution(2, 3, 7) == (2, 1) # output: (-7, 7)
+[/Environment Feedback]
+
+INFO - [Task id] Mbpp/160 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] Mbpp/160 [generation text] ### Analysis of the Issue
+
+The code correctly implements the Extended Euclidean Algorithm to find a solution to the equation \( ax + by = n \). However, the solution it finds is not necessarily the one expected by the test case. The test case expects a specific solution \((2, 1)\) for the input \((a=2, b=3, n=7)\), but the code returns \((-7, 7)\), which is also a valid solution.
+
+### Where the Solution Went Wrong
+
+1. **Multiple Solutions**: Linear Diophantine equations have infinitely many solutions. The solution returned by the algorithm is a valid one, but it may not match the specific solution expected by the test case.
+
+2. **Expected Solution**: The test case expects a specific solution \((2, 1)\). The algorithm needs to be adjusted to find this particular solution or a similar one that satisfies the equation in a more straightforward manner.
+
+### Adjustments Needed
+
+To address the issue, we need to find a solution that is closer to the expected one. We can adjust the solution by finding a particular solution and then modifying it to find a non-negative solution with smaller values for \( x \) and \( y \).
+
+### Steps to Adjust the Solution
+
+1. **Find a Particular Solution**: Use the Extended Euclidean Algorithm to find one particular solution.
+
+2. **Adjust the Solution**: Modify the solution to find a non-negative solution with smaller values for \( x \) and \( y \).
+
+3. **Return the Adjusted Solution**: Ensure the solution returned is the one expected by the test case or a similar one.
+
+Let's implement these adjustments in the code.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] Mbpp/160 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Write a function that returns integers x and y that satisfy ax + by = n as a tuple, or return None if no solution exists.
+assert find_solution(2, 3, 7) == (2, 1)
+"""
+
+[END PROBLEM]
+
+INFO - [Task id] Mbpp/160 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] Mbpp/160 [prompt] ### Problem Restatement
+
+We need to find two integers, \( x \) and \( y \), such that the equation \( ax + by = n \) holds true for given integers \( a \), \( b \), and \( n \). If such integers exist, we should return them as a tuple \((x, y)\). If no such integers exist, we should return `None`.
+
+### Conceptual Solution
+
+1. **Understanding the Equation**: The equation \( ax + by = n \) is a linear Diophantine equation. A solution exists if and only if the greatest common divisor (GCD) of \( a \) and \( b \) divides \( n \).
+
+2. **Finding a Solution**: If a solution exists, we can use the Extended Euclidean Algorithm to find one particular solution \((x_0, y_0)\) to the equation \( ax + by = \text{gcd}(a, b) \). We can then scale this solution by \( \frac{n}{\text{gcd}(a, b)} \) to get a solution to \( ax + by = n \).
+
+3. **Algorithm Steps**:
+   - Compute the GCD of \( a \) and \( b \).
+   - Check if \( n \) is divisible by this GCD. If not, return `None`.
+   - Use the Extended Euclidean Algorithm to find one solution to \( ax + by = \text{gcd}(a, b) \).
+   - Scale this solution to find a solution to \( ax + by = n \).
+
+### Pseudocode
+
+```
+function extended_gcd(a, b):
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+function find_solution(a, b, n):
+    gcd, x0, y0 = extended_gcd(a, b)
+    if n % gcd != 0:
+        return None
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+### Final Python Solution
+
+```python
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    return (x, y)
+```
+
+This code uses the Extended Euclidean Algorithm to find a solution to the linear Diophantine equation, ensuring that the solution is only returned if it exists.
+INFO - [Task id] Mbpp/160 [prompt] 
+[Environment Feedback]:
+    Note: Tests are automatically generated and can be wrong.
+
+    Tests passed:
+    None
+
+    Tests failed:
+    assert find_solution(2, 3, 7) == (2, 1) # output: (-7, 7)
+[/Environment Feedback]
+
+INFO - [Task id] Mbpp/160 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] Mbpp/160 [prompt] ### Analysis of the Issue
+
+The code correctly implements the Extended Euclidean Algorithm to find a solution to the equation \( ax + by = n \). However, the solution it finds is not necessarily the one expected by the test case. The test case expects a specific solution \((2, 1)\) for the input \((a=2, b=3, n=7)\), but the code returns \((-7, 7)\), which is also a valid solution.
+
+### Where the Solution Went Wrong
+
+1. **Multiple Solutions**: Linear Diophantine equations have infinitely many solutions. The solution returned by the algorithm is a valid one, but it may not match the specific solution expected by the test case.
+
+2. **Expected Solution**: The test case expects a specific solution \((2, 1)\). The algorithm needs to be adjusted to find this particular solution or a similar one that satisfies the equation in a more straightforward manner.
+
+### Adjustments Needed
+
+To address the issue, we need to find a solution that is closer to the expected one. We can adjust the solution by finding a particular solution and then modifying it to find a non-negative solution with smaller values for \( x \) and \( y \).
+
+### Steps to Adjust the Solution
+
+1. **Find a Particular Solution**: Use the Extended Euclidean Algorithm to find one particular solution.
+
+2. **Adjust the Solution**: Modify the solution to find a non-negative solution with smaller values for \( x \) and \( y \).
+
+3. **Return the Adjusted Solution**: Ensure the solution returned is the one expected by the test case or a similar one.
+
+Let's implement these adjustments in the code.
+INFO - [Task id] Mbpp/160 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] Mbpp/160 [generation text] ```python
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    
+    # Adjust the solution to find a non-negative solution with smaller values
+    # We will adjust x and y to be the smallest non-negative solution
+    # by using the fact that (x + k*(b/gcd), y - k*(a/gcd)) is also a solution
+    # for any integer k.
+    a_div_gcd = a // gcd
+    b_div_gcd = b // gcd
+    
+    # Adjust x and y to be non-negative
+    if x < 0:
+        k = (-x + b_div_gcd - 1) // b_div_gcd
+        x += k * b_div_gcd
+        y -= k * a_div_gcd
+    elif y < 0:
+        k = (-y + a_div_gcd - 1) // a_div_gcd
+        x -= k * b_div_gcd
+        y += k * a_div_gcd
+    
+    return (x, y)
+```
+
+This code adjusts the solution to ensure that \( x \) and \( y \) are non-negative and as small as possible, which should help in matching the expected test case solution.
+INFO - program_code:
+ 
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    
+    # Adjust the solution to find a non-negative solution with smaller values
+    # We will adjust x and y to be the smallest non-negative solution
+    # by using the fact that (x + k*(b/gcd), y - k*(a/gcd)) is also a solution
+    # for any integer k.
+    a_div_gcd = a // gcd
+    b_div_gcd = b // gcd
+    
+    # Adjust x and y to be non-negative
+    if x < 0:
+        k = (-x + b_div_gcd - 1) // b_div_gcd
+        x += k * b_div_gcd
+        y -= k * a_div_gcd
+    elif y < 0:
+        k = (-y + a_div_gcd - 1) // a_div_gcd
+        x -= k * b_div_gcd
+        y += k * a_div_gcd
+    
+    return (x, y)
+
+
+INFO - program_name:
+ find_solution
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ```python
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    
+    # Adjust the solution to find a non-negative solution with smaller values
+    # We will adjust x and y to be the smallest non-negative solution
+    # by using the fact that (x + k*(b/gcd), y - k*(a/gcd)) is also a solution
+    # for any integer k.
+    a_div_gcd = a // gcd
+    b_div_gcd = b // gcd
+    
+    # Adjust x and y to be non-negative
+    if x < 0:
+        k = (-x + b_div_gcd - 1) // b_div_gcd
+        x += k * b_div_gcd
+        y -= k * a_div_gcd
+    elif y < 0:
+        k = (-y + a_div_gcd - 1) // a_div_gcd
+        x -= k * b_div_gcd
+        y += k * a_div_gcd
+    
+    return (x, y)
+```
+
+This code adjusts the solution to ensure that \( x \) and \( y \) are non-negative and as small as possible, which should help in matching the expected test case solution.
+
+INFO - no_parent:
+ True
+
+INFO - full code to be executed: 
+ 
+def extended_gcd(a, b):
+    # Base case: if b is 0, gcd is a, and coefficients are (1, 0)
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        # Recursive call
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        # Update x and y using results of recursion
+        x = y1
+        y = x1 - (a // b) * y1
+        return (gcd, x, y)
+
+def find_solution(a, b, n):
+    # Get gcd and coefficients for the equation ax + by = gcd(a, b)
+    gcd, x0, y0 = extended_gcd(a, b)
+    # Check if n is divisible by gcd
+    if n % gcd != 0:
+        return None
+    # Scale the solution to match the equation ax + by = n
+    scale = n // gcd
+    x = x0 * scale
+    y = y0 * scale
+    
+    # Adjust the solution to find a non-negative solution with smaller values
+    # We will adjust x and y to be the smallest non-negative solution
+    # by using the fact that (x + k*(b/gcd), y - k*(a/gcd)) is also a solution
+    # for any integer k.
+    a_div_gcd = a // gcd
+    b_div_gcd = b // gcd
+    
+    # Adjust x and y to be non-negative
+    if x < 0:
+        k = (-x + b_div_gcd - 1) // b_div_gcd
+        x += k * b_div_gcd
+        y -= k * a_div_gcd
+    elif y < 0:
+        k = (-y + a_div_gcd - 1) // a_div_gcd
+        x -= k * b_div_gcd
+        y += k * a_div_gcd
+    
+    return (x, y)
+
+
+INFO - obs: Note: Tests are automatically generated and can be wrong.
+
+Tests passed:
+assert find_solution(2, 3, 7) == (2, 1)
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': (True,)}
+INFO - acc:38/39 = 97.44%

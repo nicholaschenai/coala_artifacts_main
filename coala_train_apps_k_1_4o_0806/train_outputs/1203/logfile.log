@@ -1,0 +1,2839 @@
+INFO - DB skill doc count: 0
+
+INFO - DB non_func doc count: 25
+
+INFO - DB semantic doc count: 429
+
+INFO - DB summaries doc count: 31
+
+INFO - DB reflections doc count: 31
+
+INFO - DB episodic doc count: 58
+
+INFO - [train iter]: 31/100 
+
+INFO - The task prompt is Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+number of set come at Kth postion.Elements of every subset should be in sorted order.
+The answer could  be very large so you have to print answer modulo 1e9...
+
+INFO - Attempting task_id 1203
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+number of set come at Kth postion.Elements of every subset should be in sorted order.
+The answer could  be very large so you have to print answer modulo 1e9+7.
+
+
+-----Input:-----
+- The first line of input cotains a single integer T denoting the number of test cases.
+- For every test case it contains two number N and Q.
+- Next Q line contains two number I and K.
+
+-----Output:-----
+For each test case print required answer.
+
+-----Constraints and Subtasks:-----
+- 1<=T<=5
+- 1<=N, K<=4000
+- 1<=Q<=1000000
+Subtask 3: 5 points
+- 1<=T<=5
+- 1<=N, K<=16
+- 1<=Q<=1000
+Subtask 1: 25 points
+- T=1
+- 1<=N, K<=4000
+- 1<=Q<=100000
+Subtask 2: 70 points
+- Original Constraints.
+
+-----Example:-----
+Input:
+
+1
+
+3 3
+
+1 2
+
+2 1
+
+3 2
+
+Output:
+
+0
+
+2
+
+2
+
+-----Explanation:-----
+For N=3
+
+total subsets are:
+
+{1}
+
+{2}
+
+{3}
+
+{1,2}
+
+{1,3}
+
+{2,3}
+
+{1,2,3}
+
+Now we can see that for I=1 and K=2 there is no subset in which 1 come at 2nd position so the answer is Zero for that query.
+
+For 2nd query I=2 and K=1 there are two subset i.e {2,3} and {2} in which 2 come at 1st position.
+
+Same for 3rd querry there is two subset i.e{1,3} and {2,3}.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1203 [generation text] ### Problem Restatement
+
+We are given a set of natural numbers from 1 to N. For each query, we need to determine how many subsets exist where a specific number `I` appears at the `K`-th position when the subset is sorted. The result should be given modulo \(10^9 + 7\).
+
+### Conceptual Solution
+
+1. **Understanding Subsets**: For a number `I` to be at the `K`-th position in a sorted subset, there must be exactly `K-1` numbers smaller than `I` in the subset. This means we need to choose `K-1` numbers from the set `{1, 2, ..., I-1}`.
+
+2. **Remaining Numbers**: After placing `I` at the `K`-th position, the remaining numbers in the subset can be chosen from the set `{I+1, I+2, ..., N}`. The number of such numbers is `N-I`.
+
+3. **Combinatorial Counting**:
+   - Choose `K-1` numbers from the `I-1` numbers: This is done using combinations, denoted as `C(I-1, K-1)`.
+   - Choose any subset of the remaining `N-I` numbers: This is `2^(N-I)` possible subsets.
+
+4. **Modulo Operation**: Since the result can be large, every calculation should be done modulo \(10^9 + 7\).
+
+5. **Precomputation**: To efficiently compute combinations and powers of 2, precompute factorials and their modular inverses up to the maximum possible `N`.
+
+### Pseudocode
+
+1. **Precompute Factorials and Inverses**:
+   - Compute factorials and their inverses up to the maximum `N` using Fermat's Little Theorem for modular inverses.
+
+2. **Process Each Test Case**:
+   - For each query `(I, K)`, check if `K-1` is greater than `I-1`. If true, the result is 0 because we can't choose `K-1` numbers from `I-1`.
+   - Otherwise, compute the result as `C(I-1, K-1) * 2^(N-I) % MOD`.
+
+3. **Output Results**:
+   - Print the result for each query.
+
+### Final Python Solution
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def combination(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K - 1 > I - 1:
+                results.append(0)
+            else:
+                comb = combination(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = comb * power_of_two % MOD
+                results.append(result)
+    
+    for result in results:
+        print(result)
+
+```
+
+This solution efficiently handles the constraints by precomputing necessary values and using combinatorial mathematics to determine the number of valid subsets for each query.
+INFO - [35m Rollout attempt 1/4[0m
+INFO - [33m Retrieving 1 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.3262):
+
+[Task]:
+    For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+    You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+...
+
+
+INFO - [33m Retrieving 1 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.3541):
+Title: Josephus Problem
+Part: 1/1
+# Josephus Problem
+
+## Statement
+
+We are given the natural numbers $n$ and $k$.
+All natural numbers from $1$ to $n$ are written in a circle. 
+First, count the $k$-th number starting from the first one and delete it.
+Then $k$ numbers are counted starting from the ...
+
+
+INFO - [33m Retrieving 1 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.2983):
+The official solution provides an efficient way to handle the problem by precomputing factorials modulo `10^6 + 3` up to a certain limit. This approach is insightful because it leverages the fact that factorials grow very quickly, and for any `n` greater than or equal to `10^6 + 3`, the factorial...
+
+
+INFO - [33m Retrieving 1 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.3328):
+In this problem, the task was to find a permutation of numbers from 1 to N such that a specific function f(P) equals a given integer K. The function f(P) is defined as the sum of the maximum of each pair of consecutive elements in the permutation. The challenge was to determine if such a permutat...
+
+
+INFO - [33m Retrieving 1 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.3836):
+
+[description for function: find_permutation]
+The function reads input data to determine the number of test cases, and for each test case, it reads two integers, N and K. It calculates the maximum and minimum possible sums of a permutation of numbers from 1 to N. If K is outside this range, it ap...
+
+
+INFO - Retrieved (score=0.2983): 
+[Reflection]:
+    The official solution provides an efficient way to handle the problem by precomputing factorials modulo `10^6 + 3` up to a certain limit. This approach is insightful because it leverages the fact that factorials grow very quickly, and for any `n` greater than or equal to `10^6 ...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+number of set come at Kth postion.Elements of every subset should be in sorted order.
+The answer could  be very large so you have to print answer modulo 1e9+7.
+
+
+-----Input:-----
+- The first line of input cotains a single integer T denoting the number of test cases.
+- For every test case it contains two number N and Q.
+- Next Q line contains two number I and K.
+
+-----Output:-----
+For each test case print required answer.
+
+-----Constraints and Subtasks:-----
+- 1<=T<=5
+- 1<=N, K<=4000
+- 1<=Q<=1000000
+Subtask 3: 5 points
+- 1<=T<=5
+- 1<=N, K<=16
+- 1<=Q<=1000
+Subtask 1: 25 points
+- T=1
+- 1<=N, K<=4000
+- 1<=Q<=100000
+Subtask 2: 70 points
+- Original Constraints.
+
+-----Example:-----
+Input:
+
+1
+
+3 3
+
+1 2
+
+2 1
+
+3 2
+
+Output:
+
+0
+
+2
+
+2
+
+-----Explanation:-----
+For N=3
+
+total subsets are:
+
+{1}
+
+{2}
+
+{3}
+
+{1,2}
+
+{1,3}
+
+{2,3}
+
+{1,2,3}
+
+Now we can see that for I=1 and K=2 there is no subset in which 1 come at 2nd position so the answer is Zero for that query.
+
+For 2nd query I=2 and K=1 there are two subset i.e {2,3} and {2} in which 2 come at 1st position.
+
+Same for 3rd querry there is two subset i.e{1,3} and {2,3}.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1203 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Reflection]:
+    The official solution provides an efficient way to handle the problem by precomputing factorials modulo `10^6 + 3` up to a certain limit. This approach is insightful because it leverages the fact that factorials grow very quickly, and for any `n` greater than or equal to `10^6 + 3`, the factorial modulo `10^6 + 3` will be zero due to the properties of modular arithmetic.
+
+    ### Key Insights from the Official Solution:
+
+    1. **Precomputation of Factorials**: The solution precomputes the factorials modulo `10^6 + 3` for all numbers up to `10^6 + 3`. This allows for constant-time retrieval of factorial values during each test case, significantly speeding up the process.
+
+    2. **Handling Large `n`**: If `n` is greater than or equal to `10^6 + 3`, the factorial modulo `10^6 + 3` is zero. This is because `n!` will include `10^6 + 3` as a factor, making the result zero when taken modulo `10^6 + 3`.
+
+    3. **Efficiency**: By precomputing the factorials, the solution avoids recalculating them for each test case, which is crucial given the constraints. This reduces the time complexity for each test case to O(1) after the initial precomputation.
+
+    ### Reflection on My Approach:
+
+    My initial approach involved calculating the factorial for each test case, which is inefficient given the constraints. The official solution's precomputation strategy is a significant improvement, as it reduces redundant calculations and handles large values of `n` effectively. This experience highlights the importance of considering precomputation and modular arithmetic properties when dealing with large numbers and repetitive calculations.
+[/Reflection]
+
+
+INFO - [Task id] 1203 [generation text] ## Problem Restatement
+
+We are given a set of natural numbers from 1 to N and a number of queries Q. For each query, we need to determine the number of subsets in which the Ith number appears at the Kth position when the subset is sorted. The result should be given modulo \(10^9 + 7\).
+
+## Conceptual Solution
+
+1. **Understanding Subsets**: For a number I to be at the Kth position in a subset, there must be exactly \(K-1\) numbers smaller than I in the subset. This means we need to choose \(K-1\) numbers from the set \(\{1, 2, \ldots, I-1\}\).
+
+2. **Combinatorial Counting**: The number of ways to choose \(K-1\) numbers from \(I-1\) numbers is given by the binomial coefficient \(\binom{I-1}{K-1}\).
+
+3. **Remaining Elements**: After placing I at the Kth position, the remaining elements of the subset can be any subset of the numbers greater than I, i.e., from the set \(\{I+1, I+2, \ldots, N\}\). There are \(2^{N-I}\) such subsets.
+
+4. **Modulo Arithmetic**: Since the result can be large, we need to compute the result modulo \(10^9 + 7\).
+
+5. **Precomputation**: To efficiently compute binomial coefficients and powers of 2, we can precompute factorials and their modular inverses up to the maximum possible N.
+
+## Pseudocode
+
+1. Precompute factorials and their inverses modulo \(10^9 + 7\) up to the maximum N.
+2. For each test case:
+   - For each query (I, K):
+     - If \(K > I\), output 0 (impossible to have I at Kth position).
+     - Otherwise, compute the number of subsets using the formula:
+       \[
+       \text{result} = \binom{I-1}{K-1} \times 2^{N-I} \mod (10^9 + 7)
+       \]
+3. Output the result for each query.
+
+## Final Python Solution
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+```
+INFO - program_code:
+ 
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+
+
+INFO - program_name:
+ solve
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ## Problem Restatement
+
+We are given a set of natural numbers from 1 to N and a number of queries Q. For each query, we need to determine the number of subsets in which the Ith number appears at the Kth position when the subset is sorted. The result should be given modulo \(10^9 + 7\).
+
+## Conceptual Solution
+
+1. **Understanding Subsets**: For a number I to be at the Kth position in a subset, there must be exactly \(K-1\) numbers smaller than I in the subset. This means we need to choose \(K-1\) numbers from the set \(\{1, 2, \ldots, I-1\}\).
+
+2. **Combinatorial Counting**: The number of ways to choose \(K-1\) numbers from \(I-1\) numbers is given by the binomial coefficient \(\binom{I-1}{K-1}\).
+
+3. **Remaining Elements**: After placing I at the Kth position, the remaining elements of the subset can be any subset of the numbers greater than I, i.e., from the set \(\{I+1, I+2, \ldots, N\}\). There are \(2^{N-I}\) such subsets.
+
+4. **Modulo Arithmetic**: Since the result can be large, we need to compute the result modulo \(10^9 + 7\).
+
+5. **Precomputation**: To efficiently compute binomial coefficients and powers of 2, we can precompute factorials and their modular inverses up to the maximum possible N.
+
+## Pseudocode
+
+1. Precompute factorials and their inverses modulo \(10^9 + 7\) up to the maximum N.
+2. For each test case:
+   - For each query (I, K):
+     - If \(K > I\), output 0 (impossible to have I at Kth position).
+     - Otherwise, compute the number of subsets using the formula:
+       \[
+       \text{result} = \binom{I-1}{K-1} \times 2^{N-I} \mod (10^9 + 7)
+       \]
+3. Output the result for each query.
+
+## Final Python Solution
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+```
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+None
+
+Tests failed:
+ Input: ['1', '3 3', '1 2', '2 1', '3 2'] Expected output: [{'0'}, {'2'}, {'2'}] # Execution output: []
+No output detected. You might want to check the reading from / writing to standard IO.
+A common mistake is to put the IO inside a function, but the function is not called.
+
+reward: False
+done: None
+info: {'individual_results': [False]}
+INFO - [35m Rollout attempt 2/4[0m
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+number of set come at Kth postion.Elements of every subset should be in sorted order.
+The answer could  be very large so you have to print answer modulo 1e9+7.
+
+
+-----Input:-----
+- The first line of input cotains a single integer T denoting the number of test cases.
+- For every test case it contains two number N and Q.
+- Next Q line contains two number I and K.
+
+-----Output:-----
+For each test case print required answer.
+
+-----Constraints and Subtasks:-----
+- 1<=T<=5
+- 1<=N, K<=4000
+- 1<=Q<=1000000
+Subtask 3: 5 points
+- 1<=T<=5
+- 1<=N, K<=16
+- 1<=Q<=1000
+Subtask 1: 25 points
+- T=1
+- 1<=N, K<=4000
+- 1<=Q<=100000
+Subtask 2: 70 points
+- Original Constraints.
+
+-----Example:-----
+Input:
+
+1
+
+3 3
+
+1 2
+
+2 1
+
+3 2
+
+Output:
+
+0
+
+2
+
+2
+
+-----Explanation:-----
+For N=3
+
+total subsets are:
+
+{1}
+
+{2}
+
+{3}
+
+{1,2}
+
+{1,3}
+
+{2,3}
+
+{1,2,3}
+
+Now we can see that for I=1 and K=2 there is no subset in which 1 come at 2nd position so the answer is Zero for that query.
+
+For 2nd query I=2 and K=1 there are two subset i.e {2,3} and {2} in which 2 come at 1st position.
+
+Same for 3rd querry there is two subset i.e{1,3} and {2,3}.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1203 [prompt] ## Problem Restatement
+
+We are given a set of natural numbers from 1 to N and a number of queries Q. For each query, we need to determine the number of subsets in which the Ith number appears at the Kth position when the subset is sorted. The result should be given modulo \(10^9 + 7\).
+
+## Conceptual Solution
+
+1. **Understanding Subsets**: For a number I to be at the Kth position in a subset, there must be exactly \(K-1\) numbers smaller than I in the subset. This means we need to choose \(K-1\) numbers from the set \(\{1, 2, \ldots, I-1\}\).
+
+2. **Combinatorial Counting**: The number of ways to choose \(K-1\) numbers from \(I-1\) numbers is given by the binomial coefficient \(\binom{I-1}{K-1}\).
+
+3. **Remaining Elements**: After placing I at the Kth position, the remaining elements of the subset can be any subset of the numbers greater than I, i.e., from the set \(\{I+1, I+2, \ldots, N\}\). There are \(2^{N-I}\) such subsets.
+
+4. **Modulo Arithmetic**: Since the result can be large, we need to compute the result modulo \(10^9 + 7\).
+
+5. **Precomputation**: To efficiently compute binomial coefficients and powers of 2, we can precompute factorials and their modular inverses up to the maximum possible N.
+
+## Pseudocode
+
+1. Precompute factorials and their inverses modulo \(10^9 + 7\) up to the maximum N.
+2. For each test case:
+   - For each query (I, K):
+     - If \(K > I\), output 0 (impossible to have I at Kth position).
+     - Otherwise, compute the number of subsets using the formula:
+       \[
+       \text{result} = \binom{I-1}{K-1} \times 2^{N-I} \mod (10^9 + 7)
+       \]
+3. Output the result for each query.
+
+## Final Python Solution
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+```
+INFO - [Task id] 1203 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['1', '3 3', '1 2', '2 1', '3 2'] Expected output: [{'0'}, {'2'}, {'2'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1203 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1203 [generation text] Let's analyze the problem with the current solution and identify where it might be going wrong:
+
+1. **Reading Input**: The code uses `sys.stdin.read()` to read all input at once and then splits it into a list of strings. This is a valid approach, but we need to ensure that the input is being processed correctly.
+
+2. **Output**: The code appends results to a list and then writes them all at once using `sys.stdout.write()`. This should work, but we need to ensure that the results are being computed and stored correctly.
+
+3. **Function Call**: The `solve()` function is defined but not called. This is likely the reason why no output is being produced. The function needs to be called to execute the logic.
+
+4. **Logic and Computation**: The logic for computing the number of subsets seems correct based on the problem statement. However, we need to ensure that the precomputation of factorials and inverses is correct and that the binomial coefficient and power of two calculations are accurate.
+
+5. **Edge Cases**: We should ensure that edge cases, such as when \(K > I\), are handled correctly by returning 0.
+
+Let's fix the issue by ensuring the `solve()` function is called and verify the logic step-by-step.
+
+Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+INFO - [33m Retrieving 1 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.3292):
+
+[Task]:
+    For a permutation P = (p1, p2, ..., pN) of numbers [1, 2, ..., N], we define the function f(P) = max(p1, p2) + max(p2, p3) + ... + max(pN-1, pN).
+    You are given N and an integer K. Find and report a permutation P of [1, 2, ..., N] such that f(P) = K, if such a permutation exists.
+...
+
+
+INFO - [33m Retrieving 1 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.4210):
+Chapter: Combinatorics
+Section: Binomial coefficients
+Part: 1/2
+\chapter{Combinatorics}
+
+\index{combinatorics}
+
+\key{Combinatorics} studies methods for counting
+combinations of objects.
+Usually, the goal is to find a way to
+count the combinations efficiently
+without generating each combination se...
+
+
+INFO - [33m Retrieving 1 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.3257):
+Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights:
+
+1. **Prefix Sum Optimization**: My approach used a prefix sum array to efficiently compute the sum of any subarray in constant time. This is a common optimization technique for rang...
+
+
+INFO - [33m Retrieving 1 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.3524):
+In this problem, the task was to calculate the mean of maximum possible scores for students after processing a series of questions with complexity factors. Each student starts with a score of 10, and their scores are multiplied by the complexity factor for questions they solve.
+
+### Key Concepts ...
+
+
+INFO - [33m Retrieving 1 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.3918):
+
+[description for function: main]
+The function reads input from standard input, where the first line contains an integer T representing the number of test cases, followed by T integers. For each integer N, it calculates the N'th term using a specific formula and stores the result. After processin...
+
+
+INFO - Retrieved (score=0.3257): 
+[Reflection]:
+    Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights:
+
+    1. **Prefix Sum Optimization**: My approach used a prefix sum array to efficiently compute the sum of any subarray in constant time. This is a common optimiza...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+number of set come at Kth postion.Elements of every subset should be in sorted order.
+The answer could  be very large so you have to print answer modulo 1e9+7.
+
+
+-----Input:-----
+- The first line of input cotains a single integer T denoting the number of test cases.
+- For every test case it contains two number N and Q.
+- Next Q line contains two number I and K.
+
+-----Output:-----
+For each test case print required answer.
+
+-----Constraints and Subtasks:-----
+- 1<=T<=5
+- 1<=N, K<=4000
+- 1<=Q<=1000000
+Subtask 3: 5 points
+- 1<=T<=5
+- 1<=N, K<=16
+- 1<=Q<=1000
+Subtask 1: 25 points
+- T=1
+- 1<=N, K<=4000
+- 1<=Q<=100000
+Subtask 2: 70 points
+- Original Constraints.
+
+-----Example:-----
+Input:
+
+1
+
+3 3
+
+1 2
+
+2 1
+
+3 2
+
+Output:
+
+0
+
+2
+
+2
+
+-----Explanation:-----
+For N=3
+
+total subsets are:
+
+{1}
+
+{2}
+
+{3}
+
+{1,2}
+
+{1,3}
+
+{2,3}
+
+{1,2,3}
+
+Now we can see that for I=1 and K=2 there is no subset in which 1 come at 2nd position so the answer is Zero for that query.
+
+For 2nd query I=2 and K=1 there are two subset i.e {2,3} and {2} in which 2 come at 1st position.
+
+Same for 3rd querry there is two subset i.e{1,3} and {2,3}.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1203 [prompt] ## Problem Restatement
+
+We are given a set of natural numbers from 1 to N and a number of queries Q. For each query, we need to determine the number of subsets in which the Ith number appears at the Kth position when the subset is sorted. The result should be given modulo \(10^9 + 7\).
+
+## Conceptual Solution
+
+1. **Understanding Subsets**: For a number I to be at the Kth position in a subset, there must be exactly \(K-1\) numbers smaller than I in the subset. This means we need to choose \(K-1\) numbers from the set \(\{1, 2, \ldots, I-1\}\).
+
+2. **Combinatorial Counting**: The number of ways to choose \(K-1\) numbers from \(I-1\) numbers is given by the binomial coefficient \(\binom{I-1}{K-1}\).
+
+3. **Remaining Elements**: After placing I at the Kth position, the remaining elements of the subset can be any subset of the numbers greater than I, i.e., from the set \(\{I+1, I+2, \ldots, N\}\). There are \(2^{N-I}\) such subsets.
+
+4. **Modulo Arithmetic**: Since the result can be large, we need to compute the result modulo \(10^9 + 7\).
+
+5. **Precomputation**: To efficiently compute binomial coefficients and powers of 2, we can precompute factorials and their modular inverses up to the maximum possible N.
+
+## Pseudocode
+
+1. Precompute factorials and their inverses modulo \(10^9 + 7\) up to the maximum N.
+2. For each test case:
+   - For each query (I, K):
+     - If \(K > I\), output 0 (impossible to have I at Kth position).
+     - Otherwise, compute the number of subsets using the formula:
+       \[
+       \text{result} = \binom{I-1}{K-1} \times 2^{N-I} \mod (10^9 + 7)
+       \]
+3. Output the result for each query.
+
+## Final Python Solution
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+```
+INFO - [Task id] 1203 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['1', '3 3', '1 2', '2 1', '3 2'] Expected output: [{'0'}, {'2'}, {'2'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1203 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1203 [prompt] Let's analyze the problem with the current solution and identify where it might be going wrong:
+
+1. **Reading Input**: The code uses `sys.stdin.read()` to read all input at once and then splits it into a list of strings. This is a valid approach, but we need to ensure that the input is being processed correctly.
+
+2. **Output**: The code appends results to a list and then writes them all at once using `sys.stdout.write()`. This should work, but we need to ensure that the results are being computed and stored correctly.
+
+3. **Function Call**: The `solve()` function is defined but not called. This is likely the reason why no output is being produced. The function needs to be called to execute the logic.
+
+4. **Logic and Computation**: The logic for computing the number of subsets seems correct based on the problem statement. However, we need to ensure that the precomputation of factorials and inverses is correct and that the binomial coefficient and power of two calculations are accurate.
+
+5. **Edge Cases**: We should ensure that edge cases, such as when \(K > I\), are handled correctly by returning 0.
+
+Let's fix the issue by ensuring the `solve()` function is called and verify the logic step-by-step.
+
+Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1203 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Reflection]:
+    Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights:
+
+    1. **Prefix Sum Optimization**: My approach used a prefix sum array to efficiently compute the sum of any subarray in constant time. This is a common optimization technique for range sum queries, especially when the number of queries is large. The official solution, however, computes the sum directly for each query, which can be less efficient for larger inputs.
+
+    2. **Handling Large Inputs**: The official solution uses a modulo operation with `1000000000` when computing the sum. This is likely intended to prevent integer overflow, although Python handles large integers natively. My solution did not include this, as it wasn't specified in the problem statement.
+
+    3. **Function Structure**: My solution encapsulated the logic within a function and used `sys.stdin.read` for input handling, which is efficient for large inputs. The official solution uses a more straightforward approach with `input()` calls, which is simpler but can be less efficient for very large input sizes.
+
+    4. **Code Readability and Maintenance**: My solution was structured with clear variable names and comments, making it easier to understand and maintain. The official solution is more concise but might be harder to follow for someone unfamiliar with the problem.
+
+    Overall, the experience reinforced the importance of understanding the problem constraints and choosing the right optimization techniques. The prefix sum approach is particularly useful for problems involving multiple range queries, and ensuring efficient input/output handling is crucial for performance in competitive programming.
+[/Reflection]
+
+
+INFO - [Task id] 1203 [generation text] Let's fix the solution by ensuring the `solve()` function is called and verify the logic step-by-step. Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+INFO - program_code:
+ 
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+
+
+INFO - program_name:
+ solve
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ Let's fix the solution by ensuring the `solve()` function is called and verify the logic step-by-step. Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+ Input: ['1', '3 3', '1 2', '2 1', '3 2'] Output: 0
+2
+2
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': [True]}
+INFO - Updated entry: 
+[Task]:
+    Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+    number of set come at Kth postion.Elements of every subset should be in sorted order.
+    The answer could  be very large so you have to pr...,
+
+INFO - Metadata: {
+    "raw_msg": "## Problem Restatement\n\nWe are given a set of natural numbers from 1 to N and a number of queries Q. For each query, we need to determine the number of subsets in which the Ith number appears at the Kth position when the subset is sorted. The result should be given modulo \\(1...
+
+INFO - Updated entry: 
+[Task]:
+    Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+    number of set come at Kth postion.Elements of every subset should be in sorted order.
+    The answer could  be very large so you have to pr...,
+
+INFO - Metadata: {
+    "critique": "Let's analyze the problem with the current solution and identify where it might be going wrong:\n\n1. **Reading Input**: The code uses `sys.stdin.read()` to read all input at once and then splits it into a list of strings. This is a valid approach, but we need to ensure that th...
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+number of set come at Kth postion.Elements of every subset should be in sorted order.
+The answer could  be very large so you have to print answer modulo 1e9+7.
+
+
+-----Input:-----
+- The first line of input cotains a single integer T denoting the number of test cases.
+- For every test case it contains two number N and Q.
+- Next Q line contains two number I and K.
+
+-----Output:-----
+For each test case print required answer.
+
+-----Constraints and Subtasks:-----
+- 1<=T<=5
+- 1<=N, K<=4000
+- 1<=Q<=1000000
+Subtask 3: 5 points
+- 1<=T<=5
+- 1<=N, K<=16
+- 1<=Q<=1000
+Subtask 1: 25 points
+- T=1
+- 1<=N, K<=4000
+- 1<=Q<=100000
+Subtask 2: 70 points
+- Original Constraints.
+
+-----Example:-----
+Input:
+
+1
+
+3 3
+
+1 2
+
+2 1
+
+3 2
+
+Output:
+
+0
+
+2
+
+2
+
+-----Explanation:-----
+For N=3
+
+total subsets are:
+
+{1}
+
+{2}
+
+{3}
+
+{1,2}
+
+{1,3}
+
+{2,3}
+
+{1,2,3}
+
+Now we can see that for I=1 and K=2 there is no subset in which 1 come at 2nd position so the answer is Zero for that query.
+
+For 2nd query I=2 and K=1 there are two subset i.e {2,3} and {2} in which 2 come at 1st position.
+
+Same for 3rd querry there is two subset i.e{1,3} and {2,3}.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1203 [prompt] ## Problem Restatement
+
+We are given a set of natural numbers from 1 to N and a number of queries Q. For each query, we need to determine the number of subsets in which the Ith number appears at the Kth position when the subset is sorted. The result should be given modulo \(10^9 + 7\).
+
+## Conceptual Solution
+
+1. **Understanding Subsets**: For a number I to be at the Kth position in a subset, there must be exactly \(K-1\) numbers smaller than I in the subset. This means we need to choose \(K-1\) numbers from the set \(\{1, 2, \ldots, I-1\}\).
+
+2. **Combinatorial Counting**: The number of ways to choose \(K-1\) numbers from \(I-1\) numbers is given by the binomial coefficient \(\binom{I-1}{K-1}\).
+
+3. **Remaining Elements**: After placing I at the Kth position, the remaining elements of the subset can be any subset of the numbers greater than I, i.e., from the set \(\{I+1, I+2, \ldots, N\}\). There are \(2^{N-I}\) such subsets.
+
+4. **Modulo Arithmetic**: Since the result can be large, we need to compute the result modulo \(10^9 + 7\).
+
+5. **Precomputation**: To efficiently compute binomial coefficients and powers of 2, we can precompute factorials and their modular inverses up to the maximum possible N.
+
+## Pseudocode
+
+1. Precompute factorials and their inverses modulo \(10^9 + 7\) up to the maximum N.
+2. For each test case:
+   - For each query (I, K):
+     - If \(K > I\), output 0 (impossible to have I at Kth position).
+     - Otherwise, compute the number of subsets using the formula:
+       \[
+       \text{result} = \binom{I-1}{K-1} \times 2^{N-I} \mod (10^9 + 7)
+       \]
+3. Output the result for each query.
+
+## Final Python Solution
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+```
+INFO - [Task id] 1203 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['1', '3 3', '1 2', '2 1', '3 2'] Expected output: [{'0'}, {'2'}, {'2'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1203 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1203 [prompt] Let's analyze the problem with the current solution and identify where it might be going wrong:
+
+1. **Reading Input**: The code uses `sys.stdin.read()` to read all input at once and then splits it into a list of strings. This is a valid approach, but we need to ensure that the input is being processed correctly.
+
+2. **Output**: The code appends results to a list and then writes them all at once using `sys.stdout.write()`. This should work, but we need to ensure that the results are being computed and stored correctly.
+
+3. **Function Call**: The `solve()` function is defined but not called. This is likely the reason why no output is being produced. The function needs to be called to execute the logic.
+
+4. **Logic and Computation**: The logic for computing the number of subsets seems correct based on the problem statement. However, we need to ensure that the precomputation of factorials and inverses is correct and that the binomial coefficient and power of two calculations are accurate.
+
+5. **Edge Cases**: We should ensure that edge cases, such as when \(K > I\), are handled correctly by returning 0.
+
+Let's fix the issue by ensuring the `solve()` function is called and verify the logic step-by-step.
+
+Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1203 [prompt] Let's fix the solution by ensuring the `solve()` function is called and verify the logic step-by-step. Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+INFO - [Task id] 1203 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['1', '3 3', '1 2', '2 1', '3 2'] Output: 0
+    2
+    2
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+Now, summarize your attempts as a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+- Only include the most relevant information and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - Identifying the core concepts and patterns that problem appears to test for
+    - Describing the strategies that seemed to work but did not, and vice versa
+    - Describing unexpected errors and how they were fixed
+
+Your summary should be at most a few paragraphs.
+
+INFO - [Task id] 1203 [generation text] In tackling the problem of finding subsets where a specific element appears at a given position, the core concept revolved around combinatorial counting and efficient computation using modular arithmetic. The problem required understanding how to use binomial coefficients to count combinations and leveraging precomputation for efficiency, given the constraints.
+
+### Key Concepts:
+- **Combinatorial Counting**: To determine the number of subsets where an element \(I\) is at position \(K\), we used the binomial coefficient \(\binom{I-1}{K-1}\) to count the ways to choose \(K-1\) elements from the first \(I-1\) numbers.
+- **Power of Two**: After placing \(I\) at the \(K\)th position, the remaining elements can be any subset of numbers greater than \(I\), calculated as \(2^{N-I}\).
+- **Modular Arithmetic**: Given the large potential size of results, all calculations were done modulo \(10^9 + 7\).
+
+### Strategies and Fixes:
+- **Precomputation**: Precomputing factorials and their modular inverses up to the maximum \(N\) was crucial for efficiently calculating binomial coefficients.
+- **Function Execution**: Initially, the function `solve()` was not called, leading to no output. Ensuring the function is executed was a simple but critical fix.
+- **Input Handling**: Using `sys.stdin.read()` to handle large input sizes efficiently and processing it correctly was essential for performance.
+
+This problem reinforced the importance of precomputation in combinatorial problems and the need to handle large inputs and outputs efficiently in competitive programming scenarios.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+number of set come at Kth postion.Elements of every subset should be in sorted order.
+The answer could  be very large so you have to print answer modulo 1e9+7.
+
+
+-----Input:-----
+- The first line of input cotains a single integer T denoting the number of test cases.
+- For every test case it contains two number N and Q.
+- Next Q line contains two number I and K.
+
+-----Output:-----
+For each test case print required answer.
+
+-----Constraints and Subtasks:-----
+- 1<=T<=5
+- 1<=N, K<=4000
+- 1<=Q<=1000000
+Subtask 3: 5 points
+- 1<=T<=5
+- 1<=N, K<=16
+- 1<=Q<=1000
+Subtask 1: 25 points
+- T=1
+- 1<=N, K<=4000
+- 1<=Q<=100000
+Subtask 2: 70 points
+- Original Constraints.
+
+-----Example:-----
+Input:
+
+1
+
+3 3
+
+1 2
+
+2 1
+
+3 2
+
+Output:
+
+0
+
+2
+
+2
+
+-----Explanation:-----
+For N=3
+
+total subsets are:
+
+{1}
+
+{2}
+
+{3}
+
+{1,2}
+
+{1,3}
+
+{2,3}
+
+{1,2,3}
+
+Now we can see that for I=1 and K=2 there is no subset in which 1 come at 2nd position so the answer is Zero for that query.
+
+For 2nd query I=2 and K=1 there are two subset i.e {2,3} and {2} in which 2 come at 1st position.
+
+Same for 3rd querry there is two subset i.e{1,3} and {2,3}.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1203 [prompt] ## Problem Restatement
+
+We are given a set of natural numbers from 1 to N and a number of queries Q. For each query, we need to determine the number of subsets in which the Ith number appears at the Kth position when the subset is sorted. The result should be given modulo \(10^9 + 7\).
+
+## Conceptual Solution
+
+1. **Understanding Subsets**: For a number I to be at the Kth position in a subset, there must be exactly \(K-1\) numbers smaller than I in the subset. This means we need to choose \(K-1\) numbers from the set \(\{1, 2, \ldots, I-1\}\).
+
+2. **Combinatorial Counting**: The number of ways to choose \(K-1\) numbers from \(I-1\) numbers is given by the binomial coefficient \(\binom{I-1}{K-1}\).
+
+3. **Remaining Elements**: After placing I at the Kth position, the remaining elements of the subset can be any subset of the numbers greater than I, i.e., from the set \(\{I+1, I+2, \ldots, N\}\). There are \(2^{N-I}\) such subsets.
+
+4. **Modulo Arithmetic**: Since the result can be large, we need to compute the result modulo \(10^9 + 7\).
+
+5. **Precomputation**: To efficiently compute binomial coefficients and powers of 2, we can precompute factorials and their modular inverses up to the maximum possible N.
+
+## Pseudocode
+
+1. Precompute factorials and their inverses modulo \(10^9 + 7\) up to the maximum N.
+2. For each test case:
+   - For each query (I, K):
+     - If \(K > I\), output 0 (impossible to have I at Kth position).
+     - Otherwise, compute the number of subsets using the formula:
+       \[
+       \text{result} = \binom{I-1}{K-1} \times 2^{N-I} \mod (10^9 + 7)
+       \]
+3. Output the result for each query.
+
+## Final Python Solution
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+```
+INFO - [Task id] 1203 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+    None
+
+    Tests failed:
+     Input: ['1', '3 3', '1 2', '2 1', '3 2'] Expected output: [{'0'}, {'2'}, {'2'}] # Execution output: []
+    No output detected. You might want to check the reading from / writing to standard IO.
+    A common mistake is to put the IO inside a function, but the function is not called.
+
+[/Environment Feedback]
+
+INFO - [Task id] 1203 [prompt] 
+The code doesn't pass all the tests.
+
+## Instructions
+- First, think step-by-step about why your code is wrong.
+- Then, think step-by-step about where you went wrong in your latest solution.
+
+INFO - [Task id] 1203 [prompt] Let's analyze the problem with the current solution and identify where it might be going wrong:
+
+1. **Reading Input**: The code uses `sys.stdin.read()` to read all input at once and then splits it into a list of strings. This is a valid approach, but we need to ensure that the input is being processed correctly.
+
+2. **Output**: The code appends results to a list and then writes them all at once using `sys.stdout.write()`. This should work, but we need to ensure that the results are being computed and stored correctly.
+
+3. **Function Call**: The `solve()` function is defined but not called. This is likely the reason why no output is being produced. The function needs to be called to execute the logic.
+
+4. **Logic and Computation**: The logic for computing the number of subsets seems correct based on the problem statement. However, we need to ensure that the precomputation of factorials and inverses is correct and that the binomial coefficient and power of two calculations are accurate.
+
+5. **Edge Cases**: We should ensure that edge cases, such as when \(K > I\), are handled correctly by returning 0.
+
+Let's fix the issue by ensuring the `solve()` function is called and verify the logic step-by-step.
+
+Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+INFO - [Task id] 1203 [prompt] 
+## Instructions
+Now, given your insights, try to fix the solution. 
+Output a block of correct python3 code to be executed and evaluated again. 
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters.
+
+INFO - [Task id] 1203 [prompt] Let's fix the solution by ensuring the `solve()` function is called and verify the logic step-by-step. Here's the corrected code:
+
+```python
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+```
+
+### Key Fixes:
+- **Function Call**: Added a call to `solve()` at the end of the script to ensure the function is executed.
+- **Verification**: Double-checked the logic for computing binomial coefficients and powers of two to ensure correctness.
+INFO - [Task id] 1203 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['1', '3 3', '1 2', '2 1', '3 2'] Output: 0
+    2
+    2
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1203 [prompt] 
+Below is the official solution (do exercise discretion as official solutions can also have mistakes).
+
+You will be reflecting on your attempts to solve the problem.
+This will be a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+## Instructions
+- Only include the most relevant insights and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy / official solution was obvious), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - If the official solution is insightful (e.g. better than yours in time and space complexity or more effective in breaking down the problem statement), distil the key approach of the official solution, step by step.
+    - If your approach failed the test cases, reason why the official solution works but yours does not
+
+Your reflection should be at most a few paragraphs.
+
+## Official solution
+import math
+f = math.factorial
+for u in range(eval(input())):
+ n, q = list(map(int, input().split()))
+ for j in range(q):
+  i,k = list(map(int, input().split()))
+  if k>i:
+   c=0
+   print(c)
+  else:
+   a=2**(n-i)
+   b=1
+   d=int(i-1)
+   e=1
+   h=1
+   g=1
+   #b=f(i-1)/f(k-1)/f(i-k)
+   if(k-1>i-k):
+    for z in range(i-k):
+     b=b*d
+     d=d-1
+     e=e*h
+     h=h+1
+    b=b/e
+   else:
+    for z in range(k-1):
+     b=b*d
+     d=d-1
+     e=e*g
+     g=g+1
+    b=b/e
+    
+     
+     
+   c=a*b
+   c=c%1000000007
+   print(c)
+
+INFO - [Task id] 1203 [generation text] Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights and takeaways:
+
+1. **Understanding the Problem**: The problem involves combinatorial counting, specifically determining how many subsets of a set have a particular element at a specific position when sorted. This requires understanding binomial coefficients and powers of two.
+
+2. **Precomputation for Efficiency**: My approach involved precomputing factorials and their modular inverses to efficiently calculate binomial coefficients. This is crucial for handling large inputs efficiently, especially given the constraints.
+
+3. **Handling Edge Cases**: Both my solution and the official solution correctly handle the case where \(K > I\), which is impossible and should return 0.
+
+4. **Modulo Arithmetic**: Both solutions correctly apply modulo \(10^9 + 7\) to handle large numbers, which is a common requirement in competitive programming to prevent overflow and ensure results fit within standard data types.
+
+5. **Official Solution's Simplicity**: The official solution uses Python's `math.factorial` for direct computation of binomial coefficients, which is straightforward but may not be as efficient for very large inputs due to repeated calculations. My approach of precomputing factorials and inverses is more efficient for large-scale queries.
+
+6. **Function Call**: A key oversight in my initial solution was not calling the `solve()` function, which led to no output. This highlights the importance of ensuring that the main logic is executed.
+
+In summary, the problem reinforced the importance of efficient combinatorial calculations and careful handling of input/output in competitive programming. The official solution, while straightforward, could benefit from precomputation techniques for better performance on large inputs.
+INFO - Updated entry: In tackling the problem of finding subsets where a specific element appears at a given position, the core concept revolved around combinatorial counting and efficient computation using modular arithmetic. The problem required understanding how to use binomial coefficients to count combinations an...,
+
+INFO - Metadata: {
+    "task_id": 1203
+}
+
+INFO - Updated entry: Reflecting on the problem-solving process and comparing it with the official solution, here are some key insights and takeaways:
+
+1. **Understanding the Problem**: The problem involves combinatorial counting, specifically determining how many subsets of a set have a particular element at a specif...,
+
+INFO - Metadata: {
+    "task_id": 1203
+}
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are a helpful assistant that writes a description of the given function written in the Python programming language.
+
+1) Do not mention the function name.
+2) Do not mention anything about helper functions.
+3) There might be some helper functions before the main function, but you only need to describe the main function.
+4) Try to summarize the function in no more than 6 sentences.
+5) Your response should be a single line of text.
+
+INFO - [Task id] 1203 [prompt] 
+MOD = 10**9 + 7
+
+def precompute_factorials_and_inverses(max_n):
+    factorial = [1] * (max_n + 1)
+    inverse_factorial = [1] * (max_n + 1)
+    
+    for i in range(2, max_n + 1):
+        factorial[i] = factorial[i - 1] * i % MOD
+    
+    inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+    for i in range(max_n - 1, 0, -1):
+        inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+    return factorial, inverse_factorial
+
+def binomial_coefficient(n, k, factorial, inverse_factorial):
+    if k > n or k < 0:
+        return 0
+    return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    
+    index = 0
+    T = int(data[index])
+    index += 1
+    
+    max_n = 4000
+    factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+    results = []
+    
+    for _ in range(T):
+        N = int(data[index])
+        Q = int(data[index + 1])
+        index += 2
+        
+        for _ in range(Q):
+            I = int(data[index])
+            K = int(data[index + 1])
+            index += 2
+            
+            if K > I:
+                results.append(0)
+            else:
+                binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                power_of_two = pow(2, N - I, MOD)
+                result = binom * power_of_two % MOD
+                results.append(result)
+    
+    sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+# Call the solve function to execute the solution
+solve()
+
+
+The main function is `solve`.
+INFO - [Task id] 1203 [generation text] The function reads input data for multiple test cases, where each test case consists of a number of queries. For each query, it calculates a specific result based on binomial coefficients and powers of two, using precomputed factorials and their modular inverses to efficiently compute the binomial coefficients modulo \(10^9 + 7\). It handles multiple queries per test case, checking if the conditions for valid binomial coefficient computation are met, and appends the results to a list. Finally, it outputs all the results for the queries in the required format.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1203 [prompt] 
+You are a helpful assistant that extracts important information from problems and solutions to aid in searchability and education.
+
+## Instructions
+- Read through the problem and solution carefully.
+- Reason out, step by step, in what scenarios this knowledge would be useful.
+- Focus on general patterns and situations to help connect this knowledge to new situations.
+- Then, include a list of keywords that are useful for searching this problem/solution pair.
+
+## Response format
+Respond in JSON, and follow the keys and expected format of the values strictly.
+
+The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
+the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
+
+Here is the output schema:
+```
+{"properties": {"scenarios": {"description": "In what scenarios will this knowledge be useful? Answer in a paragraph.", "title": "Scenarios", "type": "string"}, "keywords": {"description": "List of keywords that are useful for searching this problem/solution pair", "items": {"type": "string"}, "title": "Keywords", "type": "array"}}, "required": ["scenarios", "keywords"]}
+```
+
+INFO - [Task id] 1203 [prompt] 
+[Problem]
+    Given a set of  N  natural numbers 1,2,3........N and Q query.For each query you have to calculate the total number of subset in which  Ith.
+    number of set come at Kth postion.Elements of every subset should be in sorted order.
+    The answer could  be very large so you have to print answer modulo 1e9+7.
+
+
+    -----Input:-----
+    - The first line of input cotains a single integer T denoting the number of test cases.
+    - For every test case it contains two number N and Q.
+    - Next Q line contains two number I and K.
+
+    -----Output:-----
+    For each test case print required answer.
+
+    -----Constraints and Subtasks:-----
+    - 1<=T<=5
+    - 1<=N, K<=4000
+    - 1<=Q<=1000000
+    Subtask 3: 5 points
+    - 1<=T<=5
+    - 1<=N, K<=16
+    - 1<=Q<=1000
+    Subtask 1: 25 points
+    - T=1
+    - 1<=N, K<=4000
+    - 1<=Q<=100000
+    Subtask 2: 70 points
+    - Original Constraints.
+
+    -----Example:-----
+    Input:
+
+    1
+
+    3 3
+
+    1 2
+
+    2 1
+
+    3 2
+
+    Output:
+
+    0
+
+    2
+
+    2
+
+    -----Explanation:-----
+    For N=3
+
+    total subsets are:
+
+    {1}
+
+    {2}
+
+    {3}
+
+    {1,2}
+
+    {1,3}
+
+    {2,3}
+
+    {1,2,3}
+
+    Now we can see that for I=1 and K=2 there is no subset in which 1 come at 2nd position so the answer is Zero for that query.
+
+    For 2nd query I=2 and K=1 there are two subset i.e {2,3} and {2} in which 2 come at 1st position.
+
+    Same for 3rd querry there is two subset i.e{1,3} and {2,3}.
+[/Problem]
+
+[Solution]
+
+    MOD = 10**9 + 7
+
+    def precompute_factorials_and_inverses(max_n):
+        factorial = [1] * (max_n + 1)
+        inverse_factorial = [1] * (max_n + 1)
+    
+        for i in range(2, max_n + 1):
+            factorial[i] = factorial[i - 1] * i % MOD
+    
+        inverse_factorial[max_n] = pow(factorial[max_n], MOD - 2, MOD)
+        for i in range(max_n - 1, 0, -1):
+            inverse_factorial[i] = inverse_factorial[i + 1] * (i + 1) % MOD
+    
+        return factorial, inverse_factorial
+
+    def binomial_coefficient(n, k, factorial, inverse_factorial):
+        if k > n or k < 0:
+            return 0
+        return factorial[n] * inverse_factorial[k] % MOD * inverse_factorial[n - k] % MOD
+
+    def solve():
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+    
+        index = 0
+        T = int(data[index])
+        index += 1
+    
+        max_n = 4000
+        factorial, inverse_factorial = precompute_factorials_and_inverses(max_n)
+    
+        results = []
+    
+        for _ in range(T):
+            N = int(data[index])
+            Q = int(data[index + 1])
+            index += 2
+        
+            for _ in range(Q):
+                I = int(data[index])
+                K = int(data[index + 1])
+                index += 2
+            
+                if K > I:
+                    results.append(0)
+                else:
+                    binom = binomial_coefficient(I - 1, K - 1, factorial, inverse_factorial)
+                    power_of_two = pow(2, N - I, MOD)
+                    result = binom * power_of_two % MOD
+                    results.append(result)
+    
+        sys.stdout.write('\n'.join(map(str, results)) + '\n')
+
+    # Call the solve function to execute the solution
+    solve()
+
+[/Solution]
+
+INFO - [Task id] 1203 [generation text] 
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where you need to calculate the number of subsets of a set with specific constraints, such as the position of an element in the subset. This is particularly relevant in combinatorial problems where subsets need to be generated in a sorted order, and specific elements must occupy certain positions. The use of binomial coefficients and modular arithmetic is crucial in efficiently solving problems with large constraints, such as those involving large numbers of queries or large sets. This approach is applicable in competitive programming and algorithm design, where performance and correctness under constraints are critical.",
+    "keywords": [
+        "combinatorics",
+        "subsets",
+        "binomial coefficient",
+        "modular arithmetic",
+        "sorted subsets",
+        "competitive programming",
+        "algorithm design",
+        "factorials",
+        "inverse factorials",
+        "modulo 1e9+7"
+    ]
+}
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where you need to calculate the number of subsets of a set with specific constraints, such as the position of an element in the subset. This is particularly relevant in combinatorial problems where subsets need to be generated in a sorted order, and specific elements must occupy certain positions. The use of binomial coefficients and modular arithmetic is crucial in efficiently solving problems with large constraints, such as those involving large numbers of queries or large sets. This approach is applicable in competitive programming and algorithm design, where performance and correctness under constraints are critical.",
+    "keywords": [
+        "combinatorics",
+        "subsets",
+        "binomial coefficient",
+        "modular arithmetic",
+        "sorted subsets",
+        "competitive programming",
+        "algorithm design",
+        "factorials",
+        "inverse factorials",
+        "modulo 1e9+7"
+    ]
+}
+INFO - Updated entry: 
+[description for function: solve]
+The function reads input data for multiple test cases, where each test case consists of a number of queries. For each query, it calculates a specific result based on binomial coefficients and powers of two, using precomputed factorials and their modular inverses...,
+
+INFO - Metadata: {
+    "task": 1203,
+    "code": "\nMOD = 10**9 + 7\n\ndef precompute_factorials_and_inverses(max_n):\n    factorial = [1] * (max_n + 1)\n    inverse_factorial = [1] * (max_n + 1)\n    \n    for i in range(2, max_n + 1):\n        factorial[i] = factorial[i - 1] * i % MOD\n    \n    inverse_factori...
+

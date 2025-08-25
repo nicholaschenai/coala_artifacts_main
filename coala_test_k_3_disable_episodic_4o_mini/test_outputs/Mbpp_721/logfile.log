@@ -1,0 +1,671 @@
+INFO - [test iter]: 281/378
+
+INFO - The task prompt is Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Given a square matrix of size N*N given as a list of lists, where e...
+
+INFO - Attempting task_id Mbpp/721
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] Mbpp/721 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Given a square matrix of size N*N given as a list of lists, where each cell is associated with a specific cost. A path is defined as a specific sequence of cells that starts from the top-left cell move only right or down and ends on bottom right cell. We want to find a path with the maximum average over all existing paths. Average is computed as total cost divided by the number of cells visited in the path.
+assert maxAverageOfPath([[1, 2, 3], [6, 5, 4], [7, 3, 9]]) == 5.2
+"""
+
+[END PROBLEM]
+
+INFO - [Task id] Mbpp/721 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] Mbpp/721 [generation text] 1. **Restate the problem in plain English:**
+   We need to find a path through a square matrix that starts at the top-left corner and ends at the bottom-right corner. The path can only move right or down. The goal is to calculate the maximum average cost of the cells visited along this path.
+
+2. **Conceptualize a solution first in plain English:**
+   To solve this problem, we can use dynamic programming. We will create a 2D list (or matrix) to store the maximum total cost and the number of cells visited to reach each cell in the matrix. Starting from the top-left corner, we will iterate through the matrix, updating our 2D list with the maximum costs and the corresponding number of cells for each possible path. Finally, we will calculate the average for the path that ends at the bottom-right corner and return that value.
+
+3. **Write a pseudocode solution:**
+   ```
+   function maxAverageOfPath(matrix):
+       get the size of the matrix N
+       create a 2D list dp to store tuples (total_cost, num_cells)
+       initialize dp[0][0] with (matrix[0][0], 1)
+       
+       for each cell in the matrix:
+           if moving down is possible:
+               update dp[i][j] with the maximum cost and number of cells
+           if moving right is possible:
+               update dp[i][j] with the maximum cost and number of cells
+       
+       get the total cost and number of cells from dp[N-1][N-1]
+       return total_cost / num_cells
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+```python
+def maxAverageOfPath(matrix):
+    N = len(matrix)  # Get the size of the matrix
+    dp = [[(0, 0) for _ in range(N)] for _ in range(N)]  # Create a 2D list for (total_cost, num_cells)
+    
+    dp[0][0] = (matrix[0][0], 1)  # Initialize the starting point
+
+    # Fill the dp table
+    for i in range(N):
+        for j in range(N):
+            if i == 0 and j == 0:
+                continue  # Skip the starting cell
+            current_cost = matrix[i][j]
+            max_cost, num_cells = 0, 0
+            
+            # Check from the top cell
+            if i > 0:
+                top_cost, top_cells = dp[i-1][j]
+                if top_cost > max_cost:
+                    max_cost, num_cells = top_cost, top_cells
+            
+            # Check from the left cell
+            if j > 0:
+                left_cost, left_cells = dp[i][j-1]
+                if left_cost > max_cost:
+                    max_cost, num_cells = left_cost, left_cells
+            
+            # Update the dp table with the maximum cost and number of cells
+            dp[i][j] = (max_cost + current_cost, num_cells + 1)
+
+    # Get the total cost and number of cells from the bottom-right corner
+    total_cost, num_cells = dp[N-1][N-1]
+    return total_cost / num_cells  # Return the average
+```
+INFO - [35m Rollout attempt 1/4[0m
+INFO - [33m Retrieving 3 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.3552):
+Chapter: Dynamic programming
+Section: Paths in a grid
+Part: 1/1
+\section{Paths in a grid}
+
+Our next problem is to find a path
+from the upper-left corner to
+the lower-right corner
+of an $n \times n$ grid, such that
+we only move down and right.
+Each square contains a positive integer,
+and the path ...
+
+
+INFO - Retrieved (score=0.4522):
+Title: Dynamic Programming on Broken Profile. Problem "Parquet"
+Part: 1/1
+# Dynamic Programming on Broken Profile. Problem "Parquet"
+
+Common problems solved using DP on broken profile include:
+
+- finding number of ways to fully fill an area (e.g. chessboard/grid) with some figures (e.g. dominoes)...
+
+
+INFO - Retrieved (score=0.4534):
+Title: Finding the largest zero submatrix
+Part: 1/1
+# Finding the largest zero submatrix
+
+You are given a matrix with `n` rows and `m` columns. Find the largest submatrix consisting of only zeros (a submatrix is a rectangular area of the matrix).
+
+## Algorithm
+
+Elements of the matrix will be `a[i...
+
+
+INFO - [33m Retrieving 3 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.4284):
+The official solution effectively utilizes dynamic programming to solve the problem of minimizing travel costs based on the given days and ticket prices. Here are the key insights and steps from the official solution:
+
+1. **Initialization**: The solution initializes a `dp` array where `dp[i]` rep...
+
+
+INFO - Retrieved (score=0.4351):
+The official solution employs a dynamic programming approach that efficiently calculates the maximum sum of pizza slices while considering the constraints of the problem. Here are the key insights and steps from the official solution:
+
+1. **Initialization**: Two lists, `a` and `b`, are initialize...
+
+
+INFO - Retrieved (score=0.4353):
+In reflecting on the attempts to solve the problem, it is clear that the official solution takes a more structured and efficient approach to the problem than my previous attempts. Here are the key insights and differences:
+
+1. **Graph Representation**: The official solution uses an adjacency list...
+
+
+INFO - [33m Retrieving 3 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.3783):
+In this problem, the goal was to determine the number of valid paths Ryan can take through a network of cities over a specified number of seconds while satisfying certain conditions. The approach involved using dynamic programming to track the number of ways to reach each city at each time step.
+...
+
+
+INFO - Retrieved (score=0.3882):
+The problem involved maximizing the sum of pizza slice sizes taken from a circular array, where the picking order was constrained by the actions of two friends. The key insight was to use dynamic programming to handle the circular nature of the problem by considering two cases: one where the firs...
+
+
+INFO - Retrieved (score=0.3924):
+In this task, I was required to find the maximum profit from stock prices given over a series of days, allowing for at most two transactions. The core concept involved breaking down the problem into two parts: calculating the maximum profit from the first transaction and then the second transacti...
+
+
+INFO - [33m Retrieving 1 entries for db: skill 
+ [0m
+INFO - Retrieved (score=0.6698):
+
+[description for function: count_col_triang]
+This function calculates the number of non-collinear triangles that can be formed from a set of points, categorized by their colors. It first organizes the points by color and then counts the triangles for each color by checking combinations of three ...
+
+
+INFO - [33m Retrieving 3 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.4670):
+
+[description]
+The function calculates the maximum number of jumps that can be made in an array, where each jump can only be made to a lower value within a specified distance. It uses depth-first search (DFS) to explore all possible jumps from each index, while employing memoization to store prev...
+
+
+INFO - Retrieved (score=0.4716):
+
+[description]
+This function calculates the maximum sum of pizza slices that can be taken, given a list of slice values. It determines the number of slices that can be selected based on the total number of slices available. The function evaluates two scenarios: one where the first slice is includ...
+
+
+INFO - Retrieved (score=0.4718):
+
+[description]
+This function calculates the minimum cost of travel tickets over a year based on specific travel days and the costs of different ticket options. It initializes a dynamic programming array to store the minimum costs for each day, starting with zero cost for day zero. For each day of...
+
+
+INFO - Retrieved (score=0.3552): 
+[Textbook Reference Material]:
+    Chapter: Dynamic programming
+    Section: Paths in a grid
+    Part: 1/1
+    \section{Paths in a grid}
+
+    Our next problem is to find a path
+    from the upper-left corner to
+    the lower-right corner
+    of an $n \times n$ grid, such that
+    we only move do...
+INFO - Retrieved (score=0.3783): 
+[Summary]:
+    In this problem, the goal was to determine the number of valid paths Ryan can take through a network of cities over a specified number of seconds while satisfying certain conditions. The approach involved using dynamic programming to track the number of ways to reach each city at ...
+INFO - Retrieved (score=0.3882): 
+[Summary]:
+    The problem involved maximizing the sum of pizza slice sizes taken from a circular array, where the picking order was constrained by the actions of two friends. The key insight was to use dynamic programming to handle the circular nature of the problem by considering two cases: on...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] Mbpp/721 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Given a square matrix of size N*N given as a list of lists, where each cell is associated with a specific cost. A path is defined as a specific sequence of cells that starts from the top-left cell move only right or down and ends on bottom right cell. We want to find a path with the maximum average over all existing paths. Average is computed as total cost divided by the number of cells visited in the path.
+assert maxAverageOfPath([[1, 2, 3], [6, 5, 4], [7, 3, 9]]) == 5.2
+"""
+
+[END PROBLEM]
+
+INFO - [Task id] Mbpp/721 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] Mbpp/721 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Textbook Reference Material]:
+    Chapter: Dynamic programming
+    Section: Paths in a grid
+    Part: 1/1
+    \section{Paths in a grid}
+
+    Our next problem is to find a path
+    from the upper-left corner to
+    the lower-right corner
+    of an $n \times n$ grid, such that
+    we only move down and right.
+    Each square contains a positive integer,
+    and the path should be constructed so
+    that the sum of the values along
+    the path is as large as possible.
+
+    The following picture shows an optimal
+    path in a grid:
+    \begin{center}
+    \begin{tikzpicture}[scale=.65]
+      \begin{scope}
+        \fill [color=lightgray] (0, 9) rectangle (1, 8);
+        \fill [color=lightgray] (0, 8) rectangle (1, 7);
+        \fill [color=lightgray] (1, 8) rectangle (2, 7);
+        \fill [color=lightgray] (1, 7) rectangle (2, 6);
+        \fill [color=lightgray] (2, 7) rectangle (3, 6);
+        \fill [color=lightgray] (3, 7) rectangle (4, 6);
+        \fill [color=lightgray] (4, 7) rectangle (5, 6);
+        \fill [color=lightgray] (4, 6) rectangle (5, 5);
+        \fill [color=lightgray] (4, 5) rectangle (5, 4);
+        \draw (0, 4) grid (5, 9);
+        \node at (0.5,8.5) {3};
+        \node at (1.5,8.5) {7};
+        \node at (2.5,8.5) {9};
+        \node at (3.5,8.5) {2};
+        \node at (4.5,8.5) {7};
+        \node at (0.5,7.5) {9};
+        \node at (1.5,7.5) {8};
+        \node at (2.5,7.5) {3};
+        \node at (3.5,7.5) {5};
+        \node at (4.5,7.5) {5};
+        \node at (0.5,6.5) {1};
+        \node at (1.5,6.5) {7};
+        \node at (2.5,6.5) {9};
+        \node at (3.5,6.5) {8};
+        \node at (4.5,6.5) {5};
+        \node at (0.5,5.5) {3};
+        \node at (1.5,5.5) {8};
+        \node at (2.5,5.5) {6};
+        \node at (3.5,5.5) {4};
+        \node at (4.5,5.5) {10};
+        \node at (0.5,4.5) {6};
+        \node at (1.5,4.5) {3};
+        \node at (2.5,4.5) {9};
+        \node at (3.5,4.5) {7};
+        \node at (4.5,4.5) {8};
+      \end{scope}
+    \end{tikzpicture}
+    \end{center}
+    The sum of the values on the path is 67,
+    and this is the largest possible sum on a path
+    from the
+    upper-left corner to the lower-right corner.
+
+    Assume that the rows and columns of the
+    grid are numbered from 1 to $n$,
+    and $\texttt{value}[y][x]$ equals the value
+    of square $(y,x)$.
+    Let $\texttt{sum}(y,x)$ denote the maximum
+    sum on a path from the upper-left corner
+    to square $(y,x)$.
+    Now $\texttt{sum}(n,n)$ tells us
+    the maximum sum
+    from the upper-left corner to
+    the lower-right corner.
+    For example, in the above grid,
+    $\texttt{sum}(5,5)=67$.
+
+    We can recursively calculate the sums
+    as follows:
+    \[ \texttt{sum}(y,x) = \max(\texttt{sum}(y,x-1),\texttt{sum}(y-1,x))+\texttt{value}[y][x]\]
+
+
+    The recursive formula is based on the observation
+    that a path that ends at square $(y,x)$
+    can come either from square $(y,x-1)$
+    or square $(y-1,x)$:
+    \begin{center}
+    \begin{tikzpicture}[scale=.65]
+      \begin{scope}
+        \fill [color=lightgray] (3, 7) rectangle (4, 6);
+        \draw (0, 4) grid (5, 9);
+    
+        \node at (2.5,6.5) {$\rightarrow$};
+        \node at (3.5,7.5) {$\downarrow$};
+    
+      \end{scope}
+    \end{tikzpicture}
+    \end{center}
+
+    Thus, we select the direction that maximizes
+    the sum.
+    We assume that $\texttt{sum}(y,x)=0$
+    if $y=0$ or $x=0$ (because no such paths exist),
+    so the recursive formula also works when $y=1$ or $x=1$.
+
+    Since the function \texttt{sum} has two parameters,
+    the dynamic programming array also has two dimensions.
+    For example, we can use an array
+    \begin{lstlisting}
+    int sum[N][N];
+    \end{lstlisting}
+    and calculate the sums as follows:
+    \begin{lstlisting}
+    for (int y = 1; y <= n; y++) {
+        for (int x = 1; x <= n; x++) {
+            sum[y][x] = max(sum[y][x-1],sum[y-1][x])+value[y][x];
+        }
+    }
+    \end{lstlisting}
+    The time complexity of the algorithm is $O(n^2)$.
+[/Textbook Reference Material]
+
+
+[Summary]:
+    In this problem, the goal was to determine the number of valid paths Ryan can take through a network of cities over a specified number of seconds while satisfying certain conditions. The approach involved using dynamic programming to track the number of ways to reach each city at each time step.
+
+    ### Key Concepts:
+    1. **Dynamic Programming Table:** A 2D table `dp[time][city]` was used to store the number of ways to be in a specific city at a specific time. The table was initialized with `dp[0][1] = 1`, indicating Ryan starts in city 1 at time 0.
+
+    2. **State Transition:** For each time step, the algorithm updated the counts for adjacent cities and the same city, allowing Ryan to either move or stay.
+
+    3. **Condition Checking:** After populating the DP table, the conditions were checked to ensure Ryan was in the required cities at the specified times. The product of valid paths was calculated based on the counts in the DP table.
+
+    ### Issues Encountered:
+    - The initial implementation failed to correctly account for the conditions, leading to incorrect outputs. Specifically, the multiplication of valid paths did not consider the simultaneous satisfaction of multiple conditions.
+    - The output format was also incorrect, as it returned lists instead of integers.
+
+    ### Lessons Learned:
+    - It is crucial to ensure that the conditions are checked in a way that accounts for all possible paths leading to those conditions.
+    - The importance of validating the bounds of time when checking conditions was highlighted, as conditions outside the range of K should be handled appropriately.
+    - Future implementations should include thorough testing against edge cases to ensure robustness.
+
+    ### Code Snippet:
+    ```python
+    def count_trips(N, M, K, roads, Q, conditions):
+        MOD = 10**9 + 7
+        adjacency_list = [[] for _ in range(N + 1)]
+        for u, v in roads:
+            adjacency_list[u].append(v)
+            adjacency_list[v].append(u)
+
+        dp = [[0] * (N + 1) for _ in range(K + 1)]
+        dp[0][1] = 1  # Starting at city 1 at time 0
+
+        for time in range(K):
+            for city in range(1, N + 1):
+                if dp[time][city] > 0:
+                    for neighbor in adjacency_list[city]:
+                        dp[time + 1][neighbor] = (dp[time + 1][neighbor] + dp[time][city]) % MOD
+                    dp[time + 1][city] = (dp[time + 1][city] + dp[time][city]) % MOD  # Stay in the same city
+
+        valid_paths = 1
+        for a_i, b_i in conditions:
+            if b_i <= K:
+                valid_paths = (valid_paths * dp[b_i][a_i]) % MOD
+
+        return valid_paths
+    ```
+
+    This summary encapsulates the core concepts, strategies, and lessons learned from the problem-solving process, providing a reference for future similar challenges.
+[/Summary]
+
+
+[Summary]:
+    The problem involved maximizing the sum of pizza slice sizes taken from a circular array, where the picking order was constrained by the actions of two friends. The key insight was to use dynamic programming to handle the circular nature of the problem by considering two cases: one where the first slice is included and the last slice is excluded, and another where the first slice is excluded and the last slice is included.
+
+    The solution utilized a helper function to compute the maximum sum of slices that could be taken given a specific range and the number of slices allowed. The dynamic programming table was structured to keep track of the maximum sums possible for each number of slices taken.
+
+    The final implementation successfully passed the provided test case, demonstrating that the approach was effective. The core concepts involved were dynamic programming and handling circular arrays, which are common in optimization problems. The solution was straightforward and did not encounter unexpected errors, indicating a solid understanding of the problem requirements and constraints. 
+
+    Key code snippet:
+    ```python
+    def calculateMaxSum(slices, start, end, k):
+        dp = [[0] * (end - start + 1) for _ in range(k + 1)]
+        for i in range(start, end + 1):
+            for j in range(min(i - start + 1, k), 0, -1):
+                dp[j][i - start] = max(dp[j][i - start - 1], 
+                                       dp[j - 1][i - start - 2] + slices[i])
+        return dp[k][end - start]
+    ```
+[/Summary]
+
+
+INFO - [Task id] Mbpp/721 [generation text] 1. **Restate the problem in plain English:**
+   The task is to find the maximum average cost of a path from the top-left corner to the bottom-right corner of a square matrix. The path can only move right or down, and the average is calculated by dividing the total cost of the path by the number of cells visited.
+
+2. **Conceptualize a solution first in plain English:**
+   To solve this problem, we can use dynamic programming. We will create a 2D array to store the maximum sum of costs for each cell in the matrix. Starting from the top-left corner, we will fill this array by considering the maximum sum that can be obtained from the cell above or the cell to the left. Once we reach the bottom-right corner, we can calculate the average by dividing the maximum sum by the number of cells in the path.
+
+3. **Write a pseudocode solution:**
+   ```
+   function maxAverageOfPath(matrix):
+       n = length of matrix
+       create a 2D array dp of size n*n initialized to 0
+       
+       dp[0][0] = matrix[0][0]  // starting point
+       
+       // Fill the first row
+       for j from 1 to n-1:
+           dp[0][j] = dp[0][j-1] + matrix[0][j]
+       
+       // Fill the first column
+       for i from 1 to n-1:
+           dp[i][0] = dp[i-1][0] + matrix[i][0]
+       
+       // Fill the rest of the dp array
+       for i from 1 to n-1:
+           for j from 1 to n-1:
+               dp[i][j] = max(dp[i-1][j], dp[i][j-1]) + matrix[i][j]
+       
+       // The maximum sum is in dp[n-1][n-1]
+       max_sum = dp[n-1][n-1]
+       number_of_cells = n + n - 1  // total cells in the path
+       
+       return max_sum / number_of_cells
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+```python
+def maxAverageOfPath(matrix):
+    n = len(matrix)  # Get the size of the matrix
+    dp = [[0] * n for _ in range(n)]  # Create a 2D array for dynamic programming
+
+    dp[0][0] = matrix[0][0]  # Starting point
+
+    # Fill the first row
+    for j in range(1, n):
+        dp[0][j] = dp[0][j - 1] + matrix[0][j]
+
+    # Fill the first column
+    for i in range(1, n):
+        dp[i][0] = dp[i - 1][0] + matrix[i][0]
+
+    # Fill the rest of the dp array
+    for i in range(1, n):
+        for j in range(1, n):
+            dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) + matrix[i][j]
+
+    # The maximum sum is in dp[n-1][n-1]
+    max_sum = dp[n - 1][n - 1]
+    number_of_cells = n + n - 1  # Total cells in the path
+
+    return max_sum / number_of_cells  # Return the average
+```
+INFO - program_code:
+ 
+def maxAverageOfPath(matrix):
+    n = len(matrix)  # Get the size of the matrix
+    dp = [[0] * n for _ in range(n)]  # Create a 2D array for dynamic programming
+
+    dp[0][0] = matrix[0][0]  # Starting point
+
+    # Fill the first row
+    for j in range(1, n):
+        dp[0][j] = dp[0][j - 1] + matrix[0][j]
+
+    # Fill the first column
+    for i in range(1, n):
+        dp[i][0] = dp[i - 1][0] + matrix[i][0]
+
+    # Fill the rest of the dp array
+    for i in range(1, n):
+        for j in range(1, n):
+            dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) + matrix[i][j]
+
+    # The maximum sum is in dp[n-1][n-1]
+    max_sum = dp[n - 1][n - 1]
+    number_of_cells = n + n - 1  # Total cells in the path
+
+    return max_sum / number_of_cells  # Return the average
+
+
+INFO - program_name:
+ maxAverageOfPath
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ 1. **Restate the problem in plain English:**
+   The task is to find the maximum average cost of a path from the top-left corner to the bottom-right corner of a square matrix. The path can only move right or down, and the average is calculated by dividing the total cost of the path by the number of cells visited.
+
+2. **Conceptualize a solution first in plain English:**
+   To solve this problem, we can use dynamic programming. We will create a 2D array to store the maximum sum of costs for each cell in the matrix. Starting from the top-left corner, we will fill this array by considering the maximum sum that can be obtained from the cell above or the cell to the left. Once we reach the bottom-right corner, we can calculate the average by dividing the maximum sum by the number of cells in the path.
+
+3. **Write a pseudocode solution:**
+   ```
+   function maxAverageOfPath(matrix):
+       n = length of matrix
+       create a 2D array dp of size n*n initialized to 0
+       
+       dp[0][0] = matrix[0][0]  // starting point
+       
+       // Fill the first row
+       for j from 1 to n-1:
+           dp[0][j] = dp[0][j-1] + matrix[0][j]
+       
+       // Fill the first column
+       for i from 1 to n-1:
+           dp[i][0] = dp[i-1][0] + matrix[i][0]
+       
+       // Fill the rest of the dp array
+       for i from 1 to n-1:
+           for j from 1 to n-1:
+               dp[i][j] = max(dp[i-1][j], dp[i][j-1]) + matrix[i][j]
+       
+       // The maximum sum is in dp[n-1][n-1]
+       max_sum = dp[n-1][n-1]
+       number_of_cells = n + n - 1  // total cells in the path
+       
+       return max_sum / number_of_cells
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+```python
+def maxAverageOfPath(matrix):
+    n = len(matrix)  # Get the size of the matrix
+    dp = [[0] * n for _ in range(n)]  # Create a 2D array for dynamic programming
+
+    dp[0][0] = matrix[0][0]  # Starting point
+
+    # Fill the first row
+    for j in range(1, n):
+        dp[0][j] = dp[0][j - 1] + matrix[0][j]
+
+    # Fill the first column
+    for i in range(1, n):
+        dp[i][0] = dp[i - 1][0] + matrix[i][0]
+
+    # Fill the rest of the dp array
+    for i in range(1, n):
+        for j in range(1, n):
+            dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) + matrix[i][j]
+
+    # The maximum sum is in dp[n-1][n-1]
+    max_sum = dp[n - 1][n - 1]
+    number_of_cells = n + n - 1  # Total cells in the path
+
+    return max_sum / number_of_cells  # Return the average
+```
+
+INFO - no_parent:
+ True
+
+INFO - full code to be executed: 
+ 
+def maxAverageOfPath(matrix):
+    n = len(matrix)  # Get the size of the matrix
+    dp = [[0] * n for _ in range(n)]  # Create a 2D array for dynamic programming
+
+    dp[0][0] = matrix[0][0]  # Starting point
+
+    # Fill the first row
+    for j in range(1, n):
+        dp[0][j] = dp[0][j - 1] + matrix[0][j]
+
+    # Fill the first column
+    for i in range(1, n):
+        dp[i][0] = dp[i - 1][0] + matrix[i][0]
+
+    # Fill the rest of the dp array
+    for i in range(1, n):
+        for j in range(1, n):
+            dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) + matrix[i][j]
+
+    # The maximum sum is in dp[n-1][n-1]
+    max_sum = dp[n - 1][n - 1]
+    number_of_cells = n + n - 1  # Total cells in the path
+
+    return max_sum / number_of_cells  # Return the average
+
+
+INFO - obs: Note: Tests are automatically generated and can be wrong.
+
+Tests passed:
+assert maxAverageOfPath([[1, 2, 3], [6, 5, 4], [7, 3, 9]]) == 5.2
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': (True,)}
+INFO - acc:263/281 = 93.59%

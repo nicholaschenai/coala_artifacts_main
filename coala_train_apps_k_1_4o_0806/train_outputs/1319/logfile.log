@@ -1,0 +1,1210 @@
+INFO - DB skill doc count: 1
+
+INFO - DB non_func doc count: 68
+
+INFO - DB semantic doc count: 429
+
+INFO - DB summaries doc count: 84
+
+INFO - DB reflections doc count: 84
+
+INFO - DB episodic doc count: 160
+
+INFO - [train iter]: 84/100 
+
+INFO - The task prompt is A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was cor...
+
+INFO - Attempting task_id 1319
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [generation text] ## Problem Restatement
+
+We have a sequence of events where citizens declare their wealth and the king visits the court. Each citizen's wealth is a unique positive integer, and a king's visit is denoted by `-1`. When the king visits, the richest citizen who has appeared so far and is still alive is beheaded. We need to determine the wealth of the citizen who is beheaded at each of the king's visits.
+
+## Conceptual Solution
+
+1. **Data Structure Choice**: Use a max-heap to efficiently track the richest citizen who is still alive. A max-heap allows us to quickly retrieve and remove the largest element.
+
+2. **Processing Events**:
+   - For each citizen's wealth declaration, add the wealth to the max-heap.
+   - For each king's visit (`-1`), remove the richest citizen from the heap and record their wealth as they are beheaded.
+
+3. **Output**: For each king's visit, output the wealth of the beheaded citizen.
+
+## Pseudocode
+
+1. Initialize an empty max-heap.
+2. For each event in the sequence:
+   - If the event is a positive integer (citizen's wealth), add it to the max-heap.
+   - If the event is `-1` (king's visit):
+     - Remove the maximum element from the heap (the richest citizen still alive).
+     - Record this wealth as the beheaded citizen's wealth.
+3. Print the recorded wealths for each king's visit.
+
+## Python Solution
+
+```python
+import sys
+import heapq
+
+def process_events():
+    input = sys.stdin.read
+    data = input().split()
+    
+    N = int(data[0])
+    M = int(data[1])
+    
+    events = data[2:]
+    
+    # Max-heap to store the wealth of citizens
+    max_heap = []
+    
+    # List to store the results of each king's visit
+    results = []
+    
+    for event in events:
+        if event == '-1':
+            # King visits, pop the richest citizen
+            richest = -heapq.heappop(max_heap)
+            results.append(richest)
+        else:
+            # Citizen declares wealth, add to heap
+            wealth = int(event)
+            heapq.heappush(max_heap, -wealth)
+    
+    # Output the results for each king's visit
+    for result in results:
+        print(result)
+
+```
+
+### Explanation of the Code
+
+- We use a max-heap to keep track of the richest citizens. Python's `heapq` module provides a min-heap, so we store negative values to simulate a max-heap.
+- We read all input data at once and split it into a list of strings.
+- We iterate over each event:
+  - If it's a positive integer, we convert it to a negative and push it onto the heap.
+  - If it's `-1`, we pop the largest (most negative) value from the heap, convert it back to positive, and record it as the wealth of the beheaded citizen.
+- Finally, we print the wealth of the beheaded citizen for each king's visit.
+INFO - [35m Rollout attempt 1/4[0m
+INFO - [33m Retrieving 1 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.4464):
+
+[Task]:
+    There is an infinitely long street that runs west to east, which we consider as a number line.
+    There are N roadworks scheduled on this street.
+    The i-th roadwork blocks the point at coordinate X_i from time S_i - 0.5 to time T_i - 0.5.
+    Q people are standing at coordinate 0...
+
+
+INFO - [33m Retrieving 1 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.5126):
+Title: Continued fractions
+Part: 11/12
+```
+    === "Python"
+        ```py
+        # returns [ah, ph, qh] such that points r[i]=(ph[i], qh[i]) constitute upper convex hull
+        # of lattice points on 0 <= x <= N and 0 <= y <= r * x, where r = [a0; a1, a2, ...]
+        # and there are ah[i]-1 in...
+
+
+INFO - [33m Retrieving 1 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.4486):
+### Reflection on the Problem and Solution
+
+The problem involves simulating the movement of people along a number line with roadworks blocking certain points at specific times. The challenge is to determine how far each person can walk before encountering a blocked point or if they walk indefinit...
+
+
+INFO - [33m Retrieving 1 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.4021):
+In this problem, the task was to determine the winner of a billiards game based on the maximum lead achieved by either player at any point during the game. The solution involved reading multiple rounds of scores, calculating cumulative scores, and tracking the maximum lead and the player who achi...
+
+
+INFO - [33m Retrieving 1 entries for db: skill 
+ [0m
+INFO - Retrieved (score=0.7447):
+
+[description for function: count_col_triang]
+The function takes a list of tuples, where each tuple contains a point and its associated color, and calculates the total number of points, the number of distinct colors, and the total number of non-collinear triangles that can be formed within each c...
+
+
+INFO - [33m Retrieving 1 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.4895):
+
+[description for function: main]
+The function reads input from standard input, which includes the number of test cases and for each test case, the number of days and three integers. It then processes each test case to calculate the number of times an audience can be reached within the given numb...
+
+
+INFO - Retrieved (score=0.4021): 
+[Summary]:
+    In this problem, the task was to determine the winner of a billiards game based on the maximum lead achieved by either player at any point during the game. The solution involved reading multiple rounds of scores, calculating cumulative scores, and tracking the maximum lead and the...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Summary]:
+    In this problem, the task was to determine the winner of a billiards game based on the maximum lead achieved by either player at any point during the game. The solution involved reading multiple rounds of scores, calculating cumulative scores, and tracking the maximum lead and the player who achieved it.
+
+    ### Key Concepts:
+    - **Cumulative Scores:** Continuously updating the scores for each player after every round.
+    - **Lead Calculation:** Determining the lead by calculating the absolute difference between the cumulative scores of the two players.
+    - **Tracking Maximum Lead:** Keeping track of the maximum lead encountered and the player who had this lead.
+
+    ### Strategies and Fixes:
+    - **Input Handling:** Initially, the function was not called, which led to no output. The fix was to ensure the function is called after its definition to process the input and generate the output.
+    - **Standard Input/Output:** Using `sys.stdin.read()` to handle input and `print()` for output was effective for competitive programming environments.
+
+    ### Code Snippet:
+    ```python
+    def find_winner_and_lead():
+        import sys
+        input = sys.stdin.read
+        data = input().splitlines()
+    
+        N = int(data[0])
+        player1_cumulative_score = 0
+        player2_cumulative_score = 0
+        max_lead = 0
+        winner = 0
+    
+        for i in range(1, N + 1):
+            Si, Ti = map(int, data[i].split())
+            player1_cumulative_score += Si
+            player2_cumulative_score += Ti
+            current_lead = abs(player1_cumulative_score - player2_cumulative_score)
+        
+            if player1_cumulative_score > player2_cumulative_score:
+                current_leader = 1
+            else:
+                current_leader = 2
+        
+            if current_lead > max_lead:
+                max_lead = current_lead
+                winner = current_leader
+    
+        print(winner, max_lead)
+
+    find_winner_and_lead()
+    ```
+
+    This experience reinforced the importance of ensuring that functions are executed in scripts that rely on standard input/output, especially in competitive programming contexts.
+[/Summary]
+
+
+INFO - [Task id] 1319 [generation text] 1. **Restate the problem in plain English:**
+
+   We have a sequence of events where citizens declare their wealth and the king visits the court. Each citizen's wealth is a unique positive integer, and a king's visit is denoted by `-1`. When the king visits, the richest citizen who has appeared so far and is still alive is beheaded. We need to output the wealth of the citizen who is beheaded at each of the king's visits.
+
+2. **Conceptualize a solution in plain English:**
+
+   We will maintain a list of citizens' wealth as they appear. When a king's visit occurs, we need to find the richest citizen who is still alive (i.e., not yet beheaded). We can use a max-heap to efficiently track the richest citizen. Each time a citizen appears, we add their wealth to the heap. When the king visits, we extract the maximum wealth from the heap, which represents the richest citizen to be beheaded.
+
+3. **Write a pseudocode solution:**
+
+   ```
+   Initialize an empty max-heap
+   Initialize an empty set to track beheaded citizens
+
+   For each event in the sequence:
+       If the event is a positive integer (citizen's wealth):
+           Add the wealth to the max-heap
+       Else if the event is -1 (king's visit):
+           While the top of the heap is in the set of beheaded citizens:
+               Remove the top of the heap
+           Extract the maximum wealth from the heap
+           Add this wealth to the set of beheaded citizens
+           Output this wealth
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+
+```python
+def process_events():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+    
+    # Read the first line to get N and M
+    N, M = map(int, data[0].split())
+    
+    # Initialize a max-heap and a set to track beheaded citizens
+    max_heap = []
+    beheaded = set()
+    
+    # Function to push into max-heap (negate value for max-heap behavior)
+    def push_heap(heap, value):
+        heap.append(-value)
+        heap.sort()
+    
+    # Function to pop from max-heap (negate value back)
+    def pop_heap(heap):
+        return -heap.pop(0)
+    
+    # Process each event
+    for event in data[1:]:
+        event = int(event)
+        if event > 0:
+            # Citizen's wealth, add to heap
+            push_heap(max_heap, event)
+        elif event == -1:
+            # King's visit, find the richest alive
+            while max_heap and -max_heap[0] in beheaded:
+                pop_heap(max_heap)
+            richest = pop_heap(max_heap)
+            beheaded.add(richest)
+            print(richest)
+
+process_events()
+```
+
+This solution uses a max-heap to efficiently track the richest citizen who is still alive. The heap operations are managed by negating values to simulate max-heap behavior using Python's list sorting.
+INFO - program_code:
+ 
+def process_events():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+    
+    # Read the first line to get N and M
+    N, M = map(int, data[0].split())
+    
+    # Initialize a max-heap and a set to track beheaded citizens
+    max_heap = []
+    beheaded = set()
+    
+    # Function to push into max-heap (negate value for max-heap behavior)
+    def push_heap(heap, value):
+        heap.append(-value)
+        heap.sort()
+    
+    # Function to pop from max-heap (negate value back)
+    def pop_heap(heap):
+        return -heap.pop(0)
+    
+    # Process each event
+    for event in data[1:]:
+        event = int(event)
+        if event > 0:
+            # Citizen's wealth, add to heap
+            push_heap(max_heap, event)
+        elif event == -1:
+            # King's visit, find the richest alive
+            while max_heap and -max_heap[0] in beheaded:
+                pop_heap(max_heap)
+            richest = pop_heap(max_heap)
+            beheaded.add(richest)
+            print(richest)
+
+process_events()
+
+
+INFO - program_name:
+ process_events
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ 1. **Restate the problem in plain English:**
+
+   We have a sequence of events where citizens declare their wealth and the king visits the court. Each citizen's wealth is a unique positive integer, and a king's visit is denoted by `-1`. When the king visits, the richest citizen who has appeared so far and is still alive is beheaded. We need to output the wealth of the citizen who is beheaded at each of the king's visits.
+
+2. **Conceptualize a solution in plain English:**
+
+   We will maintain a list of citizens' wealth as they appear. When a king's visit occurs, we need to find the richest citizen who is still alive (i.e., not yet beheaded). We can use a max-heap to efficiently track the richest citizen. Each time a citizen appears, we add their wealth to the heap. When the king visits, we extract the maximum wealth from the heap, which represents the richest citizen to be beheaded.
+
+3. **Write a pseudocode solution:**
+
+   ```
+   Initialize an empty max-heap
+   Initialize an empty set to track beheaded citizens
+
+   For each event in the sequence:
+       If the event is a positive integer (citizen's wealth):
+           Add the wealth to the max-heap
+       Else if the event is -1 (king's visit):
+           While the top of the heap is in the set of beheaded citizens:
+               Remove the top of the heap
+           Extract the maximum wealth from the heap
+           Add this wealth to the set of beheaded citizens
+           Output this wealth
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+
+```python
+def process_events():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+    
+    # Read the first line to get N and M
+    N, M = map(int, data[0].split())
+    
+    # Initialize a max-heap and a set to track beheaded citizens
+    max_heap = []
+    beheaded = set()
+    
+    # Function to push into max-heap (negate value for max-heap behavior)
+    def push_heap(heap, value):
+        heap.append(-value)
+        heap.sort()
+    
+    # Function to pop from max-heap (negate value back)
+    def pop_heap(heap):
+        return -heap.pop(0)
+    
+    # Process each event
+    for event in data[1:]:
+        event = int(event)
+        if event > 0:
+            # Citizen's wealth, add to heap
+            push_heap(max_heap, event)
+        elif event == -1:
+            # King's visit, find the richest alive
+            while max_heap and -max_heap[0] in beheaded:
+                pop_heap(max_heap)
+            richest = pop_heap(max_heap)
+            beheaded.add(richest)
+            print(richest)
+
+process_events()
+```
+
+This solution uses a max-heap to efficiently track the richest citizen who is still alive. The heap operations are managed by negating values to simulate max-heap behavior using Python's list sorting.
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+def process_events():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+    
+    # Read the first line to get N and M
+    N, M = map(int, data[0].split())
+    
+    # Initialize a max-heap and a set to track beheaded citizens
+    max_heap = []
+    beheaded = set()
+    
+    # Function to push into max-heap (negate value for max-heap behavior)
+    def push_heap(heap, value):
+        heap.append(-value)
+        heap.sort()
+    
+    # Function to pop from max-heap (negate value back)
+    def pop_heap(heap):
+        return -heap.pop(0)
+    
+    # Process each event
+    for event in data[1:]:
+        event = int(event)
+        if event > 0:
+            # Citizen's wealth, add to heap
+            push_heap(max_heap, event)
+        elif event == -1:
+            # King's visit, find the richest alive
+            while max_heap and -max_heap[0] in beheaded:
+                pop_heap(max_heap)
+            richest = pop_heap(max_heap)
+            beheaded.add(richest)
+            print(richest)
+
+process_events()
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+ Input: ['10 3', '1', '3', '7', '6', '-1', '5', '-1', '18', '9', '11', '2', '-1', '4'] Output: 7
+6
+18
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': [True]}
+INFO - Updated entry: 
+[Task]:
+    A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+    The wily prime minister realised that investigating every citizen to d...,
+
+INFO - Metadata: {
+    "raw_msg": "1. **Restate the problem in plain English:**\n\n   We have a sequence of events where citizens declare their wealth and the king visits the court. Each citizen's wealth is a unique positive integer, and a king's visit is denoted by `-1`. When the king visits, the richest citizen...
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [prompt] 1. **Restate the problem in plain English:**
+
+   We have a sequence of events where citizens declare their wealth and the king visits the court. Each citizen's wealth is a unique positive integer, and a king's visit is denoted by `-1`. When the king visits, the richest citizen who has appeared so far and is still alive is beheaded. We need to output the wealth of the citizen who is beheaded at each of the king's visits.
+
+2. **Conceptualize a solution in plain English:**
+
+   We will maintain a list of citizens' wealth as they appear. When a king's visit occurs, we need to find the richest citizen who is still alive (i.e., not yet beheaded). We can use a max-heap to efficiently track the richest citizen. Each time a citizen appears, we add their wealth to the heap. When the king visits, we extract the maximum wealth from the heap, which represents the richest citizen to be beheaded.
+
+3. **Write a pseudocode solution:**
+
+   ```
+   Initialize an empty max-heap
+   Initialize an empty set to track beheaded citizens
+
+   For each event in the sequence:
+       If the event is a positive integer (citizen's wealth):
+           Add the wealth to the max-heap
+       Else if the event is -1 (king's visit):
+           While the top of the heap is in the set of beheaded citizens:
+               Remove the top of the heap
+           Extract the maximum wealth from the heap
+           Add this wealth to the set of beheaded citizens
+           Output this wealth
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+
+```python
+def process_events():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+    
+    # Read the first line to get N and M
+    N, M = map(int, data[0].split())
+    
+    # Initialize a max-heap and a set to track beheaded citizens
+    max_heap = []
+    beheaded = set()
+    
+    # Function to push into max-heap (negate value for max-heap behavior)
+    def push_heap(heap, value):
+        heap.append(-value)
+        heap.sort()
+    
+    # Function to pop from max-heap (negate value back)
+    def pop_heap(heap):
+        return -heap.pop(0)
+    
+    # Process each event
+    for event in data[1:]:
+        event = int(event)
+        if event > 0:
+            # Citizen's wealth, add to heap
+            push_heap(max_heap, event)
+        elif event == -1:
+            # King's visit, find the richest alive
+            while max_heap and -max_heap[0] in beheaded:
+                pop_heap(max_heap)
+            richest = pop_heap(max_heap)
+            beheaded.add(richest)
+            print(richest)
+
+process_events()
+```
+
+This solution uses a max-heap to efficiently track the richest citizen who is still alive. The heap operations are managed by negating values to simulate max-heap behavior using Python's list sorting.
+INFO - [Task id] 1319 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['10 3', '1', '3', '7', '6', '-1', '5', '-1', '18', '9', '11', '2', '-1', '4'] Output: 7
+    6
+    18
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+Now, summarize your attempts as a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+- Only include the most relevant information and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - Identifying the core concepts and patterns that problem appears to test for
+    - Describing the strategies that seemed to work but did not, and vice versa
+    - Describing unexpected errors and how they were fixed
+
+Your summary should be at most a few paragraphs.
+
+INFO - [Task id] 1319 [generation text] In this problem, the core concept was efficiently managing a sequence of events where citizens declare their wealth and the king visits to behead the richest citizen who has appeared so far. The challenge was to quickly identify and remove the richest citizen who is still alive at each king's visit.
+
+The key strategy was to use a max-heap to keep track of the wealth of citizens as they appear. By negating the wealth values, we could simulate a max-heap using Python's list sorting. This allowed us to efficiently extract the richest citizen when the king visits. Additionally, a set was used to track which citizens had already been beheaded, ensuring that only living citizens were considered during each visit.
+
+One potential pitfall was ensuring that the heap operations were efficient, especially given the constraints with large numbers of citizens and visits. The solution involved careful management of the heap and the beheaded set to maintain performance. This approach worked well, and the solution passed all test cases without any unexpected errors.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [prompt] 1. **Restate the problem in plain English:**
+
+   We have a sequence of events where citizens declare their wealth and the king visits the court. Each citizen's wealth is a unique positive integer, and a king's visit is denoted by `-1`. When the king visits, the richest citizen who has appeared so far and is still alive is beheaded. We need to output the wealth of the citizen who is beheaded at each of the king's visits.
+
+2. **Conceptualize a solution in plain English:**
+
+   We will maintain a list of citizens' wealth as they appear. When a king's visit occurs, we need to find the richest citizen who is still alive (i.e., not yet beheaded). We can use a max-heap to efficiently track the richest citizen. Each time a citizen appears, we add their wealth to the heap. When the king visits, we extract the maximum wealth from the heap, which represents the richest citizen to be beheaded.
+
+3. **Write a pseudocode solution:**
+
+   ```
+   Initialize an empty max-heap
+   Initialize an empty set to track beheaded citizens
+
+   For each event in the sequence:
+       If the event is a positive integer (citizen's wealth):
+           Add the wealth to the max-heap
+       Else if the event is -1 (king's visit):
+           While the top of the heap is in the set of beheaded citizens:
+               Remove the top of the heap
+           Extract the maximum wealth from the heap
+           Add this wealth to the set of beheaded citizens
+           Output this wealth
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+
+```python
+def process_events():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+    
+    # Read the first line to get N and M
+    N, M = map(int, data[0].split())
+    
+    # Initialize a max-heap and a set to track beheaded citizens
+    max_heap = []
+    beheaded = set()
+    
+    # Function to push into max-heap (negate value for max-heap behavior)
+    def push_heap(heap, value):
+        heap.append(-value)
+        heap.sort()
+    
+    # Function to pop from max-heap (negate value back)
+    def pop_heap(heap):
+        return -heap.pop(0)
+    
+    # Process each event
+    for event in data[1:]:
+        event = int(event)
+        if event > 0:
+            # Citizen's wealth, add to heap
+            push_heap(max_heap, event)
+        elif event == -1:
+            # King's visit, find the richest alive
+            while max_heap and -max_heap[0] in beheaded:
+                pop_heap(max_heap)
+            richest = pop_heap(max_heap)
+            beheaded.add(richest)
+            print(richest)
+
+process_events()
+```
+
+This solution uses a max-heap to efficiently track the richest citizen who is still alive. The heap operations are managed by negating values to simulate max-heap behavior using Python's list sorting.
+INFO - [Task id] 1319 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['10 3', '1', '3', '7', '6', '-1', '5', '-1', '18', '9', '11', '2', '-1', '4'] Output: 7
+    6
+    18
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1319 [prompt] 
+Below is the official solution (do exercise discretion as official solutions can also have mistakes).
+
+You will be reflecting on your attempts to solve the problem.
+This will be a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+## Instructions
+- Only include the most relevant insights and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy / official solution was obvious), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - If the official solution is insightful (e.g. better than yours in time and space complexity or more effective in breaking down the problem statement), distil the key approach of the official solution, step by step.
+    - If your approach failed the test cases, reason why the official solution works but yours does not
+
+Your reflection should be at most a few paragraphs.
+
+## Official solution
+n,m=map(int,input().split())
+l=[]
+leng=0
+for i in range(n+m):
+    w=int(input())
+    if w==-1:
+        cm=0
+        mi=0
+        for j in range(leng):
+            if l[j]>cm:
+                cm=l[j]
+                mi=j
+        
+        print(cm)
+        l[mi]=-1
+    else:
+        l.append(w)
+        leng+=1
+
+INFO - [Task id] 1319 [generation text] The problem was straightforward, and my initial approach using a max-heap was efficient for handling the task of finding the richest citizen quickly. However, the official solution takes a simpler approach by using a list to store the wealth of citizens and iterating through it to find the richest citizen when the king visits. This approach is less efficient in terms of time complexity, as it involves scanning the list for each king's visit, resulting in a time complexity of O(N * M) in the worst case.
+
+Key insights from the official solution:
+- The official solution uses a simple list to store the wealth and iterates through it to find the maximum wealth when needed. This is straightforward but not optimal for large inputs.
+- The solution marks a citizen as beheaded by setting their wealth to `-1` in the list, which is a simple way to track who has been beheaded.
+
+In contrast, my approach with a max-heap is more efficient for large inputs, as it allows for O(log N) operations to insert and extract the maximum wealth. This is particularly beneficial given the constraints where N and M can be quite large.
+
+In future problems where efficiency is crucial, especially with large input sizes, using data structures like heaps can provide significant performance improvements over simpler iterative approaches.
+INFO - Updated entry: In this problem, the core concept was efficiently managing a sequence of events where citizens declare their wealth and the king visits to behead the richest citizen who has appeared so far. The challenge was to quickly identify and remove the richest citizen who is still alive at each king's vis...,
+
+INFO - Metadata: {
+    "task_id": 1319
+}
+
+INFO - Updated entry: The problem was straightforward, and my initial approach using a max-heap was efficient for handling the task of finding the richest citizen quickly. However, the official solution takes a simpler approach by using a list to store the wealth of citizens and iterating through it to find the riches...,
+
+INFO - Metadata: {
+    "task_id": 1319
+}
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are a helpful assistant that writes a description of the given function written in the Python programming language.
+
+1) Do not mention the function name.
+2) Do not mention anything about helper functions.
+3) There might be some helper functions before the main function, but you only need to describe the main function.
+4) Try to summarize the function in no more than 6 sentences.
+5) Your response should be a single line of text.
+
+INFO - [Task id] 1319 [prompt] 
+def process_events():
+    import sys
+    input = sys.stdin.read
+    data = input().splitlines()
+    
+    # Read the first line to get N and M
+    N, M = map(int, data[0].split())
+    
+    # Initialize a max-heap and a set to track beheaded citizens
+    max_heap = []
+    beheaded = set()
+    
+    # Function to push into max-heap (negate value for max-heap behavior)
+    def push_heap(heap, value):
+        heap.append(-value)
+        heap.sort()
+    
+    # Function to pop from max-heap (negate value back)
+    def pop_heap(heap):
+        return -heap.pop(0)
+    
+    # Process each event
+    for event in data[1:]:
+        event = int(event)
+        if event > 0:
+            # Citizen's wealth, add to heap
+            push_heap(max_heap, event)
+        elif event == -1:
+            # King's visit, find the richest alive
+            while max_heap and -max_heap[0] in beheaded:
+                pop_heap(max_heap)
+            richest = pop_heap(max_heap)
+            beheaded.add(richest)
+            print(richest)
+
+process_events()
+
+
+The main function is `process_events`.
+INFO - [Task id] 1319 [generation text] This function reads a series of events from standard input, where the first line contains two integers, N and M, and subsequent lines represent events. It uses a max-heap to manage the wealth of citizens, where positive integers indicate the wealth of a new citizen to be added to the heap. When a -1 event occurs, it simulates a king's visit by finding and printing the wealth of the richest citizen who has not been beheaded, removing them from the heap and marking them as beheaded. The function ensures that only citizens who are not already beheaded are considered during a king's visit by checking against a set of beheaded citizens. The heap operations are managed by helper functions that handle the insertion and removal of elements while maintaining the max-heap property.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are a helpful assistant that extracts important information from problems and solutions to aid in searchability and education.
+
+## Instructions
+- Read through the problem and solution carefully.
+- Reason out, step by step, in what scenarios this knowledge would be useful.
+- Focus on general patterns and situations to help connect this knowledge to new situations.
+- Then, include a list of keywords that are useful for searching this problem/solution pair.
+
+## Response format
+Respond in JSON, and follow the keys and expected format of the values strictly.
+
+The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
+the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
+
+Here is the output schema:
+```
+{"properties": {"scenarios": {"description": "In what scenarios will this knowledge be useful? Answer in a paragraph.", "title": "Scenarios", "type": "string"}, "keywords": {"description": "List of keywords that are useful for searching this problem/solution pair", "items": {"type": "string"}, "title": "Keywords", "type": "array"}}, "required": ["scenarios", "keywords"]}
+```
+
+INFO - [Task id] 1319 [prompt] 
+[Problem]
+    A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+    The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+    The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+    Suppose the wealth of the citizens trooping into the court is
+    1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+    and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+    At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+    You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+    Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+    -----Input:-----
+    The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+    The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+    -----Output:-----
+    Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+    -----Constraints:-----
+    - $1 \leq M \leq 10000$.
+    - $1 \leq N \leq 100000$.
+    - You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+    -----Sample Input-----
+    10 3
+    1 
+    3 
+    7 
+    6 
+    -1 
+    5 
+    -1 
+    18 
+    9 
+    11
+    2
+    -1
+    4
+
+    -----Sample Output-----
+    7
+    6
+    18
+[/Problem]
+
+[Solution]
+
+    def process_events():
+        import sys
+        input = sys.stdin.read
+        data = input().splitlines()
+    
+        # Read the first line to get N and M
+        N, M = map(int, data[0].split())
+    
+        # Initialize a max-heap and a set to track beheaded citizens
+        max_heap = []
+        beheaded = set()
+    
+        # Function to push into max-heap (negate value for max-heap behavior)
+        def push_heap(heap, value):
+            heap.append(-value)
+            heap.sort()
+    
+        # Function to pop from max-heap (negate value back)
+        def pop_heap(heap):
+            return -heap.pop(0)
+    
+        # Process each event
+        for event in data[1:]:
+            event = int(event)
+            if event > 0:
+                # Citizen's wealth, add to heap
+                push_heap(max_heap, event)
+            elif event == -1:
+                # King's visit, find the richest alive
+                while max_heap and -max_heap[0] in beheaded:
+                    pop_heap(max_heap)
+                richest = pop_heap(max_heap)
+                beheaded.add(richest)
+                print(richest)
+
+    process_events()
+
+[/Solution]
+
+INFO - [Task id] 1319 [generation text] 
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where you need to efficiently manage and query a dynamic set of data to find the maximum or minimum value, especially when elements can be removed or marked as inactive. This is common in priority queue implementations, scheduling tasks based on priority, or any system where you need to frequently access the highest priority item. The use of a max-heap (or min-heap) is a classic approach to handle such problems efficiently, allowing for quick insertion and removal of elements while maintaining the ability to access the maximum (or minimum) element in constant time. This is particularly relevant in competitive programming, real-time systems, and resource management applications.",
+    "keywords": [
+        "max-heap",
+        "priority queue",
+        "dynamic data management",
+        "efficient querying",
+        "competitive programming",
+        "real-time systems",
+        "resource management",
+        "algorithm",
+        "data structure",
+        "heap sort"
+    ]
+}
+INFO - {
+    "scenarios": "This knowledge is useful in scenarios where you need to efficiently manage and query a dynamic set of data to find the maximum or minimum value, especially when elements can be removed or marked as inactive. This is common in priority queue implementations, scheduling tasks based on priority, or any system where you need to frequently access the highest priority item. The use of a max-heap (or min-heap) is a classic approach to handle such problems efficiently, allowing for quick insertion and removal of elements while maintaining the ability to access the maximum (or minimum) element in constant time. This is particularly relevant in competitive programming, real-time systems, and resource management applications.",
+    "keywords": [
+        "max-heap",
+        "priority queue",
+        "dynamic data management",
+        "efficient querying",
+        "competitive programming",
+        "real-time systems",
+        "resource management",
+        "algorithm",
+        "data structure",
+        "heap sort"
+    ]
+}
+INFO - Updated entry: 
+[description for function: process_events]
+This function reads a series of events from standard input, where the first line contains two integers, N and M, and subsequent lines represent events. It uses a max-heap to manage the wealth of citizens, where positive integers indicate the wealth of a...,
+
+INFO - Metadata: {
+    "task": 1319,
+    "code": "\ndef process_events():\n    import sys\n    input = sys.stdin.read\n    data = input().splitlines()\n    \n    # Read the first line to get N and M\n    N, M = map(int, data[0].split())\n    \n    # Initialize a max-heap and a set to track beheaded citizens\n    ...
+

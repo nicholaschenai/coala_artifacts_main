@@ -1,0 +1,262 @@
+INFO - [test iter]: 281/378
+
+INFO - The task prompt is Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Given a square matrix of size N*N given as a list of lists, where e...
+
+INFO - Attempting task_id Mbpp/721
+INFO - [35m Rollout attempt 1/4[0m
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] Mbpp/721 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Write a Python function that satisfies the description below. Your code must strictly follow the function name and typings of the input and output specified in the assert statement below, and pass the assertion when executed.
+"""
+Given a square matrix of size N*N given as a list of lists, where each cell is associated with a specific cost. A path is defined as a specific sequence of cells that starts from the top-left cell move only right or down and ends on bottom right cell. We want to find a path with the maximum average over all existing paths. Average is computed as total cost divided by the number of cells visited in the path.
+assert maxAverageOfPath([[1, 2, 3], [6, 5, 4], [7, 3, 9]]) == 5.2
+"""
+
+[END PROBLEM]
+
+INFO - [Task id] Mbpp/721 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] Mbpp/721 [generation text] ## Problem Restatement
+
+We are given a square matrix where each cell has a specific cost. We need to find a path from the top-left corner to the bottom-right corner of the matrix. The path can only move right or down. Our goal is to find the path that has the maximum average cost, where the average is calculated as the total cost of the path divided by the number of cells in the path.
+
+## Conceptual Solution
+
+1. **Dynamic Programming Approach**: We can use dynamic programming to solve this problem efficiently. We'll maintain a 2D list `dp` where `dp[i][j]` will store the maximum total cost of reaching cell `(i, j)` from the top-left corner `(0, 0)`.
+
+2. **Initialization**: 
+   - Start by initializing `dp[0][0]` with the cost of the top-left cell, as this is the starting point.
+
+3. **Filling the DP Table**:
+   - For each cell `(i, j)`, calculate the maximum cost to reach that cell by considering the maximum cost of reaching the cell from the top `(i-1, j)` or from the left `(i, j-1)`.
+   - The formula will be: `dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])`.
+
+4. **Calculate the Average**:
+   - The number of cells in any path from `(0, 0)` to `(N-1, N-1)` is `2N - 1`.
+   - The maximum average cost will be `dp[N-1][N-1] / (2N - 1)`.
+
+5. **Return the Result**: Return the calculated maximum average.
+
+## Pseudocode
+
+```
+function maxAverageOfPath(cost):
+    N = length of cost
+    create a 2D list dp of size N x N
+    dp[0][0] = cost[0][0]
+    
+    for i from 1 to N-1:
+        dp[i][0] = dp[i-1][0] + cost[i][0]
+        dp[0][i] = dp[0][i-1] + cost[0][i]
+    
+    for i from 1 to N-1:
+        for j from 1 to N-1:
+            dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])
+    
+    max_total_cost = dp[N-1][N-1]
+    max_average = max_total_cost / (2 * N - 1)
+    
+    return max_average
+```
+
+## Final Python Solution
+
+```python
+def maxAverageOfPath(cost):
+    N = len(cost)
+    dp = [[0] * N for _ in range(N)]
+    
+    # Initialize the starting point
+    dp[0][0] = cost[0][0]
+    
+    # Fill the first row and first column
+    for i in range(1, N):
+        dp[i][0] = dp[i-1][0] + cost[i][0]
+        dp[0][i] = dp[0][i-1] + cost[0][i]
+    
+    # Fill the rest of the dp table
+    for i in range(1, N):
+        for j in range(1, N):
+            dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])
+    
+    # Calculate the maximum average
+    max_total_cost = dp[N-1][N-1]
+    max_average = max_total_cost / (2 * N - 1)
+    
+    return max_average
+```
+INFO - program_code:
+ 
+def maxAverageOfPath(cost):
+    N = len(cost)
+    dp = [[0] * N for _ in range(N)]
+    
+    # Initialize the starting point
+    dp[0][0] = cost[0][0]
+    
+    # Fill the first row and first column
+    for i in range(1, N):
+        dp[i][0] = dp[i-1][0] + cost[i][0]
+        dp[0][i] = dp[0][i-1] + cost[0][i]
+    
+    # Fill the rest of the dp table
+    for i in range(1, N):
+        for j in range(1, N):
+            dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])
+    
+    # Calculate the maximum average
+    max_total_cost = dp[N-1][N-1]
+    max_average = max_total_cost / (2 * N - 1)
+    
+    return max_average
+
+
+INFO - program_name:
+ maxAverageOfPath
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ## Problem Restatement
+
+We are given a square matrix where each cell has a specific cost. We need to find a path from the top-left corner to the bottom-right corner of the matrix. The path can only move right or down. Our goal is to find the path that has the maximum average cost, where the average is calculated as the total cost of the path divided by the number of cells in the path.
+
+## Conceptual Solution
+
+1. **Dynamic Programming Approach**: We can use dynamic programming to solve this problem efficiently. We'll maintain a 2D list `dp` where `dp[i][j]` will store the maximum total cost of reaching cell `(i, j)` from the top-left corner `(0, 0)`.
+
+2. **Initialization**: 
+   - Start by initializing `dp[0][0]` with the cost of the top-left cell, as this is the starting point.
+
+3. **Filling the DP Table**:
+   - For each cell `(i, j)`, calculate the maximum cost to reach that cell by considering the maximum cost of reaching the cell from the top `(i-1, j)` or from the left `(i, j-1)`.
+   - The formula will be: `dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])`.
+
+4. **Calculate the Average**:
+   - The number of cells in any path from `(0, 0)` to `(N-1, N-1)` is `2N - 1`.
+   - The maximum average cost will be `dp[N-1][N-1] / (2N - 1)`.
+
+5. **Return the Result**: Return the calculated maximum average.
+
+## Pseudocode
+
+```
+function maxAverageOfPath(cost):
+    N = length of cost
+    create a 2D list dp of size N x N
+    dp[0][0] = cost[0][0]
+    
+    for i from 1 to N-1:
+        dp[i][0] = dp[i-1][0] + cost[i][0]
+        dp[0][i] = dp[0][i-1] + cost[0][i]
+    
+    for i from 1 to N-1:
+        for j from 1 to N-1:
+            dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])
+    
+    max_total_cost = dp[N-1][N-1]
+    max_average = max_total_cost / (2 * N - 1)
+    
+    return max_average
+```
+
+## Final Python Solution
+
+```python
+def maxAverageOfPath(cost):
+    N = len(cost)
+    dp = [[0] * N for _ in range(N)]
+    
+    # Initialize the starting point
+    dp[0][0] = cost[0][0]
+    
+    # Fill the first row and first column
+    for i in range(1, N):
+        dp[i][0] = dp[i-1][0] + cost[i][0]
+        dp[0][i] = dp[0][i-1] + cost[0][i]
+    
+    # Fill the rest of the dp table
+    for i in range(1, N):
+        for j in range(1, N):
+            dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])
+    
+    # Calculate the maximum average
+    max_total_cost = dp[N-1][N-1]
+    max_average = max_total_cost / (2 * N - 1)
+    
+    return max_average
+```
+
+INFO - no_parent:
+ True
+
+INFO - full code to be executed: 
+ 
+def maxAverageOfPath(cost):
+    N = len(cost)
+    dp = [[0] * N for _ in range(N)]
+    
+    # Initialize the starting point
+    dp[0][0] = cost[0][0]
+    
+    # Fill the first row and first column
+    for i in range(1, N):
+        dp[i][0] = dp[i-1][0] + cost[i][0]
+        dp[0][i] = dp[0][i-1] + cost[0][i]
+    
+    # Fill the rest of the dp table
+    for i in range(1, N):
+        for j in range(1, N):
+            dp[i][j] = cost[i][j] + max(dp[i-1][j], dp[i][j-1])
+    
+    # Calculate the maximum average
+    max_total_cost = dp[N-1][N-1]
+    max_average = max_total_cost / (2 * N - 1)
+    
+    return max_average
+
+
+INFO - obs: Note: Tests are automatically generated and can be wrong.
+
+Tests passed:
+assert maxAverageOfPath([[1, 2, 3], [6, 5, 4], [7, 3, 9]]) == 5.2
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': (True,)}
+INFO - acc:270/281 = 96.09%

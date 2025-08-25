@@ -1,0 +1,1284 @@
+INFO - DB skill doc count: 1
+
+INFO - DB non_func doc count: 64
+
+INFO - DB semantic doc count: 429
+
+INFO - DB summaries doc count: 84
+
+INFO - DB reflections doc count: 84
+
+INFO - DB episodic doc count: 0
+
+INFO - [train iter]: 84/100 
+
+INFO - The task prompt is A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was cor...
+
+INFO - Attempting task_id 1319
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [generation text] 1. **Restate the problem in plain English:**
+   The king wants to eliminate corrupt citizens based on their wealth. Citizens declare their wealth one by one, and whenever the king visits, the prime minister must identify and behead the richest citizen who has declared their wealth up to that point and is still alive. The input consists of a sequence of wealth declarations and king's visits, and the output should be the wealth of the citizens beheaded during each of the king's visits.
+
+2. **Conceptualize a solution first in plain English:**
+   We need to keep track of the wealth of citizens as they declare it. When the king visits, we need to quickly find the richest citizen who has declared their wealth and has not been beheaded yet. To do this efficiently, we can use a max-heap (or a priority queue) to keep track of the wealth of citizens. Each time a citizen declares their wealth, we add it to the heap. When the king visits, we pop the maximum wealth from the heap, which represents the richest citizen to be beheaded. We also need to ensure that we only consider citizens who are still alive.
+
+3. **Write a pseudocode solution:**
+   ```
+   Initialize an empty max-heap
+   Initialize an empty list for results
+
+   For each input line:
+       If the line is a positive integer (wealth):
+           Push the wealth into the max-heap
+       Else if the line is -1 (king's visit):
+           Pop the maximum wealth from the max-heap
+           Append this wealth to the results list
+
+   Print each wealth in the results list
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments:**
+```python
+import heapq
+
+def behead_citizens():
+    # Read the first line of input to get N and M
+    first_line = input().strip().split()
+    N = int(first_line[0])
+    M = int(first_line[1])
+    
+    # Initialize a max-heap (using negative values for max-heap simulation)
+    max_heap = []
+    results = []
+    
+    # Process each of the next N + M lines
+    for _ in range(N + M):
+        line = input().strip()
+        if line == '-1':
+            # King visits, pop the richest citizen from the heap
+            richest = -heapq.heappop(max_heap)  # Negate to get the original wealth
+            results.append(richest)
+        else:
+            # Citizen declares their wealth
+            wealth = int(line)
+            heapq.heappush(max_heap, -wealth)  # Negate to simulate max-heap
+    
+    # Output the results for each king's visit
+    for result in results:
+        print(result)
+
+```
+INFO - [35m Rollout attempt 1/4[0m
+INFO - [33m Retrieving 3 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.4839):
+Title: Games on arbitrary graphs
+Part: 2/2
+```
+
+## Example: "Policeman and thief"
+
+Here is a concrete example of such a game.
+
+There is $m \times n$ board.
+Some of the cells cannot be entered.
+The initial coordinates of the police officer and of the thief are known.
+One of the cells is the exit.
+...
+
+
+INFO - Retrieved (score=0.4959):
+Chapter: Greedy algorithms
+Section: Coin problem
+Part: 1/1
+\chapter{Greedy algorithms}
+
+\index{greedy algorithm}
+
+A \key{greedy algorithm}
+constructs a solution to the problem
+by always making a choice that looks
+the best at the moment.
+A greedy algorithm never takes back
+its choices, but directl...
+
+
+INFO - Retrieved (score=0.5011):
+Title: Continued fractions
+Part: 11/12
+```
+    === "Python"
+        ```py
+        # returns [ah, ph, qh] such that points r[i]=(ph[i], qh[i]) constitute upper convex hull
+        # of lattice points on 0 <= x <= N and 0 <= y <= r * x, where r = [a0; a1, a2, ...]
+        # and there are ah[i]-1 in...
+
+
+INFO - [33m Retrieving 3 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.4433):
+The official solution employs a more efficient approach using event processing and a priority queue (min-heap) to handle the roadworks and queries. Here are the key insights and steps from the official solution that could be useful for future reference:
+
+### Key Insights from the Official Solutio...
+
+
+INFO - Retrieved (score=0.4608):
+The official solution effectively addresses the problem with a straightforward approach that closely mirrors my own implementation, but with some differences in structure and clarity. Here are the key insights and observations:
+
+1. **Input Handling**: The official solution uses a single read for ...
+
+
+INFO - Retrieved (score=0.4708):
+The official solution effectively simplifies the problem by maintaining separate cumulative scores for both players and tracking the maximum lead for each player in a straightforward manner. Here are the key insights from the official solution:
+
+1. **Initialization**: The solution initializes cum...
+
+
+INFO - [33m Retrieving 3 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.3878):
+In this task, the goal was to determine the winner of a billiards game based on the maximum lead achieved by either player at the end of any round, rather than simply summing their scores. The problem required careful tracking of cumulative scores and leads after each round.
+
+The solution involve...
+
+
+INFO - Retrieved (score=0.4130):
+In this problem, the main challenge was to correctly handle team names that could be presented in any order due to character rearrangement. The goal was to accumulate scores for each team based on their submissions while ensuring that teams with the same character composition were treated as iden...
+
+
+INFO - Retrieved (score=0.4165):
+In this problem, the goal was to determine how many walls Chef needs to break through to reach Dr. Doof at the origin (0, 0) based on given wall positions and Chef's starting coordinates. The walls are represented by line segments defined by points (a_i, 0) and (0, a_i). 
+
+The core concept involv...
+
+
+INFO - [33m Retrieving 1 entries for db: skill 
+ [0m
+INFO - Retrieved (score=0.7131):
+
+[description for function: count_col_triang]
+This function calculates the number of non-collinear triangles that can be formed from a set of points, categorized by their colors. It first organizes the points by color and then counts the triangles for each color by checking combinations of three ...
+
+
+INFO - [33m Retrieving 3 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.4973):
+
+[description for function: solve]
+The function processes multiple test cases to determine the winner of a game based on a given integer N. It reads input data, where the first line indicates the number of test cases, followed by the values of N for each case. For each value of N, it checks if th...
+
+
+INFO - Retrieved (score=0.5012):
+
+[description for function: solve]
+This function reads multiple test cases from standard input, where each test case consists of a list of bills and a series of queries. It first constructs a prefix sum array to efficiently calculate the sum of bills between specified indices for each query. For ...
+
+
+INFO - Retrieved (score=0.5032):
+
+[description for function: solve]
+The function processes a series of operations on a list of hill heights, allowing for two types of operations: jumping to a higher hill and updating the heights of a range of hills. It first reads the number of hills and operations, followed by the initial heigh...
+
+
+INFO - Retrieved (score=0.3878): 
+[Summary]:
+    In this task, the goal was to determine the winner of a billiards game based on the maximum lead achieved by either player at the end of any round, rather than simply summing their scores. The problem required careful tracking of cumulative scores and leads after each round.
+
+    ...
+INFO - Retrieved (score=0.4130): 
+[Summary]:
+    In this problem, the main challenge was to correctly handle team names that could be presented in any order due to character rearrangement. The goal was to accumulate scores for each team based on their submissions while ensuring that teams with the same character composition were...
+INFO - Retrieved (score=0.4165): 
+[Summary]:
+    In this problem, the goal was to determine how many walls Chef needs to break through to reach Dr. Doof at the origin (0, 0) based on given wall positions and Chef's starting coordinates. The walls are represented by line segments defined by points (a_i, 0) and (0, a_i). 
+
+    The...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Summary]:
+    In this task, the goal was to determine the winner of a billiards game based on the maximum lead achieved by either player at the end of any round, rather than simply summing their scores. The problem required careful tracking of cumulative scores and leads after each round.
+
+    The solution involved reading the number of rounds and the scores for each player, updating cumulative scores, and calculating the lead for each round. The maximum lead and the corresponding winner were tracked throughout the rounds. The implementation was straightforward, leveraging basic arithmetic and conditional statements to determine the leader and maximum lead.
+
+    The final code successfully handled the input and output requirements, and it passed the provided test case without any issues. Key concepts included cumulative score tracking, lead calculation, and conditional logic to determine the winner based on maximum lead. This experience reinforced the importance of maintaining state across iterations and the need for clear logic when comparing values. 
+
+    The final code snippet is as follows:
+
+    ```python
+    def find_winner():
+        N = int(input())
+        cumulative_score_player1 = 0
+        cumulative_score_player2 = 0
+        max_lead = 0
+        winner = 0
+
+        for _ in range(N):
+            S1, S2 = map(int, input().split())
+            cumulative_score_player1 += S1
+            cumulative_score_player2 += S2
+        
+            if cumulative_score_player1 > cumulative_score_player2:
+                lead = cumulative_score_player1 - cumulative_score_player2
+                if lead > max_lead:
+                    max_lead = lead
+                    winner = 1
+            else:
+                lead = cumulative_score_player2 - cumulative_score_player1
+                if lead > max_lead:
+                    max_lead = lead
+                    winner = 2
+
+        print(winner, max_lead)
+
+    find_winner()
+    ``` 
+
+    This solution effectively meets the problem's requirements and demonstrates a clear understanding of the necessary logic and data handling.
+[/Summary]
+
+
+[Summary]:
+    In this problem, the main challenge was to correctly handle team names that could be presented in any order due to character rearrangement. The goal was to accumulate scores for each team based on their submissions while ensuring that teams with the same character composition were treated as identical.
+
+    The initial approach involved using a normalized version of the team names (sorted characters) as keys in a dictionary to accumulate scores. However, this led to the loss of the original team names, which was crucial for the final output. The output format required the original team names to be printed alongside their scores, sorted by score and then lexicographically by name.
+
+    The solution was refined by storing tuples in the dictionary that included both the original team name and the accumulated score. This allowed for proper retrieval and sorting of results. The final implementation successfully passed all tests by ensuring that the output matched the expected format.
+
+    Key takeaways:
+    - Always retain necessary information (like original names) when normalizing data for processing.
+    - Sorting and output formatting are critical in competitive programming problems, especially when multiple criteria are involved. 
+
+    Final working code snippet:
+    ```python
+    def main():
+        import sys
+        input = sys.stdin.read
+        data = input().splitlines()
+    
+        index = 0
+        T = int(data[index])  # Read number of test cases
+        index += 1
+    
+        for _ in range(T):
+            N, R = map(int, data[index].split())  # Read N and R
+            index += 1
+        
+            scores = {}  # Dictionary to hold team scores
+        
+            # Process first half hour submissions
+            for _ in range(R):
+                line = data[index].split()
+                team_name = line[0]
+                points = int(line[1])
+                normalized_name = ''.join(sorted(team_name))  # Normalize team name
+                if normalized_name not in scores:
+                    scores[normalized_name] = (team_name, 0)  # Store original name and score
+                scores[normalized_name] = (scores[normalized_name][0], scores[normalized_name][1] + points)
+                index += 1
+        
+            # Process remaining submissions
+            for _ in range(N - R):
+                line = data[index].split()
+                team_name = line[0]
+                points = int(line[1])
+                normalized_name = ''.join(sorted(team_name))  # Normalize team name
+                if normalized_name not in scores:
+                    scores[normalized_name] = (team_name, 0)  # Store original name and score
+                scores[normalized_name] = (scores[normalized_name][0], scores[normalized_name][1] + points)
+                index += 1
+        
+            # Prepare result for sorting
+            result = [(name, score) for normalized_name, (name, score) in scores.items()]
+            # Sort by score (descending) and then by team name (lexicographical)
+            result.sort(key=lambda x: (-x[1], x[0]))
+        
+            # Print the results
+            for team_name, score in result:
+                print(team_name, score)
+
+    # Call the main function to execute the code
+    main()
+    ```
+[/Summary]
+
+
+[Summary]:
+    In this problem, the goal was to determine how many walls Chef needs to break through to reach Dr. Doof at the origin (0, 0) based on given wall positions and Chef's starting coordinates. The walls are represented by line segments defined by points (a_i, 0) and (0, a_i). 
+
+    The core concept involved checking if Chef's starting point lies on any wall and counting how many walls are above the line defined by the sum of Chef's coordinates. The solution required efficiently processing multiple test cases and queries, ensuring that the checks for wall positions were done correctly.
+
+    The implemented solution involved reading input data, checking if the sum of coordinates matched any wall position, and counting walls that were greater than this sum. The approach was straightforward and worked well within the constraints provided. 
+
+    One key takeaway was the importance of efficiently handling input and output, especially when dealing with potentially large datasets. The solution utilized a linear search for counting walls, which was acceptable given the constraints, but could be optimized further with binary search if necessary. Overall, the solution was effective, and no unexpected errors were encountered during implementation. 
+
+    Here’s the final code snippet for reference:
+
+    ```python
+    def solve():
+        import sys
+        input = sys.stdin.read
+        data = input().splitlines()
+    
+        index = 0
+        T = int(data[index])  # Read number of test cases
+        index += 1
+    
+        results = []
+    
+        for _ in range(T):
+            N = int(data[index])  # Read number of walls
+            index += 1
+        
+            walls = list(map(int, data[index].split()))  # Read wall positions
+            index += 1
+        
+            Q = int(data[index])  # Read number of queries
+            index += 1
+        
+            for __ in range(Q):
+                x_j, y_j = map(int, data[index].split())  # Read query coordinates
+                index += 1
+            
+                sum_xy = x_j + y_j
+            
+                # Check if the point lies on any wall
+                if sum_xy in walls:
+                    results.append(-1)
+                else:
+                    # Count how many walls are greater than sum_xy
+                    count = 0
+                    for wall in walls:
+                        if wall > sum_xy:
+                            count += 1
+                    results.append(count)
+    
+        # Print all results for all queries
+        for res in results:
+            print(res)
+
+    # Call the solve function to execute the code
+    solve()
+    ``` 
+
+    This summary encapsulates the problem-solving process, the strategies employed, and the final solution for future reference.
+[/Summary]
+
+
+INFO - [Task id] 1319 [generation text] 1. **Restate the problem in plain English**:
+   The problem involves a king who wants to eliminate corrupt citizens based on their wealth. Citizens declare their wealth one by one, and whenever the king enters the court, the prime minister must identify and behead the richest citizen who has appeared so far and is still alive. The task is to determine which citizens are beheaded during the king's visits based on the wealth declared.
+
+2. **Conceptualize a solution first in plain English**:
+   We need to keep track of the wealth of citizens as they declare it. When the king enters, we should be able to quickly find the richest citizen who has declared their wealth and is still alive. To do this efficiently, we can use a list to store the wealth of citizens and a variable to keep track of the richest alive citizen. Each time the king enters, we will check this list to find the richest citizen, remove them from the list (indicating they are no longer alive), and record their wealth.
+
+3. **Write a pseudocode solution**:
+   ```
+   Initialize an empty list to store the wealth of citizens
+   Initialize an empty list to store the results of beheaded citizens
+
+   Read N and M from input
+   For each of the next N + M lines:
+       If the line is a positive integer (wealth):
+           Append this wealth to the citizens' list
+       Else if the line is -1 (king's visit):
+           Find the maximum wealth in the citizens' list
+           Append this wealth to the results list
+           Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+   Print each wealth in the results list
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments**:
+```python
+def find_beheaded_citizens():
+    # Initialize an empty list to store the wealth of citizens
+    citizens = []
+    # Initialize an empty list to store the results of beheaded citizens
+    results = []
+
+    # Read N and M from input
+    N, M = map(int, input().split())
+    
+    # For each of the next N + M lines
+    for _ in range(N + M):
+        line = int(input())
+        # If the line is a positive integer (wealth)
+        if line > 0:
+            citizens.append(line)  # Append this wealth to the citizens' list
+        else:  # If the line is -1 (king's visit)
+            # Find the maximum wealth in the citizens' list
+            richest = max(citizens)
+            results.append(richest)  # Append this wealth to the results list
+            citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+    # Print each wealth in the results list
+    for wealth in results:
+        print(wealth)
+
+# Call the function to execute the code
+find_beheaded_citizens()
+```
+INFO - program_code:
+ 
+def find_beheaded_citizens():
+    # Initialize an empty list to store the wealth of citizens
+    citizens = []
+    # Initialize an empty list to store the results of beheaded citizens
+    results = []
+
+    # Read N and M from input
+    N, M = map(int, input().split())
+    
+    # For each of the next N + M lines
+    for _ in range(N + M):
+        line = int(input())
+        # If the line is a positive integer (wealth)
+        if line > 0:
+            citizens.append(line)  # Append this wealth to the citizens' list
+        else:  # If the line is -1 (king's visit)
+            # Find the maximum wealth in the citizens' list
+            richest = max(citizens)
+            results.append(richest)  # Append this wealth to the results list
+            citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+    # Print each wealth in the results list
+    for wealth in results:
+        print(wealth)
+
+# Call the function to execute the code
+find_beheaded_citizens()
+
+
+INFO - program_name:
+ find_beheaded_citizens
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ 1. **Restate the problem in plain English**:
+   The problem involves a king who wants to eliminate corrupt citizens based on their wealth. Citizens declare their wealth one by one, and whenever the king enters the court, the prime minister must identify and behead the richest citizen who has appeared so far and is still alive. The task is to determine which citizens are beheaded during the king's visits based on the wealth declared.
+
+2. **Conceptualize a solution first in plain English**:
+   We need to keep track of the wealth of citizens as they declare it. When the king enters, we should be able to quickly find the richest citizen who has declared their wealth and is still alive. To do this efficiently, we can use a list to store the wealth of citizens and a variable to keep track of the richest alive citizen. Each time the king enters, we will check this list to find the richest citizen, remove them from the list (indicating they are no longer alive), and record their wealth.
+
+3. **Write a pseudocode solution**:
+   ```
+   Initialize an empty list to store the wealth of citizens
+   Initialize an empty list to store the results of beheaded citizens
+
+   Read N and M from input
+   For each of the next N + M lines:
+       If the line is a positive integer (wealth):
+           Append this wealth to the citizens' list
+       Else if the line is -1 (king's visit):
+           Find the maximum wealth in the citizens' list
+           Append this wealth to the results list
+           Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+   Print each wealth in the results list
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments**:
+```python
+def find_beheaded_citizens():
+    # Initialize an empty list to store the wealth of citizens
+    citizens = []
+    # Initialize an empty list to store the results of beheaded citizens
+    results = []
+
+    # Read N and M from input
+    N, M = map(int, input().split())
+    
+    # For each of the next N + M lines
+    for _ in range(N + M):
+        line = int(input())
+        # If the line is a positive integer (wealth)
+        if line > 0:
+            citizens.append(line)  # Append this wealth to the citizens' list
+        else:  # If the line is -1 (king's visit)
+            # Find the maximum wealth in the citizens' list
+            richest = max(citizens)
+            results.append(richest)  # Append this wealth to the results list
+            citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+    # Print each wealth in the results list
+    for wealth in results:
+        print(wealth)
+
+# Call the function to execute the code
+find_beheaded_citizens()
+```
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+def find_beheaded_citizens():
+    # Initialize an empty list to store the wealth of citizens
+    citizens = []
+    # Initialize an empty list to store the results of beheaded citizens
+    results = []
+
+    # Read N and M from input
+    N, M = map(int, input().split())
+    
+    # For each of the next N + M lines
+    for _ in range(N + M):
+        line = int(input())
+        # If the line is a positive integer (wealth)
+        if line > 0:
+            citizens.append(line)  # Append this wealth to the citizens' list
+        else:  # If the line is -1 (king's visit)
+            # Find the maximum wealth in the citizens' list
+            richest = max(citizens)
+            results.append(richest)  # Append this wealth to the results list
+            citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+    # Print each wealth in the results list
+    for wealth in results:
+        print(wealth)
+
+# Call the function to execute the code
+find_beheaded_citizens()
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+ Input: ['10 3', '1', '3', '7', '6', '-1', '5', '-1', '18', '9', '11', '2', '-1', '4'] Output: 7
+6
+18
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': [True]}
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [prompt] 1. **Restate the problem in plain English**:
+   The problem involves a king who wants to eliminate corrupt citizens based on their wealth. Citizens declare their wealth one by one, and whenever the king enters the court, the prime minister must identify and behead the richest citizen who has appeared so far and is still alive. The task is to determine which citizens are beheaded during the king's visits based on the wealth declared.
+
+2. **Conceptualize a solution first in plain English**:
+   We need to keep track of the wealth of citizens as they declare it. When the king enters, we should be able to quickly find the richest citizen who has declared their wealth and is still alive. To do this efficiently, we can use a list to store the wealth of citizens and a variable to keep track of the richest alive citizen. Each time the king enters, we will check this list to find the richest citizen, remove them from the list (indicating they are no longer alive), and record their wealth.
+
+3. **Write a pseudocode solution**:
+   ```
+   Initialize an empty list to store the wealth of citizens
+   Initialize an empty list to store the results of beheaded citizens
+
+   Read N and M from input
+   For each of the next N + M lines:
+       If the line is a positive integer (wealth):
+           Append this wealth to the citizens' list
+       Else if the line is -1 (king's visit):
+           Find the maximum wealth in the citizens' list
+           Append this wealth to the results list
+           Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+   Print each wealth in the results list
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments**:
+```python
+def find_beheaded_citizens():
+    # Initialize an empty list to store the wealth of citizens
+    citizens = []
+    # Initialize an empty list to store the results of beheaded citizens
+    results = []
+
+    # Read N and M from input
+    N, M = map(int, input().split())
+    
+    # For each of the next N + M lines
+    for _ in range(N + M):
+        line = int(input())
+        # If the line is a positive integer (wealth)
+        if line > 0:
+            citizens.append(line)  # Append this wealth to the citizens' list
+        else:  # If the line is -1 (king's visit)
+            # Find the maximum wealth in the citizens' list
+            richest = max(citizens)
+            results.append(richest)  # Append this wealth to the results list
+            citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+    # Print each wealth in the results list
+    for wealth in results:
+        print(wealth)
+
+# Call the function to execute the code
+find_beheaded_citizens()
+```
+INFO - [Task id] 1319 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['10 3', '1', '3', '7', '6', '-1', '5', '-1', '18', '9', '11', '2', '-1', '4'] Output: 7
+    6
+    18
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+Now, summarize your attempts as a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+- Only include the most relevant information and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - Identifying the core concepts and patterns that problem appears to test for
+    - Describing the strategies that seemed to work but did not, and vice versa
+    - Describing unexpected errors and how they were fixed
+
+Your summary should be at most a few paragraphs.
+
+INFO - [Task id] 1319 [generation text] In this task, the goal was to implement a solution for a problem involving a king who beheads the richest citizen present in court during his visits. The approach required efficiently tracking the wealth of citizens as they declared it and quickly identifying the richest citizen during each of the king's visits.
+
+The core concept involved using a list to store the wealth of citizens and leveraging the `max()` function to find the richest citizen when the king entered. The solution effectively handled the input format, distinguishing between wealth declarations and the king's visits. The removal of the beheaded citizen's wealth from the list was crucial to ensure that subsequent visits reflected the correct state of alive citizens.
+
+The implemented solution was straightforward and worked as expected, passing all tests. The key takeaway was the importance of maintaining an updated list of citizens and efficiently managing wealth declarations and removals. The solution demonstrated that using built-in functions like `max()` and list operations can effectively solve problems involving dynamic data tracking.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+Suppose the wealth of the citizens trooping into the court is
+1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+-----Input:-----
+The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+-----Output:-----
+Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+-----Constraints:-----
+- $1 \leq M \leq 10000$.
+- $1 \leq N \leq 100000$.
+- You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+-----Sample Input-----
+10 3
+1 
+3 
+7 
+6 
+-1 
+5 
+-1 
+18 
+9 
+11
+2
+-1
+4
+
+-----Sample Output-----
+7
+6
+18
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 1319 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 1319 [prompt] 1. **Restate the problem in plain English**:
+   The problem involves a king who wants to eliminate corrupt citizens based on their wealth. Citizens declare their wealth one by one, and whenever the king enters the court, the prime minister must identify and behead the richest citizen who has appeared so far and is still alive. The task is to determine which citizens are beheaded during the king's visits based on the wealth declared.
+
+2. **Conceptualize a solution first in plain English**:
+   We need to keep track of the wealth of citizens as they declare it. When the king enters, we should be able to quickly find the richest citizen who has declared their wealth and is still alive. To do this efficiently, we can use a list to store the wealth of citizens and a variable to keep track of the richest alive citizen. Each time the king enters, we will check this list to find the richest citizen, remove them from the list (indicating they are no longer alive), and record their wealth.
+
+3. **Write a pseudocode solution**:
+   ```
+   Initialize an empty list to store the wealth of citizens
+   Initialize an empty list to store the results of beheaded citizens
+
+   Read N and M from input
+   For each of the next N + M lines:
+       If the line is a positive integer (wealth):
+           Append this wealth to the citizens' list
+       Else if the line is -1 (king's visit):
+           Find the maximum wealth in the citizens' list
+           Append this wealth to the results list
+           Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+   Print each wealth in the results list
+   ```
+
+4. **Output the final Python 3 solution with your solution steps in comments**:
+```python
+def find_beheaded_citizens():
+    # Initialize an empty list to store the wealth of citizens
+    citizens = []
+    # Initialize an empty list to store the results of beheaded citizens
+    results = []
+
+    # Read N and M from input
+    N, M = map(int, input().split())
+    
+    # For each of the next N + M lines
+    for _ in range(N + M):
+        line = int(input())
+        # If the line is a positive integer (wealth)
+        if line > 0:
+            citizens.append(line)  # Append this wealth to the citizens' list
+        else:  # If the line is -1 (king's visit)
+            # Find the maximum wealth in the citizens' list
+            richest = max(citizens)
+            results.append(richest)  # Append this wealth to the results list
+            citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+    # Print each wealth in the results list
+    for wealth in results:
+        print(wealth)
+
+# Call the function to execute the code
+find_beheaded_citizens()
+```
+INFO - [Task id] 1319 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['10 3', '1', '3', '7', '6', '-1', '5', '-1', '18', '9', '11', '2', '-1', '4'] Output: 7
+    6
+    18
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 1319 [prompt] 
+Below is the official solution (do exercise discretion as official solutions can also have mistakes).
+
+You will be reflecting on your attempts to solve the problem.
+This will be a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+## Instructions
+- Only include the most relevant insights and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy / official solution was obvious), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - If the official solution is insightful (e.g. better than yours in time and space complexity or more effective in breaking down the problem statement), distil the key approach of the official solution, step by step.
+    - If your approach failed the test cases, reason why the official solution works but yours does not
+
+Your reflection should be at most a few paragraphs.
+
+## Official solution
+n,m=map(int,input().split())
+l=[]
+leng=0
+for i in range(n+m):
+    w=int(input())
+    if w==-1:
+        cm=0
+        mi=0
+        for j in range(leng):
+            if l[j]>cm:
+                cm=l[j]
+                mi=j
+        
+        print(cm)
+        l[mi]=-1
+    else:
+        l.append(w)
+        leng+=1
+
+INFO - [Task id] 1319 [generation text] The official solution takes a different approach to manage the wealth of citizens and the king's visits. Instead of using a list to store the wealth and then searching for the maximum wealth each time the king visits, it maintains a separate index to track the length of the list. This allows for a more efficient way to find the richest citizen who is still alive.
+
+Key insights from the official solution:
+
+1. **List Management**: The solution uses a list `l` to store the wealth of citizens and a variable `leng` to keep track of how many citizens have declared their wealth. This avoids unnecessary operations on the list.
+
+2. **Finding the Richest**: When the king visits (indicated by `-1`), the solution iterates through the list up to `leng` to find the maximum wealth and its index. This is done in a single pass, which is efficient given the constraints.
+
+3. **Marking Citizens as Beheaded**: Instead of removing the wealth from the list, the solution marks the wealth of the beheaded citizen as `-1`. This avoids the overhead of list operations like `remove`, which can be costly in terms of time complexity.
+
+4. **Output**: The wealth of the beheaded citizen is printed immediately after finding it, which simplifies the output process.
+
+Overall, the official solution is more efficient in terms of time complexity, especially when handling a large number of citizens and visits. It effectively reduces the need for repeated list operations, which can be a bottleneck in performance. This experience highlights the importance of considering data structure choices and their implications on performance in algorithm design.
+INFO - Updated entry: In this task, the goal was to implement a solution for a problem involving a king who beheads the richest citizen present in court during his visits. The approach required efficiently tracking the wealth of citizens as they declared it and quickly identifying the richest citizen during each of th...,
+
+INFO - Metadata: {
+    "task_id": 1319
+}
+
+INFO - Updated entry: The official solution takes a different approach to manage the wealth of citizens and the king's visits. Instead of using a list to store the wealth and then searching for the maximum wealth each time the king visits, it maintains a separate index to track the length of the list. This allows for ...,
+
+INFO - Metadata: {
+    "task_id": 1319
+}
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are a helpful assistant that writes a description of the given function written in the Python programming language.
+
+1) Do not mention the function name.
+2) Do not mention anything about helper functions.
+3) There might be some helper functions before the main function, but you only need to describe the main function.
+4) Try to summarize the function in no more than 6 sentences.
+5) Your response should be a single line of text.
+
+INFO - [Task id] 1319 [prompt] 
+def find_beheaded_citizens():
+    # Initialize an empty list to store the wealth of citizens
+    citizens = []
+    # Initialize an empty list to store the results of beheaded citizens
+    results = []
+
+    # Read N and M from input
+    N, M = map(int, input().split())
+    
+    # For each of the next N + M lines
+    for _ in range(N + M):
+        line = int(input())
+        # If the line is a positive integer (wealth)
+        if line > 0:
+            citizens.append(line)  # Append this wealth to the citizens' list
+        else:  # If the line is -1 (king's visit)
+            # Find the maximum wealth in the citizens' list
+            richest = max(citizens)
+            results.append(richest)  # Append this wealth to the results list
+            citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+    # Print each wealth in the results list
+    for wealth in results:
+        print(wealth)
+
+# Call the function to execute the code
+find_beheaded_citizens()
+
+
+The main function is `find_beheaded_citizens`.
+INFO - [Task id] 1319 [generation text] This function processes a series of inputs representing the wealth of citizens and the king's visits. It maintains a list of citizens' wealth and, upon each king's visit (indicated by a -1 input), identifies and removes the wealthiest citizen from the list, recording their wealth. The function reads a total of N + M lines, where N represents the number of citizens and M the number of king's visits. After processing all inputs, it outputs the wealth of each beheaded citizen in the order they were removed. The function ensures that only positive integers are added to the citizens' list, while the king's visit triggers the removal of the richest citizen. Ultimately, it provides a record of the wealth of those who were beheaded.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 1319 [prompt] 
+You are a helpful assistant that extracts important information from problems and solutions to aid in searchability and education.
+
+## Instructions
+- Read through the problem and solution carefully.
+- Reason out, step by step, in what scenarios this knowledge would be useful.
+- Focus on general patterns and situations to help connect this knowledge to new situations.
+- Then, include a list of keywords that are useful for searching this problem/solution pair.
+
+## Response format
+Respond in JSON, and follow the keys and expected format of the values strictly.
+
+The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
+the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
+
+Here is the output schema:
+```
+{"properties": {"scenarios": {"description": "In what scenarios will this knowledge be useful? Answer in a paragraph.", "title": "Scenarios", "type": "string"}, "keywords": {"description": "List of keywords that are useful for searching this problem/solution pair", "items": {"type": "string"}, "title": "Keywords", "type": "array"}}, "required": ["scenarios", "keywords"]}
+```
+
+INFO - [Task id] 1319 [prompt] 
+[Problem]
+    A despotic king decided that his kingdom needed to be rid of corruption and disparity. He called his prime minister and ordered that all corrupt citizens be put to death. Moreover, he wanted this done quickly.
+    The wily prime minister realised that investigating every citizen to decide who was corrupt and who was not was rather difficult. So he decided on the following plan: He ordered all the citizens to appear in the court one by one and declare their wealth.
+    The king does not sit in the court all the time (he has other important business to attend to - for instance, meet dignitaries from neighbouring kingdoms, spend time with his family …) Whenever the king walks into the court, the prime minister pulls out the richest man who has appeared before the court so far and is still alive and beheads him for being corrupt. Since the rich are more likely to be corrupt, he hopes to get rid of most of the corrupt and the king is happy as he sees his policy being implemented enthusiastically.
+    Suppose the wealth of the citizens trooping into the court is
+    1376518911241376518911241\; 3\; 7\; 6\; 5\; 18\;  9\; 11\;  2\; 4
+    and the king walked in three times: the first time after the first four persons have seen the minister, the second time after the first five persons have seen the minister and, finally after the first nine persons have seen the minister.
+    At the king's first visit the richest person to have met the minister has wealth $7$ and he would be beheaded. At the second visit, the wealth of the richest person who has met the minister and is still alive has wealth $6$ and so he would be beheaded. At the third visit the richest person to have met the minister who is still alive has wealth $18$ and so he would be beheaded.
+    You may assume that the input is such that whenever the king walks in, it is always possible to behead someone.
+    Your aim is to write a program that will enable the prime minister to identify the richest man to have met the minister and who is still alive quickly. You may assume that no two citizens have the same wealth.
+
+    -----Input:-----
+    The first line of the input consists of two numbers $N$ and $M$, where $N$ is the number of citizens in the kingdom and M is the number of visits to the court by the king.
+    The next $N+M$ lines describe the order in which the $N$ citizens' appearances are interleaved with the $M$ visits by the king. A citizen's visit is denoted by a positive integer, signifying his wealth. You may assume that no two citizens have the same wealth. A visit by the king is denoted by $-1$.
+
+    -----Output:-----
+    Your output should consist of $M$ lines, where the $i^{th}$ line contains the wealth of the citizen who is beheaded at the $i^{th}$ visit of the king.
+
+    -----Constraints:-----
+    - $1 \leq M \leq 10000$.
+    - $1 \leq N \leq 100000$.
+    - You may assume that in $50 \%$ of the inputs $1 \leq M \leq 1000$ and $1 \leq N \leq 8000$.
+
+    -----Sample Input-----
+    10 3
+    1 
+    3 
+    7 
+    6 
+    -1 
+    5 
+    -1 
+    18 
+    9 
+    11
+    2
+    -1
+    4
+
+    -----Sample Output-----
+    7
+    6
+    18
+[/Problem]
+
+[Solution]
+
+    def find_beheaded_citizens():
+        # Initialize an empty list to store the wealth of citizens
+        citizens = []
+        # Initialize an empty list to store the results of beheaded citizens
+        results = []
+
+        # Read N and M from input
+        N, M = map(int, input().split())
+    
+        # For each of the next N + M lines
+        for _ in range(N + M):
+            line = int(input())
+            # If the line is a positive integer (wealth)
+            if line > 0:
+                citizens.append(line)  # Append this wealth to the citizens' list
+            else:  # If the line is -1 (king's visit)
+                # Find the maximum wealth in the citizens' list
+                richest = max(citizens)
+                results.append(richest)  # Append this wealth to the results list
+                citizens.remove(richest)  # Remove this wealth from the citizens' list (indicating the citizen is beheaded)
+
+        # Print each wealth in the results list
+        for wealth in results:
+            print(wealth)
+
+    # Call the function to execute the code
+    find_beheaded_citizens()
+
+[/Solution]
+
+INFO - [Task id] 1319 [generation text] 
+INFO - {
+    "scenarios": "This knowledge would be useful in scenarios where a decision-making process needs to be optimized based on dynamic inputs, such as in resource allocation, priority scheduling, or any situation where entities are evaluated based on a specific criterion (in this case, wealth). It can also apply to game design, simulations, or any algorithmic problem involving real-time updates and queries, especially when dealing with large datasets where efficiency is crucial. The approach of maintaining a list of active entities and efficiently retrieving the maximum can be adapted to various contexts, such as managing tasks, players, or resources in competitive environments.",
+    "keywords": [
+        "king",
+        "beheading",
+        "wealth",
+        "citizens",
+        "corruption",
+        "algorithm",
+        "priority queue",
+        "dynamic input",
+        "maximum retrieval",
+        "data structure"
+    ]
+}
+INFO - {
+    "scenarios": "This knowledge would be useful in scenarios where a decision-making process needs to be optimized based on dynamic inputs, such as in resource allocation, priority scheduling, or any situation where entities are evaluated based on a specific criterion (in this case, wealth). It can also apply to game design, simulations, or any algorithmic problem involving real-time updates and queries, especially when dealing with large datasets where efficiency is crucial. The approach of maintaining a list of active entities and efficiently retrieving the maximum can be adapted to various contexts, such as managing tasks, players, or resources in competitive environments.",
+    "keywords": [
+        "king",
+        "beheading",
+        "wealth",
+        "citizens",
+        "corruption",
+        "algorithm",
+        "priority queue",
+        "dynamic input",
+        "maximum retrieval",
+        "data structure"
+    ]
+}
+INFO - Updated entry: 
+[description for function: find_beheaded_citizens]
+This function processes a series of inputs representing the wealth of citizens and the king's visits. It maintains a list of citizens' wealth and, upon each king's visit (indicated by a -1 input), identifies and removes the wealthiest citizen fr...,
+
+INFO - Metadata: {
+    "task": 1319,
+    "code": "\ndef find_beheaded_citizens():\n    # Initialize an empty list to store the wealth of citizens\n    citizens = []\n    # Initialize an empty list to store the results of beheaded citizens\n    results = []\n\n    # Read N and M from input\n    N, M = map(int, inp...
+

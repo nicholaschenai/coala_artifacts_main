@@ -1,0 +1,1388 @@
+INFO - DB skill doc count: 1
+
+INFO - DB non_func doc count: 62
+
+INFO - DB semantic doc count: 429
+
+INFO - DB summaries doc count: 80
+
+INFO - DB reflections doc count: 80
+
+INFO - DB episodic doc count: 148
+
+INFO - [train iter]: 80/100 
+
+INFO - The task prompt is Mr. Krabs loves money. He enters a bank and sees that there are n rooms arranged in a row. The only rooms with doors are the two rooms on either corner. Initially, all the rooms are locked (including the corner ones). To enter a room, it must be unlocked with a key.
+Mr. Krabs is able to steal k k...
+
+INFO - Attempting task_id 995
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 995 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Mr. Krabs loves money. He enters a bank and sees that there are n rooms arranged in a row. The only rooms with doors are the two rooms on either corner. Initially, all the rooms are locked (including the corner ones). To enter a room, it must be unlocked with a key.
+Mr. Krabs is able to steal k keys from the sleeping night guard. Each key can be used to unlock only one room. To reach one of the inner rooms, he has to unlock an adjacent room first.
+Eg: If there are 5 rooms labelled: 1 2 3 4 5
+Only Rooms 1 and 5 can be accessed initially. To unlock room 2, either room 1 or room 3 must be unlocked. Similarly to unlock Room 4, he must unlock room 5 or room 3 first.
+Each room has some money in it. The money present in room i is given by A[i]. Using the k keys, calculate what is the maximum possible amount of money obtainable.
+
+-----Input:-----
+- First line will contain n,  number of rooms.
+- Second line will contain space separated integers, denoting A[i], money present in each room.
+- Third line will contain an integer, k, the number of keys available.
+
+-----Output:-----
+Maximum money obtained.
+
+-----Constraints-----
+- 1 <= Number of Rooms <= 10^5
+- 1 <= A[i] <= 10^4
+- 1 <= k <= Number of Rooms
+
+-----Subtasks-----
+- 40 points : 1 <= Number of Rooms <= 100
+- 60 points : Number of Rooms > 100
+
+-----Sample Input:-----
+7
+1 2 3 4 5 6 1
+3
+
+-----Sample Output:-----
+12
+
+-----Explanation:-----
+For the first step, Mr. Krabs can only unlock the room at the left corner or the right corner. If he unlocks the room in the right corner, he obtains 1 dollar. He can then go on to unlock the second last room and gain 6 dollars, for a total of 7 dollars. Finally he can unlock the third last room and get 5 dollars, for a total of 12 dollars. 
+This is the maximum amount of money he can get with only 3 keys.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 995 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 995 [generation text] ### Problem Restatement
+
+Mr. Krabs wants to maximize the amount of money he can steal from a row of rooms. Each room is initially locked, and only the two rooms at the ends can be unlocked first. He has a limited number of keys, and each key can unlock one room. Once a room is unlocked, he can unlock its adjacent rooms. The goal is to determine the maximum amount of money he can collect using the given number of keys.
+
+### Conceptual Solution
+
+1. **Initial Access**: Mr. Krabs can start unlocking from either the leftmost or the rightmost room.
+2. **Unlocking Strategy**: After unlocking a room, he can only unlock its adjacent rooms.
+3. **Maximizing Money**: To maximize the money, Mr. Krabs should choose the sequence of rooms that yields the highest sum of money with the given number of keys.
+4. **Sliding Window Approach**: Use a sliding window technique to evaluate the maximum sum of money that can be collected by unlocking a contiguous sequence of rooms starting from either end.
+
+### Pseudocode
+
+1. Initialize `max_money` to 0.
+2. Calculate the sum of money for the first `k` rooms starting from the left end.
+3. Calculate the sum of money for the first `k` rooms starting from the right end.
+4. Use a sliding window to adjust the sum by moving one room from the left end to the right end:
+   - For each possible split of keys between the left and right ends:
+     - Calculate the sum of money by taking some rooms from the left and the rest from the right.
+     - Update `max_money` if the current sum is greater.
+5. Output `max_money`.
+
+### Python Solution
+
+```python
+def max_money(n, A, k):
+    # Initialize the maximum money to 0
+    max_money = 0
+    
+    # Calculate the sum of the first k rooms from the left
+    left_sum = sum(A[:k])
+    max_money = max(max_money, left_sum)
+    
+    # Calculate the sum of the first k rooms from the right
+    right_sum = sum(A[-k:])
+    max_money = max(max_money, right_sum)
+    
+    # Use a sliding window to calculate the maximum money obtainable
+    # by taking some rooms from the left and the rest from the right
+    current_left_sum = 0
+    current_right_sum = sum(A[-k:])
+    
+    for i in range(k):
+        current_left_sum += A[i]
+        current_right_sum -= A[n - k + i]
+        current_sum = current_left_sum + current_right_sum
+        max_money = max(max_money, current_sum)
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(max_money(n, A, k))
+```
+
+### Explanation of the Code
+
+- We first calculate the sum of the first `k` rooms from both the left and right ends.
+- We then use a sliding window approach to adjust the sum by moving one room from the left end to the right end, updating the maximum sum found.
+- The function `max_money` returns the maximum sum of money that can be collected with the given number of keys.
+INFO - [35m Rollout attempt 1/4[0m
+INFO - [33m Retrieving 2 entries for db: episodic 
+ [0m
+INFO - Retrieved (score=0.3506):
+
+[Task]:
+    Give me Chocolate
+
+    Anushka wants to buy chocolates.there are many chocolates in front of her, tagged with their prices.
+
+    Anushka has only a certain amount to spend, and she wants to maximize the number of chocolates she buys with this money.
+
+    Given a list of prices and an...
+
+
+INFO - Retrieved (score=0.3640):
+
+[Task]:
+    Give me Chocolate
+
+    Anushka wants to buy chocolates.there are many chocolates in front of her, tagged with their prices.
+
+    Anushka has only a certain amount to spend, and she wants to maximize the number of chocolates she buys with this money.
+
+    Given a list of prices and an...
+
+
+INFO - [33m Retrieving 2 entries for db: semantic 
+ [0m
+INFO - Retrieved (score=0.4849):
+Chapter: Dynamic programming
+Section: Coin problem
+Part: 1/2
+\chapter{Dynamic programming}
+
+\index{dynamic programming}
+
+\key{Dynamic programming}
+is a technique that combines the correctness
+of complete search and the efficiency
+of greedy algorithms.
+Dynamic programming can be applied if the
+pro...
+
+
+INFO - Retrieved (score=0.4856):
+Chapter: Greedy algorithms
+Section: Coin problem
+Part: 1/1
+\chapter{Greedy algorithms}
+
+\index{greedy algorithm}
+
+A \key{greedy algorithm}
+constructs a solution to the problem
+by always making a choice that looks
+the best at the moment.
+A greedy algorithm never takes back
+its choices, but directl...
+
+
+INFO - [33m Retrieving 2 entries for db: reflections 
+ [0m
+INFO - Retrieved (score=0.4199):
+In this problem, the task was to determine how many rooms can be completely tiled using tiles from boxes, with the constraint that each room in one house must be paired with a room in the other house, and both must be tiled using the same number of tiles from a single box. The key insight is that...
+
+
+INFO - Retrieved (score=0.4288):
+Reflecting on the problem and the official solution, here are some key insights and takeaways:
+
+1. **Understanding the Range of f(P)**:
+   - The problem involves calculating the sum of maximums of consecutive pairs in a permutation. The maximum possible value of this sum is achieved by arranging ...
+
+
+INFO - [33m Retrieving 2 entries for db: summaries 
+ [0m
+INFO - Retrieved (score=0.3344):
+In this problem, the goal was to maximize the number of chocolates Anushka could buy given a list of prices and a budget. The core concept was to sort the prices in ascending order and purchase the cheapest chocolates first to maximize the count before exceeding the budget. This approach leverage...
+
+
+INFO - Retrieved (score=0.3604):
+### Summary of Attempts to Solve the Problem
+
+#### Core Concepts and Patterns
+The problem revolves around maximizing the alternating sum of a subsequence from a list of distinct integers. The alternating sum is calculated by adding the first element, subtracting the second, adding the third, and ...
+
+
+INFO - [33m Retrieving 1 entries for db: skill 
+ [0m
+INFO - Retrieved (score=0.7112):
+
+[description for function: count_col_triang]
+The function takes a list of points, each associated with a color, and calculates several statistics about these points. It first counts the total number of points and groups them by color. For each color group, it calculates the number of non-colline...
+
+
+INFO - [33m Retrieving 2 entries for db: non_func 
+ [0m
+INFO - Retrieved (score=0.4857):
+
+[description for function: maximize_expression]
+The function calculates the maximum value of the expression \(-A[i] + A[j] - A[k] + A[l]\) for indices \(i < j < k < l\) in a given list \(A\). It initializes four variables to negative infinity to keep track of the maximum values of sub-expression...
+
+
+INFO - Retrieved (score=0.4958):
+
+[description for function: maxChocolates]
+The function calculates the maximum number of chocolates that can be purchased without exceeding a given budget. It first sorts the list of chocolate prices in ascending order to prioritize buying cheaper chocolates. It then iterates through the sorted p...
+
+
+INFO - Retrieved (score=0.3344): 
+[Summary]:
+    In this problem, the goal was to maximize the number of chocolates Anushka could buy given a list of prices and a budget. The core concept was to sort the prices in ascending order and purchase the cheapest chocolates first to maximize the count before exceeding the budget. This a...
+INFO - Retrieved (score=0.3506): 
+[Past Memory]:
+
+    [Task]:
+        Give me Chocolate
+
+        Anushka wants to buy chocolates.there are many chocolates in front of her, tagged with their prices.
+
+        Anushka has only a certain amount to spend, and she wants to maximize the number of chocolates she buys with this money.
+
+ ...
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 995 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Mr. Krabs loves money. He enters a bank and sees that there are n rooms arranged in a row. The only rooms with doors are the two rooms on either corner. Initially, all the rooms are locked (including the corner ones). To enter a room, it must be unlocked with a key.
+Mr. Krabs is able to steal k keys from the sleeping night guard. Each key can be used to unlock only one room. To reach one of the inner rooms, he has to unlock an adjacent room first.
+Eg: If there are 5 rooms labelled: 1 2 3 4 5
+Only Rooms 1 and 5 can be accessed initially. To unlock room 2, either room 1 or room 3 must be unlocked. Similarly to unlock Room 4, he must unlock room 5 or room 3 first.
+Each room has some money in it. The money present in room i is given by A[i]. Using the k keys, calculate what is the maximum possible amount of money obtainable.
+
+-----Input:-----
+- First line will contain n,  number of rooms.
+- Second line will contain space separated integers, denoting A[i], money present in each room.
+- Third line will contain an integer, k, the number of keys available.
+
+-----Output:-----
+Maximum money obtained.
+
+-----Constraints-----
+- 1 <= Number of Rooms <= 10^5
+- 1 <= A[i] <= 10^4
+- 1 <= k <= Number of Rooms
+
+-----Subtasks-----
+- 40 points : 1 <= Number of Rooms <= 100
+- 60 points : Number of Rooms > 100
+
+-----Sample Input:-----
+7
+1 2 3 4 5 6 1
+3
+
+-----Sample Output:-----
+12
+
+-----Explanation:-----
+For the first step, Mr. Krabs can only unlock the room at the left corner or the right corner. If he unlocks the room in the right corner, he obtains 1 dollar. He can then go on to unlock the second last room and gain 6 dollars, for a total of 7 dollars. Finally he can unlock the third last room and get 5 dollars, for a total of 12 dollars. 
+This is the maximum amount of money he can get with only 3 keys.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 995 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 995 [prompt] 
+Also, here are some of your memories.
+Feel free to use the given information to aid your problem solving process if necessary.
+Do not confuse the memories with the problem statement.
+
+## Memories
+
+[Summary]:
+    In this problem, the goal was to maximize the number of chocolates Anushka could buy given a list of prices and a budget. The core concept was to sort the prices in ascending order and purchase the cheapest chocolates first to maximize the count before exceeding the budget. This approach leverages a greedy algorithm, which is optimal for this type of problem.
+
+    Initially, the function `maxChocolates` was correctly implemented to solve the problem, but the solution failed to produce output because it did not handle input and output correctly. The key issue was not reading from standard input and not printing the result to standard output, which is crucial in competitive programming and similar environments.
+
+    The solution was fixed by adding code to read input using `sys.stdin.read`, parsing the input data, and then calling the function with the parsed values. Finally, the result was printed to standard output. This experience reinforced the importance of handling input/output correctly in coding challenges and the effectiveness of sorting and greedy strategies for optimization problems. 
+
+    Here's the final code snippet that worked:
+
+    ```python
+    def maxChocolates(n, k, prices):
+        prices.sort()
+        total_spent = 0
+        count = 0
+        for price in prices:
+            if total_spent + price <= k:
+                total_spent += price
+                count += 1
+            else:
+                break
+        return count
+
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    n = int(data[0])
+    k = int(data[1])
+    prices = list(map(int, data[2:]))
+    result = maxChocolates(n, k, prices)
+    print(result)
+    ```
+
+    This experience highlighted the importance of understanding both the algorithmic solution and the environment-specific requirements for input and output handling.
+[/Summary]
+
+
+[Past Memory]:
+
+    [Task]:
+        Give me Chocolate
+
+        Anushka wants to buy chocolates.there are many chocolates in front of her, tagged with their prices.
+
+        Anushka has only a certain amount to spend, and she wants to maximize the number of chocolates she buys with this money.
+
+        Given a list of prices and an amount to spend, what is the maximum number of chocolates Anushka can buy? 
+
+        For example, 
+
+        if prices =[1,2,3,4]
+        and Anushka has k=7 to spend, she can buy items [1,2,3] for 6 , or [3,4] for 7 units of currency. she would choose the first group of 3 items.
+
+        Input Format
+
+        The first line contains two integers, n and k , the number of priced chocolates and the amount Anushka has to spend.
+
+        The next line contains n space-separated integers prices[i]
+
+        Constraints
+
+        1<= n <= 105
+
+        1<= k <= 109
+
+        1<= prices[i] <= 109
+
+
+
+        A chocolate can't be bought multiple times.
+
+        Output Format
+
+        An integer that denotes the maximum number of chocolates Anushka can buy for her.
+
+        Sample Input
+
+        7 50
+
+        1 12 5 111 200 1000 10
+
+        Sample Output
+
+        4
+
+        Explanation
+
+        she can buy only 4 chocolatess at most. These chocolates have the following prices: 1, 12, 5, 10.
+    [/Task]
+
+    [Previous Critique]:
+        Let's analyze the problem and the solution to identify where the issue might be:
+
+        1. **Understanding the Problem:**
+           - The problem requires reading input from standard input and writing output to standard output.
+           - The function `maxChocolates` is correctly designed to calculate the maximum number of chocolates Anushka can buy, but it seems the issue is with how the input is being handled and how the output is being produced.
+
+        2. **Where the Solution Went Wrong:**
+           - The function `maxChocolates` is defined correctly, but it is not being called with the input from standard input.
+           - The solution does not include the necessary code to read from standard input and print the result to standard output, which is why no output is detected.
+
+        3. **Steps to Fix the Solution:**
+           - Add code to read the input values from standard input.
+           - Parse the input to extract the number of chocolates, the budget, and the list of prices.
+           - Call the `maxChocolates` function with these parsed values.
+           - Print the result to standard output.
+
+        Let's implement these changes:
+
+        ```python
+        def maxChocolates(n, k, prices):
+            # Sort the prices in ascending order to buy cheaper chocolates first
+            prices.sort()
+    
+            total_spent = 0  # Initialize the total amount spent
+            count = 0  # Initialize the count of chocolates bought
+    
+            # Iterate over the sorted prices
+            for price in prices:
+                # Check if adding this chocolate's price exceeds the budget
+                if total_spent + price <= k:
+                    total_spent += price  # Add the price to the total spent
+                    count += 1  # Increment the count of chocolates bought
+                else:
+                    break  # Stop if the budget is exceeded
+    
+            return count  # Return the maximum number of chocolates that can be bought
+
+        # Read input from standard input
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+
+        # Parse the input
+        n = int(data[0])
+        k = int(data[1])
+        prices = list(map(int, data[2:]))
+
+        # Call the function and print the result
+        result = maxChocolates(n, k, prices)
+        print(result)
+        ```
+
+        This code now includes the necessary steps to read from standard input, process the data, and output the result, which should resolve the issue with the test not detecting any output.
+    [/Previous Critique]
+
+    [Thought Process and Code]:
+        Let's fix the solution by ensuring it reads from standard input and writes to standard output correctly. Here's the updated code:
+
+        ```python
+        def maxChocolates(n, k, prices):
+            # Sort the prices in ascending order to buy cheaper chocolates first
+            prices.sort()
+    
+            total_spent = 0  # Initialize the total amount spent
+            count = 0  # Initialize the count of chocolates bought
+    
+            # Iterate over the sorted prices
+            for price in prices:
+                # Check if adding this chocolate's price exceeds the budget
+                if total_spent + price <= k:
+                    total_spent += price  # Add the price to the total spent
+                    count += 1  # Increment the count of chocolates bought
+                else:
+                    break  # Stop if the budget is exceeded
+    
+            return count  # Return the maximum number of chocolates that can be bought
+
+        # Read input from standard input
+        import sys
+        input = sys.stdin.read
+        data = input().split()
+
+        # Parse the input
+        n = int(data[0])
+        k = int(data[1])
+        prices = list(map(int, data[2:]))
+
+        # Call the function and print the result
+        result = maxChocolates(n, k, prices)
+        print(result)
+        ```
+
+        This code now includes the necessary steps to read from standard input, process the data, and output the result. It should work correctly when executed in an environment that provides input via standard input.
+    [/Thought Process and Code]
+
+    [Environment Feedback]:
+        Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+        Tests passed:
+
+         Input: ['7 50', '1 12 5 111 200 1000 10'] Output: 4
+
+        Tests failed:
+        None
+    [/Environment Feedback]
+
+    [Result]:
+        Success
+    [/Result]
+
+[/Past Memory]
+
+
+INFO - [Task id] 995 [generation text] ### Problem Restatement
+
+Mr. Krabs wants to maximize the amount of money he can steal from a series of rooms arranged in a row. Each room is initially locked, and only the two corner rooms can be accessed first. Mr. Krabs has a limited number of keys, and each key can unlock one room. To unlock an inner room, an adjacent room must be unlocked first. Given the number of rooms, the money in each room, and the number of keys, determine the maximum money Mr. Krabs can obtain.
+
+### Conceptual Solution
+
+1. **Initial Access**: Mr. Krabs can start by unlocking either the first or the last room.
+2. **Unlocking Strategy**: After unlocking a corner room, he can proceed to unlock adjacent rooms. The goal is to maximize the total money collected with the given number of keys.
+3. **Sliding Window Approach**: Use a sliding window technique to evaluate the maximum sum of money that can be collected by unlocking a contiguous sequence of rooms starting from either end.
+4. **Calculate Maximum**: For each possible starting point (either from the left or the right), calculate the maximum money that can be collected using up to `k` keys.
+
+### Pseudocode
+
+1. Initialize two arrays `left_max` and `right_max` to store the maximum money obtainable starting from the left and right ends, respectively.
+2. Use a sliding window of size `k` to calculate the maximum money obtainable from the left end:
+   - Start with the first room and expand the window to include up to `k` rooms.
+   - Update `left_max` with the maximum sum found.
+3. Repeat the process for the right end:
+   - Start with the last room and expand the window to include up to `k` rooms.
+   - Update `right_max` with the maximum sum found.
+4. The result is the maximum value found in `left_max` and `right_max`.
+
+### Python Code
+
+```python
+def maxMoney(n, A, k):
+    # Calculate maximum money obtainable from the left side
+    left_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if i < n:
+            current_sum += A[i]
+            left_max[i + 1] = current_sum
+    
+    # Calculate maximum money obtainable from the right side
+    right_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if n - 1 - i >= 0:
+            current_sum += A[n - 1 - i]
+            right_max[i + 1] = current_sum
+    
+    # Find the maximum money obtainable with k keys
+    max_money = 0
+    for i in range(k + 1):
+        max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(maxMoney(n, A, k))
+```
+
+### Explanation
+
+- **Sliding Window**: The sliding window approach efficiently calculates the maximum sum of money that can be collected from either end of the room sequence.
+- **Combining Results**: By considering both left and right starting points, the solution ensures that all possible combinations of room unlocks are evaluated.
+- **Efficiency**: The solution runs in O(n) time, which is efficient given the constraints.
+INFO - program_code:
+ 
+def maxMoney(n, A, k):
+    # Calculate maximum money obtainable from the left side
+    left_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if i < n:
+            current_sum += A[i]
+            left_max[i + 1] = current_sum
+    
+    # Calculate maximum money obtainable from the right side
+    right_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if n - 1 - i >= 0:
+            current_sum += A[n - 1 - i]
+            right_max[i + 1] = current_sum
+    
+    # Find the maximum money obtainable with k keys
+    max_money = 0
+    for i in range(k + 1):
+        max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(maxMoney(n, A, k))
+
+
+INFO - program_name:
+ maxMoney
+
+INFO - dependencies:
+ []
+
+INFO - raw_msg:
+ ### Problem Restatement
+
+Mr. Krabs wants to maximize the amount of money he can steal from a series of rooms arranged in a row. Each room is initially locked, and only the two corner rooms can be accessed first. Mr. Krabs has a limited number of keys, and each key can unlock one room. To unlock an inner room, an adjacent room must be unlocked first. Given the number of rooms, the money in each room, and the number of keys, determine the maximum money Mr. Krabs can obtain.
+
+### Conceptual Solution
+
+1. **Initial Access**: Mr. Krabs can start by unlocking either the first or the last room.
+2. **Unlocking Strategy**: After unlocking a corner room, he can proceed to unlock adjacent rooms. The goal is to maximize the total money collected with the given number of keys.
+3. **Sliding Window Approach**: Use a sliding window technique to evaluate the maximum sum of money that can be collected by unlocking a contiguous sequence of rooms starting from either end.
+4. **Calculate Maximum**: For each possible starting point (either from the left or the right), calculate the maximum money that can be collected using up to `k` keys.
+
+### Pseudocode
+
+1. Initialize two arrays `left_max` and `right_max` to store the maximum money obtainable starting from the left and right ends, respectively.
+2. Use a sliding window of size `k` to calculate the maximum money obtainable from the left end:
+   - Start with the first room and expand the window to include up to `k` rooms.
+   - Update `left_max` with the maximum sum found.
+3. Repeat the process for the right end:
+   - Start with the last room and expand the window to include up to `k` rooms.
+   - Update `right_max` with the maximum sum found.
+4. The result is the maximum value found in `left_max` and `right_max`.
+
+### Python Code
+
+```python
+def maxMoney(n, A, k):
+    # Calculate maximum money obtainable from the left side
+    left_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if i < n:
+            current_sum += A[i]
+            left_max[i + 1] = current_sum
+    
+    # Calculate maximum money obtainable from the right side
+    right_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if n - 1 - i >= 0:
+            current_sum += A[n - 1 - i]
+            right_max[i + 1] = current_sum
+    
+    # Find the maximum money obtainable with k keys
+    max_money = 0
+    for i in range(k + 1):
+        max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(maxMoney(n, A, k))
+```
+
+### Explanation
+
+- **Sliding Window**: The sliding window approach efficiently calculates the maximum sum of money that can be collected from either end of the room sequence.
+- **Combining Results**: By considering both left and right starting points, the solution ensures that all possible combinations of room unlocks are evaluated.
+- **Efficiency**: The solution runs in O(n) time, which is efficient given the constraints.
+
+INFO - no_parent:
+ False
+
+INFO - full code to be executed: 
+ 
+def maxMoney(n, A, k):
+    # Calculate maximum money obtainable from the left side
+    left_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if i < n:
+            current_sum += A[i]
+            left_max[i + 1] = current_sum
+    
+    # Calculate maximum money obtainable from the right side
+    right_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if n - 1 - i >= 0:
+            current_sum += A[n - 1 - i]
+            right_max[i + 1] = current_sum
+    
+    # Find the maximum money obtainable with k keys
+    max_money = 0
+    for i in range(k + 1):
+        max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(maxMoney(n, A, k))
+
+
+INFO - obs: Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+Tests passed:
+
+ Input: ['7', '1 2 3 4 5 6 1', '3'] Output: 12
+
+Tests failed:
+None
+reward: True
+done: None
+info: {'individual_results': [True]}
+INFO - Updated entry: 
+[Task]:
+    Mr. Krabs loves money. He enters a bank and sees that there are n rooms arranged in a row. The only rooms with doors are the two rooms on either corner. Initially, all the rooms are locked (including the corner ones). To enter a room, it must be unlocked with a key.
+    Mr. Krabs is ...,
+
+INFO - Metadata: {
+    "raw_msg": "### Problem Restatement\n\nMr. Krabs wants to maximize the amount of money he can steal from a series of rooms arranged in a row. Each room is initially locked, and only the two corner rooms can be accessed first. Mr. Krabs has a limited number of keys, and each key can unlock o...
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 995 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Mr. Krabs loves money. He enters a bank and sees that there are n rooms arranged in a row. The only rooms with doors are the two rooms on either corner. Initially, all the rooms are locked (including the corner ones). To enter a room, it must be unlocked with a key.
+Mr. Krabs is able to steal k keys from the sleeping night guard. Each key can be used to unlock only one room. To reach one of the inner rooms, he has to unlock an adjacent room first.
+Eg: If there are 5 rooms labelled: 1 2 3 4 5
+Only Rooms 1 and 5 can be accessed initially. To unlock room 2, either room 1 or room 3 must be unlocked. Similarly to unlock Room 4, he must unlock room 5 or room 3 first.
+Each room has some money in it. The money present in room i is given by A[i]. Using the k keys, calculate what is the maximum possible amount of money obtainable.
+
+-----Input:-----
+- First line will contain n,  number of rooms.
+- Second line will contain space separated integers, denoting A[i], money present in each room.
+- Third line will contain an integer, k, the number of keys available.
+
+-----Output:-----
+Maximum money obtained.
+
+-----Constraints-----
+- 1 <= Number of Rooms <= 10^5
+- 1 <= A[i] <= 10^4
+- 1 <= k <= Number of Rooms
+
+-----Subtasks-----
+- 40 points : 1 <= Number of Rooms <= 100
+- 60 points : Number of Rooms > 100
+
+-----Sample Input:-----
+7
+1 2 3 4 5 6 1
+3
+
+-----Sample Output:-----
+12
+
+-----Explanation:-----
+For the first step, Mr. Krabs can only unlock the room at the left corner or the right corner. If he unlocks the room in the right corner, he obtains 1 dollar. He can then go on to unlock the second last room and gain 6 dollars, for a total of 7 dollars. Finally he can unlock the third last room and get 5 dollars, for a total of 12 dollars. 
+This is the maximum amount of money he can get with only 3 keys.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 995 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 995 [prompt] ### Problem Restatement
+
+Mr. Krabs wants to maximize the amount of money he can steal from a series of rooms arranged in a row. Each room is initially locked, and only the two corner rooms can be accessed first. Mr. Krabs has a limited number of keys, and each key can unlock one room. To unlock an inner room, an adjacent room must be unlocked first. Given the number of rooms, the money in each room, and the number of keys, determine the maximum money Mr. Krabs can obtain.
+
+### Conceptual Solution
+
+1. **Initial Access**: Mr. Krabs can start by unlocking either the first or the last room.
+2. **Unlocking Strategy**: After unlocking a corner room, he can proceed to unlock adjacent rooms. The goal is to maximize the total money collected with the given number of keys.
+3. **Sliding Window Approach**: Use a sliding window technique to evaluate the maximum sum of money that can be collected by unlocking a contiguous sequence of rooms starting from either end.
+4. **Calculate Maximum**: For each possible starting point (either from the left or the right), calculate the maximum money that can be collected using up to `k` keys.
+
+### Pseudocode
+
+1. Initialize two arrays `left_max` and `right_max` to store the maximum money obtainable starting from the left and right ends, respectively.
+2. Use a sliding window of size `k` to calculate the maximum money obtainable from the left end:
+   - Start with the first room and expand the window to include up to `k` rooms.
+   - Update `left_max` with the maximum sum found.
+3. Repeat the process for the right end:
+   - Start with the last room and expand the window to include up to `k` rooms.
+   - Update `right_max` with the maximum sum found.
+4. The result is the maximum value found in `left_max` and `right_max`.
+
+### Python Code
+
+```python
+def maxMoney(n, A, k):
+    # Calculate maximum money obtainable from the left side
+    left_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if i < n:
+            current_sum += A[i]
+            left_max[i + 1] = current_sum
+    
+    # Calculate maximum money obtainable from the right side
+    right_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if n - 1 - i >= 0:
+            current_sum += A[n - 1 - i]
+            right_max[i + 1] = current_sum
+    
+    # Find the maximum money obtainable with k keys
+    max_money = 0
+    for i in range(k + 1):
+        max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(maxMoney(n, A, k))
+```
+
+### Explanation
+
+- **Sliding Window**: The sliding window approach efficiently calculates the maximum sum of money that can be collected from either end of the room sequence.
+- **Combining Results**: By considering both left and right starting points, the solution ensures that all possible combinations of room unlocks are evaluated.
+- **Efficiency**: The solution runs in O(n) time, which is efficient given the constraints.
+INFO - [Task id] 995 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['7', '1 2 3 4 5 6 1', '3'] Output: 12
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 995 [prompt] 
+## Instructions
+Now, summarize your attempts as a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+- Only include the most relevant information and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - Identifying the core concepts and patterns that problem appears to test for
+    - Describing the strategies that seemed to work but did not, and vice versa
+    - Describing unexpected errors and how they were fixed
+
+Your summary should be at most a few paragraphs.
+
+INFO - [Task id] 995 [generation text] In this problem, the core concept was to maximize the sum of money collected from a series of rooms using a limited number of keys. The challenge was to efficiently determine the best sequence of rooms to unlock, given that only the corner rooms are initially accessible.
+
+The solution utilized a sliding window approach to calculate the maximum possible sum of money that can be collected from either end of the room sequence. This approach is efficient because it allows us to evaluate all possible contiguous sequences of rooms that can be unlocked with the given number of keys. By maintaining two arrays (`left_max` and `right_max`), we could track the maximum sums obtainable from the left and right ends, respectively.
+
+The key insight was to combine the results from both ends to ensure that all potential unlocking strategies were considered. This approach ensured that the solution was both optimal and efficient, running in O(n) time, which is suitable given the constraints.
+
+Overall, this problem reinforced the utility of the sliding window technique in scenarios where contiguous subarray sums need to be evaluated efficiently.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 995 [prompt] 
+You are an expert programmer tasked with solving the problem below.
+
+Follow the user's instructions to solve the problem.
+The user can ask for analysis, code, or both.
+
+## Instructions
+When asked to output code,
+- Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+- include exactly one block of code with the entire solution
+- No outside libraries are allowed. 
+- Builtins are allowed.
+- If the task specifies a function name to be used, follow it strictly (be case sensitive!) and declare the that function last (helper functions are declared first).
+- DO NOT write any assert statements / tests.
+
+## Problem
+[BEGIN PROBLEM]
+Mr. Krabs loves money. He enters a bank and sees that there are n rooms arranged in a row. The only rooms with doors are the two rooms on either corner. Initially, all the rooms are locked (including the corner ones). To enter a room, it must be unlocked with a key.
+Mr. Krabs is able to steal k keys from the sleeping night guard. Each key can be used to unlock only one room. To reach one of the inner rooms, he has to unlock an adjacent room first.
+Eg: If there are 5 rooms labelled: 1 2 3 4 5
+Only Rooms 1 and 5 can be accessed initially. To unlock room 2, either room 1 or room 3 must be unlocked. Similarly to unlock Room 4, he must unlock room 5 or room 3 first.
+Each room has some money in it. The money present in room i is given by A[i]. Using the k keys, calculate what is the maximum possible amount of money obtainable.
+
+-----Input:-----
+- First line will contain n,  number of rooms.
+- Second line will contain space separated integers, denoting A[i], money present in each room.
+- Third line will contain an integer, k, the number of keys available.
+
+-----Output:-----
+Maximum money obtained.
+
+-----Constraints-----
+- 1 <= Number of Rooms <= 10^5
+- 1 <= A[i] <= 10^4
+- 1 <= k <= Number of Rooms
+
+-----Subtasks-----
+- 40 points : 1 <= Number of Rooms <= 100
+- 60 points : Number of Rooms > 100
+
+-----Sample Input:-----
+7
+1 2 3 4 5 6 1
+3
+
+-----Sample Output:-----
+12
+
+-----Explanation:-----
+For the first step, Mr. Krabs can only unlock the room at the left corner or the right corner. If he unlocks the room in the right corner, he obtains 1 dollar. He can then go on to unlock the second last room and gain 6 dollars, for a total of 7 dollars. Finally he can unlock the third last room and get 5 dollars, for a total of 12 dollars. 
+This is the maximum amount of money he can get with only 3 keys.
+
+The output code needs to read from and write to standard IO
+
+
+[END PROBLEM]
+
+INFO - [Task id] 995 [prompt] 
+## Instructions
+
+Reason through the problem and:
+1. Restate the problem in plain English
+2. Conceptualize a solution first in plain English
+3. Write a pseudocode solution
+4. Output the final Python 3 solution with your solution steps in comments.
+
+Make sure to wrap your code in '```python' and '```' Markdown delimiters, 
+and include exactly one block of code with the entire solution.
+
+No outside libraries are allowed.
+Builtins are allowed.
+
+INFO - [Task id] 995 [prompt] ### Problem Restatement
+
+Mr. Krabs wants to maximize the amount of money he can steal from a series of rooms arranged in a row. Each room is initially locked, and only the two corner rooms can be accessed first. Mr. Krabs has a limited number of keys, and each key can unlock one room. To unlock an inner room, an adjacent room must be unlocked first. Given the number of rooms, the money in each room, and the number of keys, determine the maximum money Mr. Krabs can obtain.
+
+### Conceptual Solution
+
+1. **Initial Access**: Mr. Krabs can start by unlocking either the first or the last room.
+2. **Unlocking Strategy**: After unlocking a corner room, he can proceed to unlock adjacent rooms. The goal is to maximize the total money collected with the given number of keys.
+3. **Sliding Window Approach**: Use a sliding window technique to evaluate the maximum sum of money that can be collected by unlocking a contiguous sequence of rooms starting from either end.
+4. **Calculate Maximum**: For each possible starting point (either from the left or the right), calculate the maximum money that can be collected using up to `k` keys.
+
+### Pseudocode
+
+1. Initialize two arrays `left_max` and `right_max` to store the maximum money obtainable starting from the left and right ends, respectively.
+2. Use a sliding window of size `k` to calculate the maximum money obtainable from the left end:
+   - Start with the first room and expand the window to include up to `k` rooms.
+   - Update `left_max` with the maximum sum found.
+3. Repeat the process for the right end:
+   - Start with the last room and expand the window to include up to `k` rooms.
+   - Update `right_max` with the maximum sum found.
+4. The result is the maximum value found in `left_max` and `right_max`.
+
+### Python Code
+
+```python
+def maxMoney(n, A, k):
+    # Calculate maximum money obtainable from the left side
+    left_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if i < n:
+            current_sum += A[i]
+            left_max[i + 1] = current_sum
+    
+    # Calculate maximum money obtainable from the right side
+    right_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if n - 1 - i >= 0:
+            current_sum += A[n - 1 - i]
+            right_max[i + 1] = current_sum
+    
+    # Find the maximum money obtainable with k keys
+    max_money = 0
+    for i in range(k + 1):
+        max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(maxMoney(n, A, k))
+```
+
+### Explanation
+
+- **Sliding Window**: The sliding window approach efficiently calculates the maximum sum of money that can be collected from either end of the room sequence.
+- **Combining Results**: By considering both left and right starting points, the solution ensures that all possible combinations of room unlocks are evaluated.
+- **Efficiency**: The solution runs in O(n) time, which is efficient given the constraints.
+INFO - [Task id] 995 [prompt] 
+[Environment Feedback]:
+    Note: Inputs/outputs here are automatically extracted/truncated so formatting may be a bit off.
+    Tests passed:
+
+     Input: ['7', '1 2 3 4 5 6 1', '3'] Output: 12
+
+    Tests failed:
+    None
+[/Environment Feedback]
+
+INFO - [Task id] 995 [prompt] 
+Below is the official solution (do exercise discretion as official solutions can also have mistakes).
+
+You will be reflecting on your attempts to solve the problem.
+This will be a **standalone** document for your own future reference. (can skip formalities, be concise)
+
+## Instructions
+- Only include the most relevant insights and code snippets that could be useful in the future.
+- If you did not learn much from the current experience (e.g. the problem was too easy / official solution was obvious), feel free to write less or nothing at all.
+- Here are some ideas if the experience was useful:
+    - If the official solution is insightful (e.g. better than yours in time and space complexity or more effective in breaking down the problem statement), distil the key approach of the official solution, step by step.
+    - If your approach failed the test cases, reason why the official solution works but yours does not
+
+Your reflection should be at most a few paragraphs.
+
+## Official solution
+rooms=int(input())
+money=list(map(int,input().split()))
+keys=int(input())
+rev=-1
+a,b=0,-1
+tot=[]
+#print(money[-3:-1])
+x=0
+for i in range(keys):
+    #print(money[b:-1],money[0:a])
+    x=sum(money[b:])+sum(money[0:keys-abs(b)])
+    tot.append(x)
+    b-=1
+print(max(tot))
+
+
+INFO - [Task id] 995 [generation text] The problem was straightforward, and my solution was effective in solving it using a sliding window approach. However, the official solution provided a different perspective that is worth noting.
+
+### Key Insights from the Official Solution:
+
+1. **Reverse Indexing**: The official solution uses reverse indexing to handle the rooms from the end, which simplifies the logic of combining the sums from both ends. This approach is more direct in terms of handling the two ends of the room sequence.
+
+2. **Summation Logic**: Instead of maintaining separate arrays for left and right maximum sums, the official solution directly calculates the sum of the rooms from both ends in a single loop. This reduces the need for additional space and simplifies the code.
+
+3. **Efficiency**: The official solution is efficient in terms of both time and space complexity. It uses a single loop to calculate the possible sums and stores them in a list, which is then used to find the maximum sum.
+
+### Reflection:
+
+- The official solution is more concise and leverages Python's list slicing effectively to handle the problem constraints. It avoids the need for additional arrays and directly computes the possible sums in a single pass.
+- My approach was correct and efficient, but the official solution demonstrates a more elegant way to handle the problem using Python's capabilities.
+- In future problems, considering reverse indexing and direct summation could simplify the solution and reduce the complexity of the code.
+INFO - Updated entry: In this problem, the core concept was to maximize the sum of money collected from a series of rooms using a limited number of keys. The challenge was to efficiently determine the best sequence of rooms to unlock, given that only the corner rooms are initially accessible.
+
+The solution utilized a ...,
+
+INFO - Metadata: {
+    "task_id": 995
+}
+
+INFO - Updated entry: The problem was straightforward, and my solution was effective in solving it using a sliding window approach. However, the official solution provided a different perspective that is worth noting.
+
+### Key Insights from the Official Solution:
+
+1. **Reverse Indexing**: The official solution uses re...,
+
+INFO - Metadata: {
+    "task_id": 995
+}
+
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 995 [prompt] 
+You are a helpful assistant that writes a description of the given function written in the Python programming language.
+
+1) Do not mention the function name.
+2) Do not mention anything about helper functions.
+3) There might be some helper functions before the main function, but you only need to describe the main function.
+4) Try to summarize the function in no more than 6 sentences.
+5) Your response should be a single line of text.
+
+INFO - [Task id] 995 [prompt] 
+def maxMoney(n, A, k):
+    # Calculate maximum money obtainable from the left side
+    left_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if i < n:
+            current_sum += A[i]
+            left_max[i + 1] = current_sum
+    
+    # Calculate maximum money obtainable from the right side
+    right_max = [0] * (k + 1)
+    current_sum = 0
+    for i in range(k):
+        if n - 1 - i >= 0:
+            current_sum += A[n - 1 - i]
+            right_max[i + 1] = current_sum
+    
+    # Find the maximum money obtainable with k keys
+    max_money = 0
+    for i in range(k + 1):
+        max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+    return max_money
+
+# Read input
+import sys
+input = sys.stdin.read
+data = input().split()
+
+n = int(data[0])
+A = list(map(int, data[1:n+1]))
+k = int(data[n+1])
+
+# Output the result
+print(maxMoney(n, A, k))
+
+
+The main function is `maxMoney`.
+INFO - [Task id] 995 [generation text] The function calculates the maximum sum of money that can be obtained by selecting up to `k` elements from either end of an array `A` of length `n`. It first computes the cumulative sums of the first `k` elements from the left and stores them in `left_max`. Then, it computes the cumulative sums of the first `k` elements from the right and stores them in `right_max`. Finally, it iterates through all possible combinations of selecting elements from the left and right sides, updating the maximum sum found. The function returns this maximum sum.
+INFO - LM call n parse attempt 1 / 3
+
+INFO - [Task id] 995 [prompt] 
+You are a helpful assistant that extracts important information from problems and solutions to aid in searchability and education.
+
+## Instructions
+- Read through the problem and solution carefully.
+- Reason out, step by step, in what scenarios this knowledge would be useful.
+- Focus on general patterns and situations to help connect this knowledge to new situations.
+- Then, include a list of keywords that are useful for searching this problem/solution pair.
+
+## Response format
+Respond in JSON, and follow the keys and expected format of the values strictly.
+
+The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {"properties": {"foo": {"title": "Foo", "description": "a list of strings", "type": "array", "items": {"type": "string"}}}, "required": ["foo"]}
+the object {"foo": ["bar", "baz"]} is a well-formatted instance of the schema. The object {"properties": {"foo": ["bar", "baz"]}} is not well-formatted.
+
+Here is the output schema:
+```
+{"properties": {"scenarios": {"description": "In what scenarios will this knowledge be useful? Answer in a paragraph.", "title": "Scenarios", "type": "string"}, "keywords": {"description": "List of keywords that are useful for searching this problem/solution pair", "items": {"type": "string"}, "title": "Keywords", "type": "array"}}, "required": ["scenarios", "keywords"]}
+```
+
+INFO - [Task id] 995 [prompt] 
+[Problem]
+    Mr. Krabs loves money. He enters a bank and sees that there are n rooms arranged in a row. The only rooms with doors are the two rooms on either corner. Initially, all the rooms are locked (including the corner ones). To enter a room, it must be unlocked with a key.
+    Mr. Krabs is able to steal k keys from the sleeping night guard. Each key can be used to unlock only one room. To reach one of the inner rooms, he has to unlock an adjacent room first.
+    Eg: If there are 5 rooms labelled: 1 2 3 4 5
+    Only Rooms 1 and 5 can be accessed initially. To unlock room 2, either room 1 or room 3 must be unlocked. Similarly to unlock Room 4, he must unlock room 5 or room 3 first.
+    Each room has some money in it. The money present in room i is given by A[i]. Using the k keys, calculate what is the maximum possible amount of money obtainable.
+
+    -----Input:-----
+    - First line will contain n,  number of rooms.
+    - Second line will contain space separated integers, denoting A[i], money present in each room.
+    - Third line will contain an integer, k, the number of keys available.
+
+    -----Output:-----
+    Maximum money obtained.
+
+    -----Constraints-----
+    - 1 <= Number of Rooms <= 10^5
+    - 1 <= A[i] <= 10^4
+    - 1 <= k <= Number of Rooms
+
+    -----Subtasks-----
+    - 40 points : 1 <= Number of Rooms <= 100
+    - 60 points : Number of Rooms > 100
+
+    -----Sample Input:-----
+    7
+    1 2 3 4 5 6 1
+    3
+
+    -----Sample Output:-----
+    12
+
+    -----Explanation:-----
+    For the first step, Mr. Krabs can only unlock the room at the left corner or the right corner. If he unlocks the room in the right corner, he obtains 1 dollar. He can then go on to unlock the second last room and gain 6 dollars, for a total of 7 dollars. Finally he can unlock the third last room and get 5 dollars, for a total of 12 dollars. 
+    This is the maximum amount of money he can get with only 3 keys.
+[/Problem]
+
+[Solution]
+
+    def maxMoney(n, A, k):
+        # Calculate maximum money obtainable from the left side
+        left_max = [0] * (k + 1)
+        current_sum = 0
+        for i in range(k):
+            if i < n:
+                current_sum += A[i]
+                left_max[i + 1] = current_sum
+    
+        # Calculate maximum money obtainable from the right side
+        right_max = [0] * (k + 1)
+        current_sum = 0
+        for i in range(k):
+            if n - 1 - i >= 0:
+                current_sum += A[n - 1 - i]
+                right_max[i + 1] = current_sum
+    
+        # Find the maximum money obtainable with k keys
+        max_money = 0
+        for i in range(k + 1):
+            max_money = max(max_money, left_max[i] + right_max[k - i])
+    
+        return max_money
+
+    # Read input
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+
+    n = int(data[0])
+    A = list(map(int, data[1:n+1]))
+    k = int(data[n+1])
+
+    # Output the result
+    print(maxMoney(n, A, k))
+
+[/Solution]
+
+INFO - [Task id] 995 [generation text] 
+INFO - {
+    "scenarios": "This problem is useful in scenarios where you need to maximize a resource (in this case, money) given a limited number of actions (keys) and constraints on accessibility (rooms can only be unlocked if adjacent rooms are unlocked). This is a common type of optimization problem that can be applied to various fields such as operations research, logistics, and computer science, where resources are limited and must be allocated efficiently. The solution involves dynamic programming techniques to calculate the maximum possible value by considering different combinations of actions, which is a valuable approach in solving similar optimization problems.",
+    "keywords": [
+        "optimization",
+        "dynamic programming",
+        "resource allocation",
+        "maximum sum",
+        "adjacent constraints",
+        "key unlocking problem",
+        "bank rooms",
+        "money maximization",
+        "algorithm",
+        "programming"
+    ]
+}
+INFO - {
+    "scenarios": "This problem is useful in scenarios where you need to maximize a resource (in this case, money) given a limited number of actions (keys) and constraints on accessibility (rooms can only be unlocked if adjacent rooms are unlocked). This is a common type of optimization problem that can be applied to various fields such as operations research, logistics, and computer science, where resources are limited and must be allocated efficiently. The solution involves dynamic programming techniques to calculate the maximum possible value by considering different combinations of actions, which is a valuable approach in solving similar optimization problems.",
+    "keywords": [
+        "optimization",
+        "dynamic programming",
+        "resource allocation",
+        "maximum sum",
+        "adjacent constraints",
+        "key unlocking problem",
+        "bank rooms",
+        "money maximization",
+        "algorithm",
+        "programming"
+    ]
+}
+INFO - Updated entry: 
+[description for function: maxMoney]
+The function calculates the maximum sum of money that can be obtained by selecting up to `k` elements from either end of an array `A` of length `n`. It first computes the cumulative sums of the first `k` elements from the left and stores them in `left_max`. T...,
+
+INFO - Metadata: {
+    "task": 995,
+    "code": "\ndef maxMoney(n, A, k):\n    # Calculate maximum money obtainable from the left side\n    left_max = [0] * (k + 1)\n    current_sum = 0\n    for i in range(k):\n        if i < n:\n            current_sum += A[i]\n            left_max[i + 1] = current_sum\n    \n  ...
+
